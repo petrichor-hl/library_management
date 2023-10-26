@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:library_management/screens/book_manage.dart';
@@ -28,11 +29,13 @@ class _LibraryManagementState extends State<LibraryManagement>
 
   @override
   Widget build(BuildContext context) {
+    var windowButtonColors = WindowButtonColors(
+      mouseOver: Theme.of(context).colorScheme.primary,
+    );
     return Scaffold(
       body: Column(
         children: [
           Container(
-            height: 70,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -41,67 +44,83 @@ class _LibraryManagementState extends State<LibraryManagement>
                 ],
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/library.png',
-                    width: 50,
+            child: Column(
+              children: [
+                WindowTitleBarBox(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: MoveWindow(),
+                      ),
+                      MinimizeWindowButton(colors: windowButtonColors),
+                      MaximizeWindowButton(colors: windowButtonColors),
+                      CloseWindowButton(),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  SvgPicture.asset('assets/LibraryBOOKS.svg'),
-                  const SizedBox(
-                    width: 80,
-                  ),
-                  Expanded(
-                    child: TabBar.secondary(
-                      controller: _tabController,
-                      tabs: const [
-                        Tab(
-                          text: "Độc giả",
-                          height: 70,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/library.png',
+                        width: 50,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SvgPicture.asset('assets/LibraryBOOKS.svg'),
+                      const SizedBox(
+                        width: 80,
+                      ),
+                      Expanded(
+                        child: TabBar.secondary(
+                          controller: _tabController,
+                          tabs: const [
+                            Tab(
+                              text: "Độc giả",
+                              height: 70,
+                            ),
+                            Tab(
+                              text: "Quản lý Sách",
+                            ),
+                            Tab(
+                              text: "Mượn trả",
+                            ),
+                            Tab(
+                              text: "Báo cáo",
+                            ),
+                            Tab(
+                              text: "Quy định",
+                            ),
+                          ],
+                          indicator: const BoxDecoration(color: Colors.white),
+                          dividerColor: Colors.transparent,
                         ),
-                        Tab(
-                          text: "Quản lý Sách",
-                        ),
-                        Tab(
-                          text: "Mượn trả",
-                        ),
-                        Tab(
-                          text: "Báo cáo",
-                        ),
-                        Tab(
-                          text: "Quy định",
-                        ),
-                      ],
-                      indicator: const BoxDecoration(color: Colors.white),
-                      dividerColor: Colors.transparent,
-                    ),
+                      ),
+                      const SizedBox(
+                        width: 80,
+                      ),
+                      const CircleAvatar(
+                        backgroundImage: AssetImage('assets/profile-user.png'),
+                        backgroundColor: Colors.transparent,
+                        radius: 18,
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 80,
-                  ),
-                  const CircleAvatar(
-                    backgroundImage: AssetImage('assets/profile-user.png'),
-                    backgroundColor: Colors.transparent,
-                    radius: 18,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: const [
-                BookManage(),
                 ReaderManage(),
                 BookManage(),
                 ReaderManage(),
                 BookManage(),
+                ReaderManage(),
               ],
             ),
           ),

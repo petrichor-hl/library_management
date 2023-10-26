@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:library_management/screens/library_management.dart';
@@ -8,12 +9,21 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 DbProcess dbProcess = DbProcess();
 
 void main() async {
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  // sqfliteFfiInit();
+  // databaseFactory = databaseFactoryFfi;
 
-  await dbProcess.connect();
+  // await dbProcess.connect();
 
   runApp(const MyApp());
+
+  doWhenWindowReady(() {
+    const initialSize = Size(1280, 720);
+    appWindow.minSize = initialSize;
+    appWindow.size = initialSize;
+    appWindow.alignment = Alignment.center;
+    appWindow.title = "Quản lý thư viện";
+    appWindow.show();
+  });
 }
 
 class MyApp extends StatelessWidget {

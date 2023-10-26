@@ -18,7 +18,7 @@ class DbProcess {
             password TEXT
           );
 
-          INSERT INTO TaiKhoan VALUES('quanly','123456');
+          INSERT INTO TaiKhoan VALUES('admin','123456');
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
