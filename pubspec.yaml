@@ -40,6 +40,10 @@ dependencies:
   google_fonts: ^6.1.0
   flutter_svg: ^2.0.8
   bitsdojo_window: ^0.1.5
+  intl: ^0.18.1
+  flutter_localizations:
+    sdk: flutter
+  dart_date: ^1.2.2
 
 dev_dependencies:
   flutter_test:

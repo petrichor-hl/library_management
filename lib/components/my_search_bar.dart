@@ -38,7 +38,7 @@ class MySearchBar extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 32),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 38),
           ),
           child: const Icon(Icons.search),
         )
