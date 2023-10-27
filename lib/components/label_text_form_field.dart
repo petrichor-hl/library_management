@@ -7,12 +7,20 @@ class LabelTextFormField extends StatelessWidget {
     this.controller,
     this.isEnable = true,
     this.hint = "",
+    this.initText,
+    this.onEditingComplete,
+    this.onTap,
+    this.suffixText,
   });
 
   final String labelText;
   final TextEditingController? controller;
   final bool isEnable;
   final String hint;
+  final String? initText;
+  final void Function()? onEditingComplete;
+  final void Function()? onTap;
+  final String? suffixText;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +35,7 @@ class LabelTextFormField extends StatelessWidget {
         TextFormField(
           controller: controller,
           enabled: isEnable,
+          initialValue: initText,
           decoration: InputDecoration(
             filled: true,
             fillColor: isEnable
@@ -40,8 +49,16 @@ class LabelTextFormField extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.all(14),
             isCollapsed: true,
-            // isDense: true,
+            suffixText: suffixText,
           ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Bạn chưa nhập $labelText';
+            }
+            return null;
+          },
+          onEditingComplete: onEditingComplete,
+          onTap: onTap,
         ),
       ],
     );

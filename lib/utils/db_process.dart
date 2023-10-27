@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:library_management/models/reader.dart';
+import 'package:library_management/utils/common_variables.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DbProcess {
@@ -92,15 +94,56 @@ class DbProcess {
             FOREIGN KEY (MaCTPN) REFERENCES CT_PhieuNhap(MaCTPN) ON DELETE RESTRICT,
             FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE RESTRICT
           );
+
+          CREATE TABLE DocGia(
+            MaDocGia INTEGER PRIMARY KEY AUTOINCREMENT,
+            HoTen TEXT,
+            NgaySinh TEXT,
+            DiaChi TEXT,
+            SoDienThoai TEXT,
+            NgayLapThe TEXT,
+            NgayHetHan TEXT,
+            TongNo INTEGER
+          );
         ''',
         );
       },
     );
   }
 
+  // SELECT CODE
   Future<Map<String, dynamic>> queryAccount() async {
     List<Map<String, dynamic>> data =
         await _database.rawQuery('select * from TaiKhoan');
     return data.first;
+  }
+
+  Future<List<Reader>> querryRecentReader() async {
+    List<Map<String, dynamic>> data =
+        await _database.rawQuery('select * from DocGia');
+
+    List<Reader> readers = [];
+
+    for (var element in data) {
+      readers.add(
+        Reader(
+          element['MaDocGia'],
+          element['HoTen'],
+          vnDateFormat.parse(element['NgaySinh'] as String),
+          element['DiaChi'],
+          element['SoDienThoai'],
+          vnDateFormat.parse(element['NgayLapThe'] as String),
+          vnDateFormat.parse(element['NgayHetHan'] as String),
+          element['TongNo'],
+        ),
+      );
+    }
+
+    return readers;
+  }
+
+  // INSERT CODE
+  Future<void> insertReader(Reader newReader) async {
+    await _database.insert('DocGia', newReader.toMap());
   }
 }

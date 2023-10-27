@@ -34,11 +34,12 @@ class LabelTextFieldDatePicker extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: GestureDetector(
                 onTap: () => openDatePicker(context),
-                child: TextField(
+                child: TextFormField(
                   controller: controller,
                   enabled: false,
                   mouseCursor: SystemMouseCursors.click,
@@ -53,8 +54,13 @@ class LabelTextFieldDatePicker extends StatelessWidget {
                     ),
                     contentPadding: const EdgeInsets.all(14),
                     isCollapsed: true,
-                    // isDense: true,
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bạn chưa nhập $labelText'; // 68 44
+                    }
+                    return null;
+                  },
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
@@ -64,7 +70,7 @@ class LabelTextFieldDatePicker extends StatelessWidget {
               onPressed: () => openDatePicker(context),
               icon: const Icon(Icons.calendar_today),
               padding: const EdgeInsets.all(10),
-            )
+            ),
           ],
         ),
       ],
