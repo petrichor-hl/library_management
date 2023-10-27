@@ -111,13 +111,13 @@ class DbProcess {
     );
   }
 
-  // SELECT CODE
   Future<Map<String, dynamic>> queryAccount() async {
     List<Map<String, dynamic>> data =
         await _database.rawQuery('select * from TaiKhoan');
     return data.first;
   }
 
+  // READER MODEL CODE
   Future<List<Reader>> querryRecentReader() async {
     List<Map<String, dynamic>> data =
         await _database.rawQuery('select * from DocGia');
@@ -142,8 +142,12 @@ class DbProcess {
     return readers;
   }
 
-  // INSERT CODE
   Future<void> insertReader(Reader newReader) async {
     await _database.insert('DocGia', newReader.toMap());
+  }
+
+  Future<void> deleteReader(int readerId) async {
+    await _database
+        .rawDelete('delete from DocGia where MaDocGia  = ?', [readerId]);
   }
 }

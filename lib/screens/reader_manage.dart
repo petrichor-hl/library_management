@@ -75,7 +75,48 @@ class _ReaderManageState extends State<ReaderManage> {
                     ),
                     const SizedBox(width: 12),
                     IconButton.filled(
-                      onPressed: () {},
+                      onPressed: selectedRow == -1
+                          ? null
+                          : () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Xác nhận'),
+                                  content: Text(
+                                      'Bạn có chắc xóa Độc giả ${_readerRows[selectedRow].fullname}?'),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Huỷ'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        await dbProcess.deleteReader(
+                                            _readerRows[selectedRow].id!);
+                                        if (mounted) {
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .clearSnackBars();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Đã xóa Độc giả ${_readerRows[selectedRow].fullname}.'),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: const Text('Có'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                       icon: const Icon(Icons.delete),
                       style: IconButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -86,14 +127,12 @@ class _ReaderManageState extends State<ReaderManage> {
                     ),
                     const SizedBox(width: 12),
                     IconButton.filled(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AddEditReaderForm(
-                            editReader: _readerRows[selectedRow],
-                          ),
-                        );
-                      },
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (ctx) => AddEditReaderForm(
+                          editReader: _readerRows[selectedRow],
+                        ),
+                      ),
                       icon: const Icon(Icons.edit),
                       style: IconButton.styleFrom(
                         shape: RoundedRectangleBorder(
