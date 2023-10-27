@@ -19,9 +19,8 @@ class AddEditReaderForm extends StatefulWidget {
 }
 
 class _AddEditReaderFormState extends State<AddEditReaderForm> {
-  final TextEditingController _creationDateController = TextEditingController();
-
-  final _expirationDateController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool _isProcessing = false;
 
   final _fullnameController = TextEditingController();
 
@@ -31,16 +30,16 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
 
   final _phoneController = TextEditingController();
 
+  final _creationDateController = TextEditingController();
+
+  final _expirationDateController = TextEditingController();
+
   final _totalTiabilitiesController = TextEditingController();
 
   void setCreationExpriationDate(DateTime date) {
     _creationDateController.text = date.toVnFormat();
-
     _expirationDateController.text = date.addMonths(6).toVnFormat();
   }
-
-  final _formKey = GlobalKey<FormState>();
-  bool _isProcessing = false;
 
   void saveReader(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
@@ -48,18 +47,42 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
         _isProcessing = true;
       });
 
-      Reader newReader = Reader(
-        null,
-        _fullnameController.text,
-        vnDateFormat.parse(_dobController.text),
-        _addressController.text,
-        _phoneController.text,
-        vnDateFormat.parse(_creationDateController.text),
-        vnDateFormat.parse(_expirationDateController.text),
-        0,
-      );
+      if (widget.editReader == null) {
+        Reader newReader = Reader(
+          null,
+          _fullnameController.text,
+          vnDateFormat.parse(_dobController.text),
+          _addressController.text,
+          _phoneController.text,
+          vnDateFormat.parse(_creationDateController.text),
+          vnDateFormat.parse(_expirationDateController.text),
+          0,
+        );
 
-      await dbProcess.insertReader(newReader);
+        int returningId = await dbProcess.insertReader(newReader);
+        newReader.id = returningId;
+
+        if (mounted) {
+          Navigator.of(context).pop(newReader);
+        }
+      } else {
+        widget.editReader!.fullname = _fullnameController.text;
+        widget.editReader!.dob = vnDateFormat.parse(_dobController.text);
+        widget.editReader!.address = _addressController.text;
+        widget.editReader!.phoneNumber = _phoneController.text;
+        widget.editReader!.creationDate =
+            vnDateFormat.parse(_creationDateController.text);
+        widget.editReader!.expirationDate =
+            vnDateFormat.parse(_expirationDateController.text);
+        widget.editReader!.totalTiabilities =
+            int.parse(_totalTiabilitiesController.text.replaceAll('.', ''));
+
+        await dbProcess.updateReader(widget.editReader!);
+
+        if (mounted) {
+          Navigator.of(context).pop('updated');
+        }
+      }
 
       setState(() {
         _isProcessing = false;
@@ -67,13 +90,14 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tạo thẻ độc giả thành công.'),
+          SnackBar(
+            content: Text(widget.editReader == null
+                ? 'Tạo thẻ độc giả thành công.'
+                : 'Cập nhật thông tin thành công'),
             behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
-        Navigator.of(context).pop();
       }
     }
   }
@@ -87,15 +111,24 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
       _addressController.text = widget.editReader!.address;
       _phoneController.text = widget.editReader!.phoneNumber;
       _addressController.text = widget.editReader!.address;
+      _creationDateController.text =
+          widget.editReader!.creationDate.toVnFormat();
+      _expirationDateController.text =
+          widget.editReader!.expirationDate.toVnFormat();
       _totalTiabilitiesController.text =
           widget.editReader!.totalTiabilities.toVnCurrencyWithoutSymbolFormat();
+    } else {
+      /* 
+      Nếu là thêm mới Độc Giả, thì thiết lập sẵn Creation và ExpriationDate 
+      CreationDate là DateTime.now()
+      ExpriationDate là DateTime.now() + 6 tháng 
+      */
+      setCreationExpriationDate(DateTime.now());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    setCreationExpriationDate(DateTime.now());
-
     return Dialog(
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
@@ -150,6 +183,9 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 LabelTextFieldDatePicker(
                   labelText: 'Ngày sinh',
                   controller: _dobController,
+                  initialDate: widget.editReader != null
+                      ? widget.editReader!.dob
+                      : DateTime.now(),
                 ),
                 //
                 const SizedBox(height: 10),
@@ -166,7 +202,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 //
                 const SizedBox(height: 10),
                 const Text(
-                  'Ngày đăng ký',
+                  'Ngày lập thẻ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
@@ -177,7 +213,9 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                         onTap: () async {
                           DateTime? chosenDate = await showDatePicker(
                             context: context,
-                            initialDate: DateTime.now(),
+                            initialDate: widget.editReader != null
+                                ? widget.editReader!.creationDate
+                                : DateTime.now(),
                             firstDate: DateTime(1950),
                             lastDate: DateTime.now(),
                           );
@@ -211,7 +249,9 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                       onPressed: () async {
                         DateTime? chosenDate = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(),
+                          initialDate: widget.editReader != null
+                              ? widget.editReader!.creationDate
+                              : DateTime.now(),
                           firstDate: DateTime(1950),
                           lastDate: DateTime.now(),
                         );
@@ -244,6 +284,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                             int.parse(text).toVnCurrencyWithoutSymbolFormat();
                       } catch (e) {
                         // Do nothing
+                        print('Parse FAILED');
                       }
                       FocusScope.of(context).unfocus();
                     },

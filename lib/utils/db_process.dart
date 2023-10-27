@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:library_management/models/reader.dart';
 import 'package:library_management/utils/common_variables.dart';
+import 'package:library_management/utils/extension.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DbProcess {
@@ -119,8 +120,14 @@ class DbProcess {
 
   // READER MODEL CODE
   Future<List<Reader>> querryRecentReader() async {
-    List<Map<String, dynamic>> data =
-        await _database.rawQuery('select * from DocGia');
+    /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from DocGia 
+      order by MaDocGia desc
+      limit 10
+      ''',
+    );
 
     List<Reader> readers = [];
 
@@ -142,12 +149,33 @@ class DbProcess {
     return readers;
   }
 
-  Future<void> insertReader(Reader newReader) async {
-    await _database.insert('DocGia', newReader.toMap());
+  Future<int> insertReader(Reader newReader) async {
+    return await _database.insert('DocGia', newReader.toMap());
   }
 
   Future<void> deleteReader(int readerId) async {
     await _database
         .rawDelete('delete from DocGia where MaDocGia  = ?', [readerId]);
+  }
+
+  Future<void> updateReader(Reader updatedReader) async {
+    await _database.rawUpdate(
+      '''
+      update DocGia 
+      set HoTen = ?, NgaySinh = ?, DiaChi = ?, SoDienThoai = ?, 
+      NgayLapThe = ?, NgayHetHan = ?, TongNo = ? 
+      where MaDocGia  = ?
+      ''',
+      [
+        updatedReader.fullname,
+        updatedReader.dob.toVnFormat(),
+        updatedReader.address,
+        updatedReader.phoneNumber,
+        updatedReader.creationDate.toVnFormat(),
+        updatedReader.expirationDate.toVnFormat(),
+        updatedReader.totalTiabilities,
+        updatedReader.id,
+      ],
+    );
   }
 }

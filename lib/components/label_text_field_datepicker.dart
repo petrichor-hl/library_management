@@ -6,15 +6,17 @@ class LabelTextFieldDatePicker extends StatelessWidget {
     super.key,
     required this.labelText,
     required this.controller,
+    this.initialDate,
   });
 
   final String labelText;
   final TextEditingController controller;
+  final DateTime? initialDate;
 
   Future<void> openDatePicker(BuildContext context) async {
     DateTime? chosenDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate ?? DateTime.now(),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );

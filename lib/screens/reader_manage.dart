@@ -1,3 +1,4 @@
+import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:library_management/components/forms/add_edit_reader_form.dart';
 import 'package:library_management/components/my_search_bar.dart';
@@ -13,24 +14,63 @@ class ReaderManage extends StatefulWidget {
 }
 
 class _ReaderManageState extends State<ReaderManage> {
+  // Danh sách Tên các cột trong Bảng Độc Giả
   final List<String> _colsName = [
     '#',
     'Họ Tên',
     'Ngày sinh',
     'Địa chỉ',
     'Số điện thoại',
-    'Ngày đăng ký',
+    'Ngày lập thẻ',
     'Ngày hết hạn',
     'Tổng nợ',
   ];
 
-  int selectedRow = -1;
+  int _selectedRow = -1;
 
   late final List<Reader> _readerRows;
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
     _readerRows = await dbProcess.querryRecentReader();
+  }
+
+  /*
+  Nếu có Độc giả mới được thêm (tức là đã điền đầy đủ thông tin hợp lệ + nhấn Save)
+  thì phương thức showDialog() sẽ trả về một Reader mới
+  */
+  Future<void> _logicAddReader() async {
+    Reader? newReader = await showDialog(
+      context: context,
+      builder: (ctx) => const AddEditReaderForm(),
+    );
+
+    // print(newReader);
+    if (newReader != null) {
+      setState(() {
+        _readerRows.insert(0, newReader);
+      });
+    }
+  }
+
+  /*
+  Hàm này là logic xử lý khi người dùng nhấn vào nút Edit hoặc Long Press vào một Row trong bảng
+  Đầu tiên là show AddEditReaderForm, showDialog() sẽ trả về:
+    - String 'updated', nếu người dùng nhấn Save
+    - null, nếu người dùng nhấn nút Close hoặc Click Outside of Dialog
+  */
+  Future<void> _logicEditReader() async {
+    String? message = await showDialog(
+      context: context,
+      builder: (ctx) => AddEditReaderForm(
+        editReader: _readerRows[_selectedRow],
+      ),
+    );
+
+    // print(message);
+    if (message == "updated") {
+      setState(() {});
+    }
   }
 
   @override
@@ -56,13 +96,12 @@ class _ReaderManageState extends State<ReaderManage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    /* 
+                    Đây là nút "Thêm độc giả" mới,
+                    Logic xử lý khi nhấn _logicAddReader xem ở bên trên
+                    */
                     FilledButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => const AddEditReaderForm(),
-                        );
-                      },
+                      onPressed: _logicAddReader,
                       icon: const Icon(Icons.add_rounded),
                       label: const Text('Thêm độc giả'),
                       style: TextButton.styleFrom(
@@ -74,16 +113,24 @@ class _ReaderManageState extends State<ReaderManage> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    /* 
+                    Đây là nút "Xóa độc giả" mới,
+                    Phòng trường hợp khi _selectedRow đang ở cuối bảng và ta nhấn xóa dòng cuối của bảng
+                    Lúc này _selectedRow đã nằm ngoài mảng, và nút "Xóa độc giả" vẫn chưa được Disable
+                    => Có khả năng gây ra lỗi
+                    Solution: Sau khi xóa phải kiểm tra lại 
+                    xem _selectedRow có nằm ngoài phạm vi của _readerRows hay không.
+                    */
                     IconButton.filled(
-                      onPressed: selectedRow == -1
+                      onPressed: _selectedRow == -1
                           ? null
-                          : () {
-                              showDialog(
+                          : () async {
+                              await showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Xác nhận'),
                                   content: Text(
-                                      'Bạn có chắc xóa Độc giả ${_readerRows[selectedRow].fullname}?'),
+                                      'Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].fullname}?'),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -94,10 +141,19 @@ class _ReaderManageState extends State<ReaderManage> {
                                       },
                                       child: const Text('Huỷ'),
                                     ),
-                                    TextButton(
+                                    FilledButton(
                                       onPressed: () async {
+                                        var deleteReaderName =
+                                            _readerRows[_selectedRow].fullname;
+
                                         await dbProcess.deleteReader(
-                                            _readerRows[selectedRow].id!);
+                                          _readerRows[_selectedRow].id!,
+                                        );
+
+                                        setState(() {
+                                          _readerRows.removeAt(_selectedRow);
+                                        });
+
                                         if (mounted) {
                                           Navigator.of(context).pop();
                                           ScaffoldMessenger.of(context)
@@ -106,7 +162,9 @@ class _ReaderManageState extends State<ReaderManage> {
                                               .showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                  'Đã xóa Độc giả ${_readerRows[selectedRow].fullname}.'),
+                                                  'Đã xóa Độc giả $deleteReaderName.'),
+                                              behavior:
+                                                  SnackBarBehavior.floating,
                                             ),
                                           );
                                         }
@@ -116,6 +174,10 @@ class _ReaderManageState extends State<ReaderManage> {
                                   ],
                                 ),
                               );
+
+                              if (_selectedRow >= _readerRows.length) {
+                                _selectedRow = -1;
+                              }
                             },
                       icon: const Icon(Icons.delete),
                       style: IconButton.styleFrom(
@@ -126,13 +188,12 @@ class _ReaderManageState extends State<ReaderManage> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    /* 
+                    Nút "Sửa thông tin Độc Giả" 
+                    Logic xử lý _logicEditReader xem ở phần khai báo bên trên
+                    */
                     IconButton.filled(
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (ctx) => AddEditReaderForm(
-                          editReader: _readerRows[selectedRow],
-                        ),
-                      ),
+                      onPressed: _selectedRow == -1 ? null : _logicEditReader,
                       icon: const Icon(Icons.edit),
                       style: IconButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -144,17 +205,22 @@ class _ReaderManageState extends State<ReaderManage> {
                   ],
                 ),
                 const SizedBox(height: 12),
+
+                /* Bo góc cho DataTable */
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   clipBehavior: Clip.antiAlias,
                   child: DataTable(
-                    columnSpacing: 40,
-                    dataRowColor:
-                        MaterialStateProperty.resolveWith(_getDataRowColor),
-                    border: TableBorder.symmetric(),
+                    /* Set màu cho Heading */
                     headingRowColor: MaterialStateColor.resolveWith(
                       (states) => Theme.of(context).colorScheme.primary,
                     ),
+                    /* The horizontal margin between the contents of each data column */
+                    columnSpacing: 40,
+                    dataRowColor:
+                        MaterialStateProperty.resolveWith(_getDataRowColor),
+                    dataRowMaxHeight: 62,
+                    border: TableBorder.symmetric(),
                     showCheckboxColumn: false,
                     columns: List.generate(
                       _colsName.length,
@@ -172,43 +238,96 @@ class _ReaderManageState extends State<ReaderManage> {
                       _readerRows.length,
                       (index) {
                         Reader reader = _readerRows[index];
+                        /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black26) */
+                        TextStyle cellTextStyle = TextStyle(
+                            color: reader.expirationDate < DateTime.now()
+                                ? Colors.black26
+                                : Colors.black);
+
                         return DataRow(
-                          selected: selectedRow == index,
+                          /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black12) */
+                          color: reader.expirationDate < DateTime.now()
+                              ? MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.3);
+                                  }
+                                  return Colors.black12;
+                                })
+                              : null,
+                          selected: _selectedRow == index,
                           onSelectChanged: (_) => setState(() {
-                            selectedRow = index;
+                            _selectedRow = index;
                           }),
                           onLongPress: () {
                             setState(() {
-                              selectedRow = index;
+                              _selectedRow = index;
                             });
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AddEditReaderForm(
-                                editReader: reader,
-                              ),
-                            );
+                            _logicEditReader();
                           },
                           cells: [
-                            DataCell(Text(reader.id!.toString())),
-                            DataCell(
-                              SizedBox(
-                                width: 150,
-                                child: Text(reader.fullname),
-                              ),
-                            ),
-                            DataCell(Text(reader.dob.toVnFormat())),
-                            DataCell(
-                              SizedBox(
-                                width: 250,
-                                child: Text(reader.address),
-                              ),
-                            ),
-                            DataCell(Text(reader.phoneNumber)),
-                            DataCell(Text(reader.creationDate.toVnFormat())),
-                            DataCell(Text(reader.expirationDate.toVnFormat())),
                             DataCell(
                               Text(
-                                reader.totalTiabilities.toVnCurrencyFormat(),
+                                reader.id!.toString(),
+                                style: cellTextStyle,
+                              ),
+                            ),
+                            DataCell(
+                              /* Ràng buộc cho Chiều rộng Tối đa của cột Họ Tên = 150 */
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 150),
+                                child: Text(
+                                  reader.fullname,
+                                  style: cellTextStyle,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                reader.dob.toVnFormat(),
+                                style: cellTextStyle,
+                              ),
+                            ),
+                            DataCell(
+                              /* 
+                              Ràng buộc cho Chiều rộng Tối đa của cột Địa chỉ = 250 
+                              phòng trường hợp địa chỉ quá dài
+                              */
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 250),
+                                child: Text(
+                                  reader.address,
+                                  style: cellTextStyle,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                reader.phoneNumber,
+                                style: cellTextStyle,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                reader.creationDate.toVnFormat(),
+                                style: cellTextStyle,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                reader.expirationDate.toVnFormat(),
+                                style: cellTextStyle,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                reader.totalTiabilities
+                                    .toVnCurrencyWithoutSymbolFormat(),
+                                style: cellTextStyle,
                               ),
                             ),
                           ],
@@ -217,6 +336,15 @@ class _ReaderManageState extends State<ReaderManage> {
                     ),
                   ),
                 ),
+                if (_readerRows.isEmpty)
+                  const Expanded(
+                    child: Center(
+                      child: Text(
+                        'Chưa có dữ liệu Độc Giả',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                    ),
+                  )
               ],
             ),
           );
