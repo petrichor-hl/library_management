@@ -32,12 +32,13 @@ class _ReaderManageState extends State<ReaderManage> {
 
   int _selectedRow = -1;
 
+  /* 2 biến này không set final bởi vì nó sẽ thay đổi giá trị khi người dùng tương tác */
   late List<Reader> _readerRows;
-  late final int _readerCount;
+  late int _readerCount;
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
-    _readerRows = await dbProcess.querryRecentReader(numberRowIgnore: 0);
+    _readerRows = await dbProcess.querryReader(numberRowIgnore: 0);
     _readerCount = await dbProcess.queryCountReader();
   }
 
@@ -53,8 +54,14 @@ class _ReaderManageState extends State<ReaderManage> {
 
     // print(newReader);
     if (newReader != null) {
+      // print(
+      //     "('${newReader.fullname}', '${newReader.dob.toVnFormat()}', '${newReader.address}', '${newReader.phoneNumber}', '${newReader.creationDate.toVnFormat()}', '${newReader.expirationDate.toVnFormat()}', 0),");
       setState(() {
-        _readerRows.insert(0, newReader);
+        if (_readerRows.length < 8) {
+          _readerRows.add(newReader);
+        }
+        _readerCount++;
+        // print('total page = ${_readerCount ~/ 8 + min(_readerCount % 8, 1)}');
       });
     }
   }
@@ -79,6 +86,77 @@ class _ReaderManageState extends State<ReaderManage> {
     }
   }
 
+  /* 
+  Hàm này là logic Xóa Độc giả 
+  */
+  Future<void> _logicDeleteReader() async {
+    var deleteReaderName = _readerRows[_selectedRow].fullname;
+
+    /* Xóa dòng dữ liệu*/
+    await dbProcess.deleteReader(
+      _readerRows[_selectedRow].id!,
+    );
+
+    /* 
+    Lấy giá trị totalPages trước khi giảm _readerCount đi 1 đơn vị 
+    VD: Có 17 dòng dữ liệu, phân trang 8 dòng => Đang có 3 total page 
+    Nếu giảm _readerCount đi 1 đơn vị trước khi tính totalPages
+    thì totalPages chỉ còn 2 => SAI 
+    */
+    int totalPages = _readerCount ~/ 8 + min(_readerCount % 8, 1);
+    int currentPage = int.parse(_paginationController.text);
+
+    _readerCount--;
+
+    // print('totalPage = $totalPages');
+
+    if (currentPage == totalPages) {
+      _readerRows.removeAt(_selectedRow);
+      /* 
+      Trường hợp đặc biệt:
+      Thủ thư đang ở trang cuối cùng và xóa nốt dòng cuối cùng 
+      thì phải chuyển lại sang trang trước đó.
+
+      Nếu không còn trang trước đó, tức _readerCount == 0, thì không cần làm gì cả
+      */
+      if (_readerRows.isEmpty && _readerCount > 0) {
+        currentPage--;
+        _paginationController.text = currentPage.toString();
+        _loadReadersOfPageIndex(currentPage);
+      }
+    } else {
+      _loadReadersOfPageIndex(currentPage);
+    }
+
+    setState(() {});
+
+    if (mounted) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Đã xóa Độc giả $deleteReaderName.',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          width: 400,
+        ),
+      );
+    }
+  }
+
+  /* Hàm này dùng để lấy các Reader ở trang thứ Index và hiển thị lên bảng */
+  Future<void> _loadReadersOfPageIndex(int pageIndex) async {
+    var newReaderRows =
+        await dbProcess.querryReader(numberRowIgnore: (pageIndex - 1) * 8);
+
+    setState(() {
+      _readerRows = newReaderRows;
+      _selectedRow = -1;
+    });
+  }
+
   final _paginationController = TextEditingController(text: "1");
 
   @override
@@ -94,15 +172,17 @@ class _ReaderManageState extends State<ReaderManage> {
             );
           }
 
+          int totalPages = _readerCount ~/ 8 + min(_readerCount % 8, 1);
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 40),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 const MySearchBar(),
                 const SizedBox(height: 24),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     /* 
                     Đây là nút "Thêm độc giả" mới,
@@ -122,7 +202,7 @@ class _ReaderManageState extends State<ReaderManage> {
                     ),
                     const SizedBox(width: 12),
                     /* 
-                    Đây là nút "Xóa độc giả" mới,
+                    Đây là nút "Xóa độc giả",
                     Phòng trường hợp khi _selectedRow đang ở cuối bảng và ta nhấn xóa dòng cuối của bảng
                     Lúc này _selectedRow đã nằm ngoài mảng, và nút "Xóa độc giả" vẫn chưa được Disable
                     => Có khả năng gây ra lỗi
@@ -150,33 +230,7 @@ class _ReaderManageState extends State<ReaderManage> {
                                       child: const Text('Huỷ'),
                                     ),
                                     FilledButton(
-                                      onPressed: () async {
-                                        var deleteReaderName =
-                                            _readerRows[_selectedRow].fullname;
-
-                                        await dbProcess.deleteReader(
-                                          _readerRows[_selectedRow].id!,
-                                        );
-
-                                        setState(() {
-                                          _readerRows.removeAt(_selectedRow);
-                                        });
-
-                                        if (mounted) {
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(context)
-                                              .clearSnackBars();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Đã xóa Độc giả $deleteReaderName.'),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                            ),
-                                          );
-                                        }
-                                      },
+                                      onPressed: _logicDeleteReader,
                                       child: const Text('Có'),
                                     ),
                                   ],
@@ -205,153 +259,153 @@ class _ReaderManageState extends State<ReaderManage> {
                 const SizedBox(height: 12),
 
                 /* Bo góc cho DataTable */
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  clipBehavior: Clip.antiAlias,
-                  child: DataTable(
-                    /* Set màu cho Heading */
-                    headingRowColor: MaterialStateColor.resolveWith(
-                      (states) => Theme.of(context).colorScheme.primary,
-                    ),
-                    /* The horizontal margin between the contents of each data column */
-                    columnSpacing: 40,
-                    dataRowColor:
-                        MaterialStateProperty.resolveWith(_getDataRowColor),
-                    dataRowMaxHeight: 62,
-                    border: TableBorder.symmetric(),
-                    showCheckboxColumn: false,
-                    columns: List.generate(
-                      _colsName.length,
-                      (index) => DataColumn(
-                        label: Text(
-                          _colsName[index],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontStyle: FontStyle.italic,
+                SizedBox(
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    clipBehavior: Clip.antiAlias,
+                    child: DataTable(
+                      /* Set màu cho Heading */
+                      headingRowColor: MaterialStateColor.resolveWith(
+                        (states) => Theme.of(context).colorScheme.primary,
+                      ),
+                      /* The horizontal margin between the contents of each data column */
+                      columnSpacing: 40,
+                      dataRowColor:
+                          MaterialStateProperty.resolveWith(_getDataRowColor),
+                      dataRowMaxHeight: 62,
+                      border: TableBorder.symmetric(),
+                      showCheckboxColumn: false,
+                      columns: List.generate(
+                        _colsName.length,
+                        (index) => DataColumn(
+                          label: Text(
+                            _colsName[index],
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    rows: List.generate(
-                      _readerRows.length,
-                      (index) {
-                        Reader reader = _readerRows[index];
-                        /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black26) */
-                        TextStyle cellTextStyle = TextStyle(
-                            color: reader.expirationDate < DateTime.now()
-                                ? Colors.black26
-                                : Colors.black);
+                      rows: List.generate(
+                        _readerRows.length,
+                        (index) {
+                          Reader reader = _readerRows[index];
+                          /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black26) */
+                          TextStyle cellTextStyle = TextStyle(
+                              color: reader.expirationDate < DateTime.now()
+                                  ? Colors.black26
+                                  : Colors.black);
 
-                        return DataRow(
-                          /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black12) */
-                          color: reader.expirationDate < DateTime.now()
-                              ? MaterialStateProperty.resolveWith((states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.3);
-                                  }
-                                  return Colors.black12;
-                                })
-                              : null,
-                          selected: _selectedRow == index,
-                          onSelectChanged: (_) => setState(() {
-                            _selectedRow = index;
-                          }),
-                          onLongPress: () {
-                            setState(() {
+                          return DataRow(
+                            /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black12) */
+                            color: reader.expirationDate < DateTime.now()
+                                ? MaterialStateProperty.resolveWith((states) {
+                                    if (states
+                                        .contains(MaterialState.selected)) {
+                                      return Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.3);
+                                    }
+                                    return Colors.black12;
+                                  })
+                                : null,
+                            selected: _selectedRow == index,
+                            onSelectChanged: (_) => setState(() {
                               _selectedRow = index;
-                            });
-                            _logicEditReader();
-                          },
-                          cells: [
-                            DataCell(
-                              Text(
-                                reader.id!.toString(),
-                                style: cellTextStyle,
-                              ),
-                            ),
-                            DataCell(
-                              /* Ràng buộc cho Chiều rộng Tối đa của cột Họ Tên = 150 */
-                              ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 150),
-                                child: Text(
-                                  reader.fullname,
+                            }),
+                            onLongPress: () {
+                              setState(() {
+                                _selectedRow = index;
+                              });
+                              _logicEditReader();
+                            },
+                            cells: [
+                              DataCell(
+                                Text(
+                                  reader.id!.toString(),
                                   style: cellTextStyle,
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                reader.dob.toVnFormat(),
-                                style: cellTextStyle,
+                              DataCell(
+                                /* Ràng buộc cho Chiều rộng Tối đa của cột Họ Tên = 150 */
+                                ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 150),
+                                  child: Text(
+                                    reader.fullname,
+                                    style: cellTextStyle,
+                                  ),
+                                ),
                               ),
-                            ),
-                            DataCell(
-                              /* 
-                              Ràng buộc cho Chiều rộng Tối đa của cột Địa chỉ = 250 
-                              phòng trường hợp địa chỉ quá dài
-                              */
-                              ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 250),
-                                child: Text(
-                                  reader.address,
+                              DataCell(
+                                Text(
+                                  reader.dob.toVnFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                reader.phoneNumber,
-                                style: cellTextStyle,
+                              DataCell(
+                                /* 
+                                Ràng buộc cho Chiều rộng Tối đa của cột Địa chỉ = 250 
+                                phòng trường hợp địa chỉ quá dài
+                                */
+                                ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 250),
+                                  child: Text(
+                                    reader.address,
+                                    style: cellTextStyle,
+                                  ),
+                                ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                reader.creationDate.toVnFormat(),
-                                style: cellTextStyle,
+                              DataCell(
+                                Text(
+                                  reader.phoneNumber,
+                                  style: cellTextStyle,
+                                ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                reader.expirationDate.toVnFormat(),
-                                style: cellTextStyle,
+                              DataCell(
+                                Text(
+                                  reader.creationDate.toVnFormat(),
+                                  style: cellTextStyle,
+                                ),
                               ),
-                            ),
-                            DataCell(
-                              Text(
-                                reader.totalTiabilities
-                                    .toVnCurrencyWithoutSymbolFormat(),
-                                style: cellTextStyle,
+                              DataCell(
+                                Text(
+                                  reader.expirationDate.toVnFormat(),
+                                  style: cellTextStyle,
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                              DataCell(
+                                Text(
+                                  reader.totalTiabilities
+                                      .toVnCurrencyWithoutSymbolFormat(),
+                                  style: cellTextStyle,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
-                const Spacer(),
-                _readerRows.isNotEmpty
+                if (_readerCount > 0) const Spacer(),
+                _readerCount > 0
                     ? Pagination(
                         controller: _paginationController,
-                        maxPages: _readerCount ~/ 8 + min(_readerCount % 8, 1),
-                        onChanged: (currentPage) async {
-                          var newReaderRows =
-                              await dbProcess.querryRecentReader(
-                                  numberRowIgnore: (currentPage - 1) * 8);
-
-                          setState(() {
-                            _readerRows = newReaderRows;
-                          });
-                        })
-                    : const Center(
-                        child: Text(
-                          'Chưa có dữ liệu Độc Giả',
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        maxPages: totalPages,
+                        onChanged: _loadReadersOfPageIndex,
+                      )
+                    : const Expanded(
+                        child: Center(
+                          child: Text(
+                            'Chưa có dữ liệu Độc Giả',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
                         ),
                       ),
               ],

@@ -94,7 +94,8 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 ? 'Tạo thẻ độc giả thành công.'
                 : 'Cập nhật thông tin thành công'),
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 3),
+            width: 300,
           ),
         );
       }
@@ -283,7 +284,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                             int.parse(text).toVnCurrencyWithoutSymbolFormat();
                       } catch (e) {
                         // Do nothing
-                        print('Parse FAILED');
+                        // print('Parse FAILED');
                       }
                       FocusScope.of(context).unfocus();
                     },

@@ -24,6 +24,7 @@ class _PaginationState extends State<Pagination> {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
       children: [
         IconButton.filled(
           onPressed: () {

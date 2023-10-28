@@ -120,8 +120,9 @@ class DbProcess {
   }
 
   // READER MODEL CODE
-  Future<List<Reader>> querryRecentReader(
-      {required int numberRowIgnore}) async {
+  Future<List<Reader>> querryReader({
+    required int numberRowIgnore,
+  }) async {
     /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
