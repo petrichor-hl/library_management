@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:library_management/models/reader.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
+import 'package:sqflite/utils/utils.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DbProcess {
@@ -119,14 +120,15 @@ class DbProcess {
   }
 
   // READER MODEL CODE
-  Future<List<Reader>> querryRecentReader() async {
+  Future<List<Reader>> querryRecentReader(
+      {required int numberRowIgnore}) async {
     /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select * from DocGia 
-      order by MaDocGia desc
-      limit 10
+      limit ?, 8
       ''',
+      [numberRowIgnore],
     );
 
     List<Reader> readers = [];
@@ -147,6 +149,11 @@ class DbProcess {
     }
 
     return readers;
+  }
+
+  Future<int> queryCountReader() async {
+    return firstIntValue(
+        await _database.rawQuery('select count(MaDocGia) from DocGia'))!;
   }
 
   Future<int> insertReader(Reader newReader) async {

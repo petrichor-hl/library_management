@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
 import 'package:library_management/components/forms/add_edit_reader_form.dart';
 import 'package:library_management/components/my_search_bar.dart';
+import 'package:library_management/components/pagination.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/reader.dart';
+import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
 class ReaderManage extends StatefulWidget {
@@ -28,11 +32,13 @@ class _ReaderManageState extends State<ReaderManage> {
 
   int _selectedRow = -1;
 
-  late final List<Reader> _readerRows;
+  late List<Reader> _readerRows;
+  late final int _readerCount;
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
-    _readerRows = await dbProcess.querryRecentReader();
+    _readerRows = await dbProcess.querryRecentReader(numberRowIgnore: 0);
+    _readerCount = await dbProcess.queryCountReader();
   }
 
   /*
@@ -73,6 +79,8 @@ class _ReaderManageState extends State<ReaderManage> {
     }
   }
 
+  final _paginationController = TextEditingController(text: "1");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +95,7 @@ class _ReaderManageState extends State<ReaderManage> {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 40),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -180,12 +188,7 @@ class _ReaderManageState extends State<ReaderManage> {
                               }
                             },
                       icon: const Icon(Icons.delete),
-                      style: IconButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                      ),
+                      style: myIconButtonStyle,
                     ),
                     const SizedBox(width: 12),
                     /* 
@@ -195,12 +198,7 @@ class _ReaderManageState extends State<ReaderManage> {
                     IconButton.filled(
                       onPressed: _selectedRow == -1 ? null : _logicEditReader,
                       icon: const Icon(Icons.edit),
-                      style: IconButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                      ),
+                      style: myIconButtonStyle,
                     ),
                   ],
                 ),
@@ -336,15 +334,26 @@ class _ReaderManageState extends State<ReaderManage> {
                     ),
                   ),
                 ),
-                if (_readerRows.isEmpty)
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Chưa có dữ liệu Độc Giả',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                const Spacer(),
+                _readerRows.isNotEmpty
+                    ? Pagination(
+                        controller: _paginationController,
+                        maxPages: _readerCount ~/ 8 + min(_readerCount % 8, 1),
+                        onChanged: (currentPage) async {
+                          var newReaderRows =
+                              await dbProcess.querryRecentReader(
+                                  numberRowIgnore: (currentPage - 1) * 8);
+
+                          setState(() {
+                            _readerRows = newReaderRows;
+                          });
+                        })
+                    : const Center(
+                        child: Text(
+                          'Chưa có dữ liệu Độc Giả',
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
                       ),
-                    ),
-                  )
               ],
             ),
           );

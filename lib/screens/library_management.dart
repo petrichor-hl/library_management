@@ -76,6 +76,7 @@ class _LibraryManagementState extends State<LibraryManagement>
                       Expanded(
                         child: TabBar.secondary(
                           controller: _tabController,
+                          labelStyle: const TextStyle(fontSize: 16),
                           tabs: const [
                             Tab(
                               text: "Độc giả",
