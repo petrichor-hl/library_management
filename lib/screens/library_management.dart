@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:library_management/screens/book_manage.dart';
 import 'package:library_management/screens/reader_manage.dart';
+import 'package:library_management/screens/regulations.dart';
 
 class LibraryManagement extends StatefulWidget {
   const LibraryManagement({super.key});
@@ -35,7 +36,7 @@ class _LibraryManagementState extends State<LibraryManagement>
     return Scaffold(
       body: Column(
         children: [
-          Container(
+          Ink(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -74,7 +75,7 @@ class _LibraryManagementState extends State<LibraryManagement>
                         width: 80,
                       ),
                       Expanded(
-                        child: TabBar.secondary(
+                        child: TabBar(
                           controller: _tabController,
                           labelStyle: const TextStyle(fontSize: 16),
                           tabs: const [
@@ -84,19 +85,34 @@ class _LibraryManagementState extends State<LibraryManagement>
                             ),
                             Tab(
                               text: "Quản lý Sách",
+                              height: 70,
                             ),
                             Tab(
                               text: "Mượn trả",
+                              height: 70,
                             ),
                             Tab(
                               text: "Báo cáo",
+                              height: 70,
                             ),
                             Tab(
                               text: "Quy định",
+                              height: 70,
                             ),
                           ],
                           indicator: const BoxDecoration(color: Colors.white),
+                          indicatorSize: TabBarIndicatorSize.tab,
                           dividerColor: Colors.transparent,
+                          overlayColor:
+                              MaterialStateProperty.resolveWith((states) {
+                            if (states.contains(MaterialState.hovered)) {
+                              return Colors.white.withOpacity(0.5);
+                            }
+                            if (states.contains(MaterialState.pressed)) {
+                              return Colors.white.withOpacity(0.5);
+                            }
+                            return Colors.transparent;
+                          }),
                         ),
                       ),
                       const SizedBox(
@@ -121,7 +137,7 @@ class _LibraryManagementState extends State<LibraryManagement>
                 BookManage(),
                 ReaderManage(),
                 BookManage(),
-                ReaderManage(),
+                Regulations(),
               ],
             ),
           ),

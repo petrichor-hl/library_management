@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MySearchBar extends StatelessWidget {
-  const MySearchBar({super.key});
+  const MySearchBar({
+    super.key,
+    required this.controller,
+    required this.onSearch,
+  });
+
+  final TextEditingController controller;
+  final void Function() onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -9,6 +16,7 @@ class MySearchBar extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
+            controller: controller,
             decoration: InputDecoration(
               filled: true,
               fillColor: const Color.fromARGB(255, 245, 246, 250),
@@ -27,13 +35,22 @@ class MySearchBar extends StatelessWidget {
               ),
               contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
             ),
+            onEditingComplete: onSearch,
+            onChanged: (value) async {
+              if (value.isEmpty) {
+                await Future.delayed(
+                  const Duration(milliseconds: 50),
+                );
+                onSearch();
+              }
+            },
           ),
         ),
         const SizedBox(
           width: 12,
         ),
         FilledButton(
-          onPressed: () {},
+          onPressed: () => onSearch(),
           style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

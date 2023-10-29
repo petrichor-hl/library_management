@@ -38,9 +38,11 @@ class _ReaderManageState extends State<ReaderManage> {
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
-    _readerRows = await dbProcess.querryReader(numberRowIgnore: 0);
+    _readerRows = await dbProcess.queryReader(numberRowIgnore: 0);
     _readerCount = await dbProcess.queryCountReader();
   }
+
+  final _searchController = TextEditingController();
 
   /*
   Nếu có Độc giả mới được thêm (tức là đã điền đầy đủ thông tin hợp lệ + nhấn Save)
@@ -148,8 +150,14 @@ class _ReaderManageState extends State<ReaderManage> {
 
   /* Hàm này dùng để lấy các Reader ở trang thứ Index và hiển thị lên bảng */
   Future<void> _loadReadersOfPageIndex(int pageIndex) async {
-    var newReaderRows =
-        await dbProcess.querryReader(numberRowIgnore: (pageIndex - 1) * 8);
+    String searchText = _searchController.text;
+
+    List<Reader> newReaderRows = searchText.isEmpty
+        ? await dbProcess.queryReader(numberRowIgnore: (pageIndex - 1) * 8)
+        : await dbProcess.queryReaderFullnameWithString(
+            numberRowIgnore: (pageIndex - 1) * 8,
+            str: searchText,
+          );
 
     setState(() {
       _readerRows = newReaderRows;
@@ -179,7 +187,16 @@ class _ReaderManageState extends State<ReaderManage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const MySearchBar(),
+                MySearchBar(
+                  controller: _searchController,
+                  onSearch: () async {
+                    _paginationController.text = '1';
+                    _readerCount =
+                        await dbProcess.queryCountReaderFullnameWithString(
+                            _searchController.text);
+                    _loadReadersOfPageIndex(1);
+                  },
+                ),
                 const SizedBox(height: 24),
                 Row(
                   mainAxisSize: MainAxisSize.min,

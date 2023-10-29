@@ -24,6 +24,13 @@ class DbProcess {
 
           INSERT INTO TaiKhoan VALUES('admin','123456');
 
+          CREATE TABLE PARAMETER(
+            SoNgayMuonToiDa INTEGER,
+            SoSachMuonToiDa INTEGER,
+            MucThuTienPhat INTEGER,
+            TuoiToiThieu INTEGER,
+          );
+
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
             TenTacGia TEXT
@@ -120,7 +127,7 @@ class DbProcess {
   }
 
   // READER MODEL CODE
-  Future<List<Reader>> querryReader({
+  Future<List<Reader>> queryReader({
     required int numberRowIgnore,
   }) async {
     /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
@@ -152,9 +159,52 @@ class DbProcess {
     return readers;
   }
 
+  Future<List<Reader>> queryReaderFullnameWithString({
+    required String str,
+    required int numberRowIgnore,
+  }) async {
+    /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from DocGia where HoTen COLLATE NOCASE like ?
+      limit ?, 8
+      ''',
+      ['%$str%', numberRowIgnore],
+    );
+    List<Reader> readers = [];
+
+    for (var element in data) {
+      readers.add(
+        Reader(
+          element['MaDocGia'],
+          element['HoTen'],
+          vnDateFormat.parse(element['NgaySinh'] as String),
+          element['DiaChi'],
+          element['SoDienThoai'],
+          vnDateFormat.parse(element['NgayLapThe'] as String),
+          vnDateFormat.parse(element['NgayHetHan'] as String),
+          element['TongNo'],
+        ),
+      );
+    }
+
+    return readers;
+  }
+
   Future<int> queryCountReader() async {
     return firstIntValue(
         await _database.rawQuery('select count(MaDocGia) from DocGia'))!;
+  }
+
+  Future<int> queryCountReaderFullnameWithString(String str) async {
+    return firstIntValue(
+      await _database.rawQuery(
+        '''
+          select count(MaDocGia) from DocGia where Hoten like ?
+          ''',
+        ['%$str%'],
+      ),
+    )!;
   }
 
   Future<int> insertReader(Reader newReader) async {
