@@ -9,7 +9,10 @@ import 'package:library_management/utils/extension.dart';
 import 'package:library_management/utils/parameters.dart';
 
 class AddEditReaderForm extends StatefulWidget {
-  const AddEditReaderForm({super.key, this.editReader});
+  const AddEditReaderForm({
+    super.key,
+    this.editReader,
+  });
 
   final Reader? editReader;
 
@@ -106,6 +109,10 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
   void initState() {
     super.initState();
     if (widget.editReader != null) {
+      /*
+      Nếu là chỉnh sửa độc giả
+      thì phải fill thông tin vào của độc giả cần chỉnh sửa vào form
+      */
       _fullnameController.text = widget.editReader!.fullname;
       _dobController.text = widget.editReader!.dob.toVnFormat();
       _addressController.text = widget.editReader!.address;
@@ -125,6 +132,19 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
       */
       setCreationExpriationDate(DateTime.now());
     }
+  }
+
+  @override
+  void dispose() {
+    /* dispose các controller để tránh lãng phí bộ nhớ */
+    _fullnameController.dispose();
+    _dobController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    _creationDateController.dispose();
+    _expirationDateController.dispose();
+    _totalTiabilitiesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -183,7 +203,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 LabelTextFieldDatePicker(
                   labelText: 'Ngày sinh',
                   controller: _dobController,
-                  initialDate: widget.editReader != null
+                  initialDateInPicker: widget.editReader != null
                       ? widget.editReader!.dob
                       : DateTime.now(),
                 ),
@@ -230,9 +250,6 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: const Color.fromARGB(255, 245, 246, 250),
-                            hintText: 'dd/MM/yyyy',
-                            hintStyle:
-                                const TextStyle(color: Color(0xFF888888)),
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius: BorderRadius.circular(8),

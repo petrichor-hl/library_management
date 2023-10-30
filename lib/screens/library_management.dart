@@ -19,7 +19,7 @@ class _LibraryManagementState extends State<LibraryManagement>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 1);
   }
 
   @override

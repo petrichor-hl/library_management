@@ -19,7 +19,7 @@ class MySearchBar extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color.fromARGB(255, 245, 246, 250),
+              fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               prefixIcon: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Icon(Icons.search),

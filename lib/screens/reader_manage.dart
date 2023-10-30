@@ -9,6 +9,7 @@ import 'package:library_management/main.dart';
 import 'package:library_management/models/reader.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
+import 'package:library_management/utils/common_variables.dart';
 
 class ReaderManage extends StatefulWidget {
   const ReaderManage({super.key});
@@ -168,6 +169,12 @@ class _ReaderManageState extends State<ReaderManage> {
   final _paginationController = TextEditingController(text: "1");
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -183,7 +190,7 @@ class _ReaderManageState extends State<ReaderManage> {
           int totalPages = _readerCount ~/ 8 + min(_readerCount % 8, 1);
 
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 40),
+            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -288,8 +295,9 @@ class _ReaderManageState extends State<ReaderManage> {
                       ),
                       /* The horizontal margin between the contents of each data column */
                       columnSpacing: 40,
-                      dataRowColor:
-                          MaterialStateProperty.resolveWith(_getDataRowColor),
+                      dataRowColor: MaterialStateProperty.resolveWith(
+                        (states) => getDataRowColor(context, states),
+                      ),
                       dataRowMaxHeight: 62,
                       border: TableBorder.symmetric(),
                       showCheckboxColumn: false,
@@ -431,21 +439,5 @@ class _ReaderManageState extends State<ReaderManage> {
         },
       ),
     );
-  }
-
-  Color _getDataRowColor(Set<MaterialState> states) {
-    if (states.contains(MaterialState.selected)) {
-      return Theme.of(context).colorScheme.primary.withOpacity(0.3);
-    }
-
-    // Thứ tự các dòng if ở đây khá quan trọng, thay đổi thứ tự là thay đổi hành vi
-    if (states.contains(MaterialState.pressed)) {
-      return Theme.of(context).colorScheme.primary.withOpacity(0.3);
-    }
-    if (states.contains(MaterialState.hovered)) {
-      return Theme.of(context).colorScheme.primary.withOpacity(0.1);
-    }
-
-    return Colors.transparent;
   }
 }

@@ -28,7 +28,7 @@ class DbProcess {
             SoNgayMuonToiDa INTEGER,
             SoSachMuonToiDa INTEGER,
             MucThuTienPhat INTEGER,
-            TuoiToiThieu INTEGER,
+            TuoiToiThieu INTEGER
           );
 
           CREATE TABLE TacGia(
@@ -36,18 +36,18 @@ class DbProcess {
             TenTacGia TEXT
           );
           
-          CREATE TABLE TuaSach(
-            MaTuaSach INTEGER PRIMARY KEY AUTOINCREMENT, 
-            TenTuaSach TEXT
+          CREATE TABLE DauSach(
+            MaDauSach INTEGER PRIMARY KEY AUTOINCREMENT, 
+            TenDauSach TEXT
           );
 
-          CREATE TABLE TacGia_TuaSach (
+          CREATE TABLE TacGia_DauSach (
             MaTacGia INTEGER,
-            MaTuaSach INTEGER,
-            PRIMARY KEY (MaTacGia, MaTuaSach),
+            MaDauSach INTEGER,
+            PRIMARY KEY (MaTacGia, MaDauSach),
 
             FOREIGN KEY (MaTacGia) REFERENCES TacGia(MaTacGia) ON DELETE CASCADE,
-            FOREIGN KEY (MaTuaSach) REFERENCES TuaSach(MaTuaSach) ON DELETE CASCADE
+            FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE CASCADE
           );
 
           CREATE TABLE TheLoai(
@@ -56,41 +56,50 @@ class DbProcess {
             MoTa TEXT
           );
 
-          CREATE TABLE TuaSach_TheLoai(
-            MaTuaSach INTEGER,
+          CREATE TABLE DauSach_TheLoai(
+            MaDauSach INTEGER,
             MaTheLoai INTEGER,
 
-            PRIMARY KEY (MaTuaSach, MaTheLoai),
+            PRIMARY KEY (MaDauSach, MaTheLoai),
 
-            FOREIGN KEY (MaTuaSach) REFERENCES TuaSach(MaTuaSach) ON DELETE CASCADE,
+            FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE CASCADE,
             FOREIGN KEY (MaTheLoai) REFERENCES TheLoai(MaTheLoai) ON DELETE CASCADE
           );
 
-          CREATE TABLE DauSach(
-            MaDauSach INTEGER PRIMARY KEY AUTOINCREMENT, 
+          CREATE TABLE Sach(
+            MaSach INTEGER PRIMARY KEY AUTOINCREMENT, 
             LanTaiBan INTEGER,
             NhaXuatBan TEXT,
             NamXuatBan INTEGER,
-            MaTuaSach INTEGER,
+            MaDauSach INTEGER,
 
-            FOREIGN KEY (MaTuaSach) REFERENCES TuaSach(MaTuaSach) ON DELETE RESTRICT
+            FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE RESTRICT
           );
+
+          -- CREATE TABLE NhaCungCap(
+          --   MaNCC INTEGER PRIMARY KEY AUTOINCREMENT, 
+          --   TenNCC TEXT,
+          --   SoDienThoai TEXT
+          -- );
 
           CREATE TABLE PhieuNhap(
             MaPhieuNhap INTEGER PRIMARY KEY AUTOINCREMENT, 
             NgayLap TEXT,
-            TongTien INTEGER
+            TongTien INTEGER,
+            MaNCC INTEGER
+
+            -- FOREIGN KEY (MaNCC) REFERENCES NhaCungCap(MaNCC) ON DELETE RESTRICT
           );
 
           CREATE TABLE CT_PhieuNhap(
             MaCTPN TEXT PRIMARY KEY, 
             MaPhieuNhap INTEGER,
-            MaDauSach INTEGER,
+            MaSach INTEGER,
             SoLuong INTEGER,
             DonGia INTEGER,
 
             FOREIGN KEY (MaPhieuNhap) REFERENCES PhieuNhap(MaPhieuNhap) ON DELETE RESTRICT,
-            FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE RESTRICT
+            FOREIGN KEY (MaSach) REFERENCES Sach(MaSach) ON DELETE RESTRICT
           );
 
           CREATE TABLE CuonSach(
@@ -98,10 +107,10 @@ class DbProcess {
             TinhTrang INTEGER,
             ViTri TEXT,
             MaCTPN INTEGER,
-            MaDauSach INTEGER,
+            MaSach INTEGER,
 
             FOREIGN KEY (MaCTPN) REFERENCES CT_PhieuNhap(MaCTPN) ON DELETE RESTRICT,
-            FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE RESTRICT
+            FOREIGN KEY (MaSach) REFERENCES Sach(MaSach) ON DELETE RESTRICT
           );
 
           CREATE TABLE DocGia(
