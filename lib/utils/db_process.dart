@@ -70,7 +70,7 @@ class DbProcess {
             MaSach INTEGER PRIMARY KEY AUTOINCREMENT, 
             LanTaiBan INTEGER,
             NhaXuatBan TEXT,
-            NamXuatBan INTEGER,
+            -- NamXuatBan INTEGER,
             MaDauSach INTEGER,
 
             FOREIGN KEY (MaDauSach) REFERENCES DauSach(MaDauSach) ON DELETE RESTRICT

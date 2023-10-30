@@ -100,7 +100,15 @@ class _LibraryManagementState extends State<LibraryManagement>
                               height: 70,
                             ),
                           ],
-                          indicator: const BoxDecoration(color: Colors.white),
+                          indicator: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(8),
+                            ),
+                          ),
+                          splashBorderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8),
+                          ),
                           indicatorSize: TabBarIndicatorSize.tab,
                           dividerColor: Colors.transparent,
                           overlayColor:

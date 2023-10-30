@@ -154,272 +154,287 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
 
     bool _isProcessing = false;
 
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: LabelTextFieldDatePicker(
-                    labelText: 'Ngày nhập',
-                    controller: dateAddedController,
+    return StatefulBuilder(
+      builder: (ctx, setState) => Padding(
+          padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
+          child: Column(
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  prefixIconConstraints: const BoxConstraints(maxWidth: 24),
+                  hintText: 'Tìm kiếm',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
                   ),
+                  contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
                 ),
-                const SizedBox(width: 80),
-                /* Tổng tiền */
-                Expanded(
-                  child: LabelTextFormField(
-                    labelText: 'Tổng tiền:',
-                    controller: totalAmountController,
-                    isEnable: false,
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton.filled(
-                  onPressed: () async {
-                    EnterBookDetail? newEnterBpookDeital = await showDialog(
-                      context: context,
-                      builder: (ctx) {
-                        return const AddEditEnterBookDetailForm();
-                      },
-                    );
-
-                    if (newEnterBpookDeital != null) {
-                      setState(() {
-                        _enterbookCards.add(newEnterBpookDeital);
-                      });
-                    }
-                  },
-                  icon: const Icon(Icons.add_rounded),
-                  style: myIconButtonStyle,
-                ),
-                const SizedBox(width: 12),
-                /* 
-                */
-                IconButton.filled(
-                  onPressed: 0 == -1
-                      ? null
-                      : () async {
-                          // await showDialog(
-                          //   context: context,
-                          //   builder: (ctx) => AlertDialog(
-                          //     title: const Text('Xác nhận'),
-                          //     content: Text(
-                          //         'Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].fullname}?'),
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(10),
-                          //     ),
-                          //     actions: [
-                          //       TextButton(
-                          //         onPressed: () {
-                          //           Navigator.of(context).pop();
-                          //         },
-                          //         child: const Text('Huỷ'),
-                          //       ),
-                          //       FilledButton(
-                          //         onPressed: _logicDeleteReader,
-                          //         child: const Text('Có'),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // );
-
-                          // if (_selectedRow >= _readerRows.length) {
-                          //   _selectedRow = -1;
-                          // }
-                        },
-                  icon: const Icon(Icons.delete),
-                  style: myIconButtonStyle,
-                ),
-                const SizedBox(width: 12),
-                /* 
-                */
-                IconButton.filled(
-                  onPressed: 0 == -1 ? null : () {},
-                  icon: const Icon(Icons.edit),
-                  style: myIconButtonStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Column(
-                  children: [
-                    Container(
-                      color: Theme.of(context).colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 30,
-                      ),
-                      child: const Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 15),
-                              child: Text(
-                                '#',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 15,
-                              ),
-                              child: Text(
-                                'Mã Sách',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 15,
-                              ),
-                              child: Text(
-                                'Số lượng',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 15),
-                              child: Text(
-                                'Đơn giá',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: LabelTextFieldDatePicker(
+                      labelText: 'Ngày nhập',
+                      controller: dateAddedController,
                     ),
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        children: List.generate(
-                          _enterbookCards.length,
-                          (index) {
-                            return Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: 15,
-                                    ),
-                                    child: Text(_enterbookCards[index]
-                                        .maCTPN
-                                        .toString()),
+                  ),
+                  const SizedBox(width: 80),
+                  /* Tổng tiền */
+                  Expanded(
+                    child: LabelTextFormField(
+                      labelText: 'Tổng tiền:',
+                      controller: totalAmountController,
+                      isEnable: false,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton.filled(
+                    onPressed: () async {
+                      EnterBookDetail? newEnterBpookDeital = await showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return const AddEditEnterBookDetailForm();
+                        },
+                      );
+
+                      if (newEnterBpookDeital != null) {
+                        setState(() {
+                          _enterbookCards.add(newEnterBpookDeital);
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.add_rounded),
+                    style: myIconButtonStyle,
+                  ),
+                  const SizedBox(width: 12),
+                  /* 
+                  */
+                  IconButton.filled(
+                    onPressed: 0 == -1
+                        ? null
+                        : () async {
+                            // await showDialog(
+                            //   context: context,
+                            //   builder: (ctx) => AlertDialog(
+                            //     title: const Text('Xác nhận'),
+                            //     content: Text(
+                            //         'Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].fullname}?'),
+                            //     shape: RoundedRectangleBorder(
+                            //       borderRadius: BorderRadius.circular(10),
+                            //     ),
+                            //     actions: [
+                            //       TextButton(
+                            //         onPressed: () {
+                            //           Navigator.of(context).pop();
+                            //         },
+                            //         child: const Text('Huỷ'),
+                            //       ),
+                            //       FilledButton(
+                            //         onPressed: _logicDeleteReader,
+                            //         child: const Text('Có'),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // );
+
+                            // if (_selectedRow >= _readerRows.length) {
+                            //   _selectedRow = -1;
+                            // }
+                          },
+                    icon: const Icon(Icons.delete),
+                    style: myIconButtonStyle,
+                  ),
+                  const SizedBox(width: 12),
+                  /* 
+                  */
+                  IconButton.filled(
+                    onPressed: 0 == -1 ? null : () {},
+                    icon: const Icon(Icons.edit),
+                    style: myIconButtonStyle,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 30,
+                        ),
+                        child: const Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 15),
+                                child: Text(
+                                  '#',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
                                   ),
                                 ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () {},
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                child: Text(
+                                  'Mã Sách',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
+                                child: Text(
+                                  'Số lượng',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 15),
+                                child: Text(
+                                  'Đơn giá',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          children: List.generate(
+                            _enterbookCards.length,
+                            (index) {
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 15,
+                                      ),
+                                      child: Text(_enterbookCards[index]
+                                          .maCTPN
+                                          .toString()),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                          vertical: 15,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              _enterbookCards[index]
+                                                  .maSach
+                                                  .toString(),
+                                            ),
+                                            const Spacer(),
+                                            const Icon(
+                                                Icons.open_in_new_rounded)
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 15,
-                                        vertical: 15,
                                       ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            _enterbookCards[index]
-                                                .maSach
-                                                .toString(),
-                                          ),
-                                          const Spacer(),
-                                          const Icon(Icons.open_in_new_rounded)
-                                        ],
+                                      child: Text(_enterbookCards[index]
+                                          .soLuong
+                                          .toString()),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 15,
                                       ),
+                                      child: Text(_enterbookCards[index]
+                                          .donGia
+                                          .toVnCurrencyWithoutSymbolFormat()),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    child: Text(_enterbookCards[index]
-                                        .soLuong
-                                        .toString()),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 15,
-                                    ),
-                                    child: Text(_enterbookCards[index]
-                                        .donGia
-                                        .toVnCurrencyWithoutSymbolFormat()),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                                ],
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: _isProcessing
-                  ? const SizedBox(
-                      height: 44,
-                      width: 44,
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : FilledButton(
-                      onPressed: () {},
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+              Align(
+                alignment: Alignment.center,
+                child: _isProcessing
+                    ? const SizedBox(
+                        height: 44,
+                        width: 44,
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: CircularProgressIndicator(),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 30,
+                      )
+                    : FilledButton(
+                        onPressed: () {},
+                        style: FilledButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 30,
+                          ),
+                        ),
+                        child: const Text(
+                          'Save',
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      child: const Text(
-                        'Save',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-            ),
-          ],
-        ));
+              ),
+            ],
+          )),
+    );
   }
 
   Widget buildEnterBookCards() {
