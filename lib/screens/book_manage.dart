@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:library_management/components/forms/add_edit_enter_book_detail_form.dart';
+import 'package:library_management/components/forms/add_edit_enter_book_detail_form/add_edit_enter_book_detail_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/components/my_search_bar.dart';
