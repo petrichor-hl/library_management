@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/reader.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
@@ -130,8 +131,7 @@ class DbProcess {
   }
 
   Future<Map<String, dynamic>> queryAccount() async {
-    List<Map<String, dynamic>> data =
-        await _database.rawQuery('select * from TaiKhoan');
+    List<Map<String, dynamic>> data = await _database.rawQuery('select * from TaiKhoan');
     return data.first;
   }
 
@@ -201,8 +201,7 @@ class DbProcess {
   }
 
   Future<int> queryCountReader() async {
-    return firstIntValue(
-        await _database.rawQuery('select count(MaDocGia) from DocGia'))!;
+    return firstIntValue(await _database.rawQuery('select count(MaDocGia) from DocGia'))!;
   }
 
   Future<int> queryCountReaderFullnameWithString(String str) async {
@@ -221,8 +220,7 @@ class DbProcess {
   }
 
   Future<void> deleteReader(int readerId) async {
-    await _database
-        .rawDelete('delete from DocGia where MaDocGia  = ?', [readerId]);
+    await _database.rawDelete('delete from DocGia where MaDocGia  = ?', [readerId]);
   }
 
   Future<void> updateReader(Reader updatedReader) async {
@@ -245,4 +243,34 @@ class DbProcess {
       ],
     );
   }
+
+  /* DAU SACH CODE */
+  Future<List<DauSach>> queryDauSach() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from DauSach 
+      ''',
+    );
+
+    List<DauSach> dauSachs = [];
+
+    for (var element in data) {
+      dauSachs.add(
+        DauSach(element['MaDauSach'], element['TenDauSach']),
+      );
+    }
+
+    return dauSachs;
+  }
+
+  Future<int> insertDauSach(DauSach newDauSach) async {
+    return await _database.insert(
+      'DauSach',
+      {
+        'TenDauSach': newDauSach.tenDauSach,
+      },
+    );
+  }
+
+  /* REPORT CODE */
 }

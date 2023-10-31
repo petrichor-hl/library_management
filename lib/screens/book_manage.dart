@@ -159,18 +159,6 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
           padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
           child: Column(
             children: [
-              TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  prefixIconConstraints: const BoxConstraints(maxWidth: 24),
-                  hintText: 'Tìm kiếm',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-                ),
-              ),
               Row(
                 children: [
                   Expanded(
@@ -346,9 +334,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                                       padding: const EdgeInsets.only(
                                         right: 15,
                                       ),
-                                      child: Text(_enterbookCards[index]
-                                          .maCTPN
-                                          .toString()),
+                                      child: Text(_enterbookCards[index].maCTPN.toString()),
                                     ),
                                   ),
                                   Expanded(
@@ -362,13 +348,10 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                                         child: Row(
                                           children: [
                                             Text(
-                                              _enterbookCards[index]
-                                                  .maSach
-                                                  .toString(),
+                                              _enterbookCards[index].maSach.toString(),
                                             ),
                                             const Spacer(),
-                                            const Icon(
-                                                Icons.open_in_new_rounded)
+                                            const Icon(Icons.open_in_new_rounded)
                                           ],
                                         ),
                                       ),
@@ -379,9 +362,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 15,
                                       ),
-                                      child: Text(_enterbookCards[index]
-                                          .soLuong
-                                          .toString()),
+                                      child: Text(_enterbookCards[index].soLuong.toString()),
                                     ),
                                   ),
                                   Expanded(
@@ -389,9 +370,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                                       padding: const EdgeInsets.only(
                                         left: 15,
                                       ),
-                                      child: Text(_enterbookCards[index]
-                                          .donGia
-                                          .toVnCurrencyWithoutSymbolFormat()),
+                                      child: Text(_enterbookCards[index].donGia.toVnCurrencyWithoutSymbolFormat()),
                                     ),
                                   ),
                                 ],

@@ -18,5 +18,12 @@ VALUES('Trần Lê Hoàng Lâm', '17/04/2003', 'S8.01 VGP, Quận 9, Thủ Đứ
 ('Nguyễn Minh Châu', '28/10/2023', '40 Bế Văn Đàn, Phường 14, Tân Bình, Thành phố Hồ Chí Minh', '0397116293', '19/10/2023', '19/04/2024', 0),
 ('Trần Thị Thu Hoài', '16/09/2003', '69/9 Đề Thám, phường Cô Giang, Quận 1, TP HCM', '0378034554', '08/08/2023', '08/02/2024', 0),
 ('Phạm Thị Như Ý', '05/11/2003', '20/16 Đường số 2, phường Tân Kiểng, Quận 7', '0941288835', '28/10/2023', '28/04/2024', 0),
-('Nguyễn Hồ Phúc My', '03/12/2003', '28 Mai Văn Ngọc, Phường 10, Phú Nhuận, Thành phố Hồ Chí Minh', '0905067490', '20/06/2023', '20/12/2023', 0)
+('Nguyễn Hồ Phúc My', '03/12/2003', '28 Mai Văn Ngọc, Phường 10, Phú Nhuận, Thành phố Hồ Chí Minh', '0905067490', '20/06/2023', '20/12/2023', 0);
 -- ('', '', '', '', '', '', 0),
+
+INSERT INTO DauSach(TenDauSach) 
+VALUES ('Nhà Giả Kim'),
+('Bắt trẻ đồng xanh'),
+('Tôi thấy hoa vàng trên cỏ xanh'),
+('Cố định một đám mây'),
+('Cô gái năm ấy chúng ta cùng theo đuổi')

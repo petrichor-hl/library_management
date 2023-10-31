@@ -2,8 +2,10 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:library_management/screens/book_manage.dart';
+import 'package:library_management/screens/borrow_return.dart';
 import 'package:library_management/screens/reader_manage.dart';
 import 'package:library_management/screens/regulations.dart';
+import 'package:library_management/screens/report_manage.dart';
 
 class LibraryManagement extends StatefulWidget {
   const LibraryManagement({super.key});
@@ -12,8 +14,7 @@ class LibraryManagement extends StatefulWidget {
   State<LibraryManagement> createState() => _LibraryManagementState();
 }
 
-class _LibraryManagementState extends State<LibraryManagement>
-    with TickerProviderStateMixin {
+class _LibraryManagementState extends State<LibraryManagement> with TickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -39,10 +40,7 @@ class _LibraryManagementState extends State<LibraryManagement>
           Ink(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 175, 219, 208),
-                  Color.fromARGB(255, 236, 237, 182)
-                ],
+                colors: [Color.fromARGB(255, 175, 219, 208), Color.fromARGB(255, 236, 237, 182)],
               ),
             ),
             child: Column(
@@ -111,8 +109,7 @@ class _LibraryManagementState extends State<LibraryManagement>
                           ),
                           indicatorSize: TabBarIndicatorSize.tab,
                           dividerColor: Colors.transparent,
-                          overlayColor:
-                              MaterialStateProperty.resolveWith((states) {
+                          overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.hovered)) {
                               return Colors.white.withOpacity(0.5);
                             }
@@ -143,8 +140,8 @@ class _LibraryManagementState extends State<LibraryManagement>
               children: const [
                 ReaderManage(),
                 BookManage(),
-                ReaderManage(),
-                BookManage(),
+                BorrowReturn(),
+                ReportManage(),
                 Regulations(),
               ],
             ),
