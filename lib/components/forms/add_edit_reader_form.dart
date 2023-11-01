@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/reader.dart';
+import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 import 'package:library_management/utils/parameters.dart';
 
-class AddEditReaderForm extends StatefulWidget {
-  const AddEditReaderForm({
+class AddEditDocGiaForm extends StatefulWidget {
+  const AddEditDocGiaForm({
     super.key,
-    this.editReader,
+    this.editDocGia,
   });
 
-  final Reader? editReader;
+  final DocGia? editDocGia;
 
   @override
-  State<AddEditReaderForm> createState() => _AddEditReaderFormState();
+  State<AddEditDocGiaForm> createState() => _AddEditDocGiaFormState();
 }
 
-class _AddEditReaderFormState extends State<AddEditReaderForm> {
+class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isProcessing = false;
 
@@ -43,14 +43,14 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
     _expirationDateController.text = date.addMonths(6).toVnFormat();
   }
 
-  void saveReader(BuildContext context) async {
+  void saveDocGia(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isProcessing = true;
       });
 
-      if (widget.editReader == null) {
-        Reader newReader = Reader(
+      if (widget.editDocGia == null) {
+        DocGia newDocGia = DocGia(
           null,
           _fullnameController.text,
           vnDateFormat.parse(_dobController.text),
@@ -61,25 +61,22 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
           0,
         );
 
-        int returningId = await dbProcess.insertReader(newReader);
-        newReader.id = returningId;
+        int returningId = await dbProcess.insertDocGia(newDocGia);
+        newDocGia.maDocGia = returningId;
 
         if (mounted) {
-          Navigator.of(context).pop(newReader);
+          Navigator.of(context).pop(newDocGia);
         }
       } else {
-        widget.editReader!.fullname = _fullnameController.text;
-        widget.editReader!.dob = vnDateFormat.parse(_dobController.text);
-        widget.editReader!.address = _addressController.text;
-        widget.editReader!.phoneNumber = _phoneController.text;
-        widget.editReader!.creationDate =
-            vnDateFormat.parse(_creationDateController.text);
-        widget.editReader!.expirationDate =
-            vnDateFormat.parse(_expirationDateController.text);
-        widget.editReader!.totalTiabilities =
-            int.parse(_totalTiabilitiesController.text.replaceAll('.', ''));
+        widget.editDocGia!.hoTen = _fullnameController.text;
+        widget.editDocGia!.ngaySinh = vnDateFormat.parse(_dobController.text);
+        widget.editDocGia!.diaChi = _addressController.text;
+        widget.editDocGia!.soDienThoai = _phoneController.text;
+        widget.editDocGia!.ngayLapThe = vnDateFormat.parse(_creationDateController.text);
+        widget.editDocGia!.ngayHetHan = vnDateFormat.parse(_expirationDateController.text);
+        widget.editDocGia!.tongNo = int.parse(_totalTiabilitiesController.text.replaceAll('.', ''));
 
-        await dbProcess.updateReader(widget.editReader!);
+        await dbProcess.updateDocGia(widget.editDocGia!);
 
         if (mounted) {
           Navigator.of(context).pop('updated');
@@ -93,9 +90,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.editReader == null
-                ? 'Tạo thẻ độc giả thành công.'
-                : 'Cập nhật thông tin thành công'),
+            content: Text(widget.editDocGia == null ? 'Tạo thẻ độc giả thành công.' : 'Cập nhật thông tin thành công'),
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 3),
             width: 300,
@@ -108,22 +103,19 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
   @override
   void initState() {
     super.initState();
-    if (widget.editReader != null) {
+    if (widget.editDocGia != null) {
       /*
       Nếu là chỉnh sửa độc giả
       thì phải fill thông tin vào của độc giả cần chỉnh sửa vào form
       */
-      _fullnameController.text = widget.editReader!.fullname;
-      _dobController.text = widget.editReader!.dob.toVnFormat();
-      _addressController.text = widget.editReader!.address;
-      _phoneController.text = widget.editReader!.phoneNumber;
-      _addressController.text = widget.editReader!.address;
-      _creationDateController.text =
-          widget.editReader!.creationDate.toVnFormat();
-      _expirationDateController.text =
-          widget.editReader!.expirationDate.toVnFormat();
-      _totalTiabilitiesController.text =
-          widget.editReader!.totalTiabilities.toVnCurrencyWithoutSymbolFormat();
+      _fullnameController.text = widget.editDocGia!.hoTen;
+      _dobController.text = widget.editDocGia!.ngaySinh.toVnFormat();
+      _addressController.text = widget.editDocGia!.diaChi;
+      _phoneController.text = widget.editDocGia!.soDienThoai;
+      _addressController.text = widget.editDocGia!.diaChi;
+      _creationDateController.text = widget.editDocGia!.ngayLapThe.toVnFormat();
+      _expirationDateController.text = widget.editDocGia!.ngayHetHan.toVnFormat();
+      _totalTiabilitiesController.text = widget.editDocGia!.tongNo.toVnCurrencyWithoutSymbolFormat();
     } else {
       /* 
       Nếu là thêm mới Độc Giả, thì thiết lập sẵn Creation và ExpriationDate 
@@ -168,9 +160,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 Row(
                   children: [
                     Text(
-                      widget.editReader == null
-                          ? 'TẠO THẺ ĐỘC GIẢ'
-                          : 'SỬA THẺ ĐỘC GIẢ',
+                      widget.editDocGia == null ? 'TẠO THẺ ĐỘC GIẢ' : 'SỬA THẺ ĐỘC GIẢ',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -184,11 +174,11 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                   ],
                 ),
                 //
-                // if (widget.editReader != null) ...[
+                // if (widget.editDocGia != null) ...[
                 //   const SizedBox(height: 10),
                 //   LabelTextFormField(
                 //     labelText: 'Mã độc giả',
-                //     initText: widget.editReader!.id.toString(),
+                //     initText: widget.editDocGia!.id.toString(),
                 //     isEnable: false,
                 //   ),
                 // ],
@@ -203,9 +193,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                 LabelTextFieldDatePicker(
                   labelText: 'Ngày sinh',
                   controller: _dobController,
-                  initialDateInPicker: widget.editReader != null
-                      ? widget.editReader!.dob
-                      : DateTime.now(),
+                  initialDateInPicker: widget.editDocGia != null ? widget.editDocGia!.ngaySinh : DateTime.now(),
                 ),
                 //
                 const SizedBox(height: 10),
@@ -233,9 +221,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                         onTap: () async {
                           DateTime? chosenDate = await showDatePicker(
                             context: context,
-                            initialDate: widget.editReader != null
-                                ? widget.editReader!.creationDate
-                                : DateTime.now(),
+                            initialDate: widget.editDocGia != null ? widget.editDocGia!.ngayLapThe : DateTime.now(),
                             firstDate: DateTime(1950),
                             lastDate: DateTime.now(),
                           );
@@ -266,9 +252,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                       onPressed: () async {
                         DateTime? chosenDate = await showDatePicker(
                           context: context,
-                          initialDate: widget.editReader != null
-                              ? widget.editReader!.creationDate
-                              : DateTime.now(),
+                          initialDate: widget.editDocGia != null ? widget.editDocGia!.ngayLapThe : DateTime.now(),
                           firstDate: DateTime(1950),
                           lastDate: DateTime.now(),
                         );
@@ -288,7 +272,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                   isEnable: false,
                   controller: _expirationDateController,
                 ),
-                if (widget.editReader != null) ...[
+                if (widget.editDocGia != null) ...[
                   const SizedBox(height: 10),
                   LabelTextFormField(
                     labelText: 'Tổng nợ',
@@ -297,8 +281,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                     onEditingComplete: () {
                       var text = _totalTiabilitiesController.text;
                       try {
-                        _totalTiabilitiesController.text =
-                            int.parse(text).toVnCurrencyWithoutSymbolFormat();
+                        _totalTiabilitiesController.text = int.parse(text).toVnCurrencyWithoutSymbolFormat();
                       } catch (e) {
                         // Do nothing
                         // print('Parse FAILED');
@@ -306,8 +289,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                       FocusScope.of(context).unfocus();
                     },
                     onTap: () {
-                      _totalTiabilitiesController.text =
-                          _totalTiabilitiesController.text.replaceAll('.', '');
+                      _totalTiabilitiesController.text = _totalTiabilitiesController.text.replaceAll('.', '');
                     },
                   ),
                 ] else ...[
@@ -330,7 +312,7 @@ class _AddEditReaderFormState extends State<AddEditReaderForm> {
                           ),
                         )
                       : FilledButton(
-                          onPressed: () => saveReader(context),
+                          onPressed: () => saveDocGia(context),
                           style: FilledButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
