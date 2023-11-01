@@ -8,4 +8,16 @@ class TatCaSachCubit extends Cubit<List<Sach>?> {
   void addSach(Sach newSach) => emit([...state!, newSach]);
 
   bool get isEmpty => state!.isEmpty;
+  bool contains(int maSach) {
+    for (var sach in state!) {
+      if (sach.maSach == maSach) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  String getTenDauSach(int maSach) {
+    return state!.firstWhere((element) => element.maSach == maSach).tenDauSach;
+  }
 }

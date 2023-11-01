@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/main.dart';
@@ -168,41 +169,50 @@ class _TatCarSachDState extends State<TatCaSach> {
                           ),
                           Expanded(
                             child: ListView(
-                              padding: const EdgeInsets.symmetric(horizontal: 30),
                               children: List.generate(
                                 filteredSachs.length,
                                 (index) {
-                                  return Row(
+                                  return Column(
                                     children: [
-                                      SizedBox(
-                                        width: 80,
-                                        child: Text(filteredSachs[index].maSach.toString()),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                            vertical: 15,
+                                      Row(
+                                        children: [
+                                          const Gap(30),
+                                          SizedBox(
+                                            width: 80,
+                                            child: Text(filteredSachs[index].maSach.toString()),
                                           ),
-                                          child: Text(filteredSachs[index].tenDauSach.toString()),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 15,
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                                vertical: 15,
+                                              ),
+                                              child: Text(filteredSachs[index].tenDauSach.toString()),
+                                            ),
                                           ),
-                                          child: Text(filteredSachs[index].lanTaiBan.toString()),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 15,
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                              ),
+                                              child: Text(filteredSachs[index].lanTaiBan.toString()),
+                                            ),
                                           ),
-                                          child: Text(filteredSachs[index].nhaXuatBan),
-                                        ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 15,
+                                              ),
+                                              child: Text(filteredSachs[index].nhaXuatBan),
+                                            ),
+                                          ),
+                                          const Gap(30),
+                                        ],
                                       ),
+                                      if (index < filteredSachs.length - 1)
+                                        const Divider(
+                                          height: 0,
+                                        ),
                                     ],
                                   );
                                 },

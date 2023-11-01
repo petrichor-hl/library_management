@@ -278,6 +278,15 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                     labelText: 'Tổng nợ',
                     controller: _totalTiabilitiesController,
                     suffixText: 'VND',
+                    customValidator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Bạn chưa nhập Tổng nợ';
+                      }
+                      if (int.tryParse(value.replaceAll('.', '')) == null) {
+                        return 'Tổng nợ phải là con số';
+                      }
+                      return null;
+                    },
                     onEditingComplete: () {
                       var text = _totalTiabilitiesController.text;
                       try {
@@ -323,7 +332,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                             ),
                           ),
                           child: const Text(
-                            'Save',
+                            'Lưu',
                             textAlign: TextAlign.center,
                           ),
                         ),

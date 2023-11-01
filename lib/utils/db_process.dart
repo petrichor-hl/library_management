@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
+import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
@@ -87,14 +89,14 @@ class DbProcess {
           CREATE TABLE PhieuNhap(
             MaPhieuNhap INTEGER PRIMARY KEY AUTOINCREMENT, 
             NgayLap TEXT,
-            TongTien INTEGER,
-            MaNCC INTEGER
+            TongTien INTEGER
+            -- MaNCC INTEGER
 
             -- FOREIGN KEY (MaNCC) REFERENCES NhaCungCap(MaNCC) ON DELETE RESTRICT
           );
 
           CREATE TABLE CT_PhieuNhap(
-            MaCTPN TEXT PRIMARY KEY, 
+            MaCTPN INTEGER PRIMARY KEY AUTOINCREMENT, 
             MaPhieuNhap INTEGER,
             MaSach INTEGER,
             SoLuong INTEGER,
@@ -305,6 +307,29 @@ class DbProcess {
     return await _database.insert(
       'Sach',
       newSach.toMap(),
+    );
+  }
+
+  /* PHIEU NHAP CODE */
+  Future<int> insertPhieuNhap(PhieuNhap newPhieuNhap) async {
+    // print("INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}', '${newPhieuNhap.tongTien}');");
+    return await _database.insert(
+      'PhieuNhap',
+      newPhieuNhap.toMap(),
+    );
+  }
+
+  /* CHI TIET PHIEU NHAP CODE */
+  Future<int> insertChiTietPhieuNhap(ChiTietPhieuNhap newChiTietPhieuNhap) async {
+    /*
+    print('''
+      INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) 
+      VALUES ('${newChiTietPhieuNhap.maPhieuNhap}', '${newChiTietPhieuNhap.maSach}', '${newChiTietPhieuNhap.soLuong}', '${newChiTietPhieuNhap.donGia}');
+    ''');
+    */
+    return await _database.insert(
+      'CT_PhieuNhap',
+      newChiTietPhieuNhap.toMap(),
     );
   }
 
