@@ -18,6 +18,8 @@ class TatCaSach extends StatefulWidget {
 }
 
 class _TatCarSachDState extends State<TatCaSach> {
+  final _searchController = TextEditingController();
+
   Future<void> prepareSachData() async {
     if (context.read<TatCaSachCubit>().state == null) {
       context.read<TatCaSachCubit>().setList(await dbProcess.querySach());
@@ -28,6 +30,12 @@ class _TatCarSachDState extends State<TatCaSach> {
   void initState() {
     prepareSachData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,154 +58,164 @@ class _TatCarSachDState extends State<TatCaSach> {
               vertical: 30,
               horizontal: 30,
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MySearchBar(
-                  controller: TextEditingController(),
-                  onSearch: () {},
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Text(
-                      'Tất cả Sách',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    FilledButton.icon(
-                      onPressed: widget.openThemSachMoiForm,
-                      icon: const Icon(Icons.add_rounded),
-                      label: const Text('Thêm mới sách'),
-                      style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+            child: StatefulBuilder(builder: (ctx, setStateColumn) {
+              List<Sach> filteredSachs;
+              if (_searchController.text.isEmpty) {
+                filteredSachs = List.of(sachs);
+              } else {
+                filteredSachs = sachs.where((element) => element.tenDauSach.toLowerCase().contains(_searchController.text.toLowerCase())).toList();
+              }
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MySearchBar(
+                    controller: _searchController,
+                    onSearch: () {
+                      setStateColumn(() {});
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Text(
+                        'Tất cả Sách',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Column(
-                      children: [
-                        Container(
-                          color: Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 30,
+                      const Spacer(),
+                      FilledButton.icon(
+                        onPressed: widget.openThemSachMoiForm,
+                        icon: const Icon(Icons.add_rounded),
+                        label: const Text('Thêm mới sách'),
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Row(
-                            children: [
-                              SizedBox(
-                                width: 81,
-                                child: Text(
-                                  'Mã Sách',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  child: Text(
-                                    'Tên Đầu sách',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                  ),
-                                  child: Text(
-                                    'Lần Tái bản',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Text(
-                                    'NXB',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                         ),
-                        Expanded(
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            children: List.generate(
-                              sachs.length,
-                              (index) {
-                                return Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Text(sachs[index].maSach.toString()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Column(
+                        children: [
+                          Container(
+                            color: Theme.of(context).colorScheme.primary,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 30,
+                            ),
+                            child: const Row(
+                              children: [
+                                SizedBox(
+                                  width: 81,
+                                  child: Text(
+                                    'Mã Sách',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontStyle: FontStyle.italic,
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 15,
-                                        ),
-                                        child: Text(sachs[index].tenDauSach.toString()),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    child: Text(
+                                      'Tên Đầu sách',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontStyle: FontStyle.italic,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                        ),
-                                        child: Text(sachs[index].lanTaiBan.toString()),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    child: Text(
+                                      'Lần Tái bản',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontStyle: FontStyle.italic,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 15,
-                                        ),
-                                        child: Text(sachs[index].nhaXuatBan),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      'NXB',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontStyle: FontStyle.italic,
                                       ),
                                     ),
-                                  ],
-                                );
-                              },
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: ListView(
+                              padding: const EdgeInsets.symmetric(horizontal: 30),
+                              children: List.generate(
+                                filteredSachs.length,
+                                (index) {
+                                  return Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: Text(filteredSachs[index].maSach.toString()),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                            vertical: 15,
+                                          ),
+                                          child: Text(filteredSachs[index].tenDauSach.toString()),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          child: Text(filteredSachs[index].lanTaiBan.toString()),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 15,
+                                          ),
+                                          child: Text(filteredSachs[index].nhaXuatBan),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            }),
           );
         }),
       ),

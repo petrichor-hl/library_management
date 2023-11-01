@@ -3,7 +3,7 @@ import 'package:library_management/components/forms/add_edit_enter_book_detail_f
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/components/my_search_bar.dart';
-import 'package:library_management/models/enter_book_detail.dart';
+import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
@@ -148,8 +148,8 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
       text: 0.toVnCurrencyFormat(),
     );
 
-    List<EnterBookDetail> _enterbookCards = [
-      EnterBookDetail(1, 1, 1, 4, 52000),
+    List<ChiTietPhieuNhap> _enterbookCards = [
+      ChiTietPhieuNhap(1, 1, 1, 4, 52000),
     ];
 
     bool _isProcessing = false;
@@ -184,7 +184,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 children: [
                   IconButton.filled(
                     onPressed: () async {
-                      EnterBookDetail? newEnterBpookDeital = await showDialog(
+                      ChiTietPhieuNhap? newEnterBpookDeital = await showDialog(
                         context: context,
                         builder: (ctx) {
                           return const AddEditEnterBookDetailForm();

@@ -26,4 +26,10 @@ VALUES ('Nhà Giả Kim'),
 ('Bắt trẻ đồng xanh'),
 ('Tôi thấy hoa vàng trên cỏ xanh'),
 ('Cố định một đám mây'),
-('Cô gái năm ấy chúng ta cùng theo đuổi')
+('Cô gái năm ấy chúng ta cùng theo đuổi');
+
+INSERT INTO Sach(LanTaiBan, NhaXuatBan, MaDauSach)
+VALUES ('5', 'Hoàng Nguyên', '4'),
+('2', 'Ấn Tầm', '2'),
+('7', 'Kim Đồng', '1'),
+('1', 'Ấn Tầm', '3')

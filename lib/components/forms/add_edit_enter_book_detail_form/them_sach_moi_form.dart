@@ -83,6 +83,14 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
   }
 
   @override
+  void dispose() {
+    _timTenDauSachController.dispose();
+    _lanTaiBanController.dispose();
+    _nhaXuatBanController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
 

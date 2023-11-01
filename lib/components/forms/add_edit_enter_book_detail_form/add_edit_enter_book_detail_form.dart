@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:library_management/components/forms/add_edit_enter_book_detail_form/tat_ca_sach.dart';
 import 'package:library_management/components/forms/add_edit_enter_book_detail_form/them_sach_moi_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
-import 'package:library_management/models/enter_book_detail.dart';
+import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 
 class AddEditEnterBookDetailForm extends StatefulWidget {
   const AddEditEnterBookDetailForm({
@@ -10,7 +10,7 @@ class AddEditEnterBookDetailForm extends StatefulWidget {
     this.editEnterBookDetail,
   });
 
-  final EnterBookDetail? editEnterBookDetail;
+  final ChiTietPhieuNhap? editEnterBookDetail;
 
   @override
   State<AddEditEnterBookDetailForm> createState() => _AddEditEnterBookDetailState();
