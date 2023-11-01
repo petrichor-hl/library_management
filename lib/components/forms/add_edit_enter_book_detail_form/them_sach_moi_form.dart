@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:library_management/components/label_text_form_field.dart';
+import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/sach.dart';
@@ -59,12 +61,24 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
         int.parse(_lanTaiBanController.text),
         _nhaXuatBanController.text,
         _filteredDauSachs[_selectedIndex].maDauSach!,
+        _filteredDauSachs[_selectedIndex].tenDauSach,
       );
       int maSachMoi = await dbProcess.insertSach(newSach);
       newSach.maSach = maSachMoi;
 
       // print('(${newSach.maDauSach}, ${newSach.maSach}, ${newSach.lanTaiBan}, ${newSach.nhaXuatBan})');
-      widget.onClose();
+      setState(() {
+        /* 
+        Đặt dòng context.read này trong đây để khỏi bị thông báo nhắc nhở 
+        Don't use 'BuildContext's across async gaps.
+        Try rewriting the code to not reference the 'BuildContext'
+        */
+        context.read<TatCaSachCubit>().addSach(newSach);
+
+        _selectedIndex = -2;
+        _lanTaiBanController.clear();
+        _nhaXuatBanController.clear();
+      });
     }
   }
 
@@ -316,6 +330,15 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
                       LabelTextFormField(
                         controller: _lanTaiBanController,
                         labelText: 'Lần tái bản',
+                        customValidator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bạn chưa nhập Lần tái bản';
+                          }
+                          if (int.tryParse(value) == null) {
+                            return 'Lần tái bản phải là con số';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 14),
                       LabelTextFormField(

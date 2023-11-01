@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
-import 'package:library_management/models/cuon_sach.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
@@ -258,7 +257,10 @@ class DbProcess {
 
     for (var element in data) {
       dauSachs.add(
-        DauSach(element['MaDauSach'], element['TenDauSach']),
+        DauSach(
+          element['MaDauSach'],
+          element['TenDauSach'],
+        ),
       );
     }
 
@@ -275,6 +277,30 @@ class DbProcess {
   }
 
   /* SACH CODE */
+  Future<List<Sach>> querySach() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from Sach join DauSach using(MaDauSach)
+      ''',
+    );
+
+    List<Sach> sachs = [];
+
+    for (var element in data) {
+      sachs.add(
+        Sach(
+          element['MaSach'],
+          element['LanTaiBan'],
+          element['NhaXuatBan'],
+          element['MaDauSach'],
+          element['TenDauSach'],
+        ),
+      );
+    }
+
+    return sachs;
+  }
+
   Future<int> insertSach(Sach newSach) async {
     return await _database.insert(
       'Sach',

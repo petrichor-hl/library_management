@@ -3,12 +3,14 @@ class Sach {
   int lanTaiBan;
   String nhaXuatBan;
   int maDauSach;
+  String tenDauSach;
 
   Sach(
     this.maSach,
     this.lanTaiBan,
     this.nhaXuatBan,
     this.maDauSach,
+    this.tenDauSach,
   );
 
   Map<String, dynamic> toMap() {

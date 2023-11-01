@@ -9,7 +9,6 @@ import 'package:library_management/main.dart';
 import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
-import 'package:library_management/utils/common_variables.dart';
 
 class ReaderManage extends StatefulWidget {
   const ReaderManage({super.key});
