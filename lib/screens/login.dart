@@ -39,14 +39,14 @@ class _LoginState extends State<Login> {
       // print(accountToLogin);
     }
 
-    if (enteredUsername == accountToLogin['username'] &&
-        enteredPassword == accountToLogin['password']) {
+    if (enteredUsername == accountToLogin['username'] && enteredPassword == accountToLogin['password']) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Đăng nhập thành công.'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(seconds: 3),
+            width: 300,
           ),
         );
 
@@ -142,8 +142,7 @@ class _LoginState extends State<Login> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 22),
+                          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 22),
                         ),
                         child: const Text(
                           'ĐĂNG NHẬP',
@@ -187,9 +186,7 @@ class _PasswordTextFieldState extends State<_PasswordTextField> {
                     _isShowPassword = !_isShowPassword;
                   });
                 },
-                icon: _isShowPassword
-                    ? const Icon(Icons.visibility_off)
-                    : const Icon(Icons.visibility),
+                icon: _isShowPassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility),
               ),
         suffixIconColor: const Color(0xFFACACAC),
         border: const OutlineInputBorder(

@@ -26,10 +26,20 @@ VALUES ('Nhà Giả Kim'),
 ('Bắt trẻ đồng xanh'),
 ('Tôi thấy hoa vàng trên cỏ xanh'),
 ('Cố định một đám mây'),
-('Cô gái năm ấy chúng ta cùng theo đuổi');
+('Cô gái năm ấy chúng ta cùng theo đuổi'),
+('Năm tháng vội vã');
 
 INSERT INTO Sach(LanTaiBan, NhaXuatBan, MaDauSach)
 VALUES ('5', 'Hoàng Nguyên', '4'),
 ('2', 'Ấn Tầm', '2'),
-('7', 'Kim Đồng', '1'),
-('1', 'Ấn Tầm', '3')
+('2', 'Kim Đồng', '1'),
+('1', 'Ấn Tầm', '3'),
+('7', 'Thanh niên', '6');
+
+INSERT INTO PhieuNhap(NgayLap, TongTien) 
+VALUES ('01/11/2023', '556000');
+
+INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) 
+VALUES ('1', '4', '2', '37000'),
+('1', '4', '2', '37000'),
+('1', '5', '5', '62000');

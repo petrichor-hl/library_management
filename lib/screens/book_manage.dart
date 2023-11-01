@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:library_management/components/forms/add_edit_enter_book_detail_form/add_edit_enter_book_detail_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/components/my_search_bar.dart';
+import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
+import 'package:library_management/main.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
+import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
@@ -21,7 +26,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -94,7 +99,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
               children: [
                 buildBookWarehouseSection(),
                 buildEnterBook(),
-                buildEnterBookCards(),
+                buildchiTietPhieuNhaps(),
               ],
             ),
           ),
@@ -143,19 +148,56 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
       text: DateTime.now().toVnFormat(),
     );
 
-    int _totalAmout = 0;
-    final totalAmountController = TextEditingController(
-      text: 0.toVnCurrencyFormat(),
-    );
+    int totalAmout = 0;
+    final totalAmountController = TextEditingController(text: '0');
 
-    List<ChiTietPhieuNhap> _enterbookCards = [
-      ChiTietPhieuNhap(1, 1, 1, 4, 52000),
-    ];
+    List<ChiTietPhieuNhap> chiTietPhieuNhaps = [];
 
-    bool _isProcessing = false;
+    bool isProcessing = false;
+
+    void savePhieuNhap(Function(void Function()) setStateNhapSach) async {
+      setStateNhapSach(() {
+        isProcessing = true;
+      });
+
+      int maPhieuNhap = await dbProcess.insertPhieuNhap(
+        PhieuNhap(
+          null,
+          vnDateFormat.parse(dateAddedController.text),
+          totalAmout,
+        ),
+      );
+
+      for (var chiTietPhieuNhap in chiTietPhieuNhaps) {
+        chiTietPhieuNhap.maPhieuNhap = maPhieuNhap;
+        dbProcess.insertChiTietPhieuNhap(chiTietPhieuNhap);
+      }
+      setStateNhapSach(() {
+        totalAmout = 0;
+        totalAmountController.text = '0';
+        chiTietPhieuNhaps.clear();
+        isProcessing = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Tạo Phiếu Nhập sách thành công.'),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            width: 350,
+            action: SnackBarAction(
+              label: 'Xem',
+              onPressed: () => _tabController.animateTo(2),
+            ),
+          ),
+        );
+      }
+    }
 
     return StatefulBuilder(
-      builder: (ctx, setState) => Padding(
+      builder: (ctx, setStateNhapSach) => Padding(
           padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
           child: Column(
             children: [
@@ -184,16 +226,20 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 children: [
                   IconButton.filled(
                     onPressed: () async {
-                      ChiTietPhieuNhap? newEnterBpookDeital = await showDialog(
+                      List<ChiTietPhieuNhap>? newChiTietPhieuNhaps = await showDialog(
                         context: context,
                         builder: (ctx) {
                           return const AddEditEnterBookDetailForm();
                         },
                       );
 
-                      if (newEnterBpookDeital != null) {
-                        setState(() {
-                          _enterbookCards.add(newEnterBpookDeital);
+                      if (newChiTietPhieuNhaps != null) {
+                        setStateNhapSach(() {
+                          for (var chiTietPhieuNhap in newChiTietPhieuNhaps) {
+                            totalAmout += chiTietPhieuNhap.tongTien;
+                            chiTietPhieuNhaps.add(chiTietPhieuNhap);
+                          }
+                          totalAmountController.text = totalAmout.toVnCurrencyFormat();
                         });
                       }
                     },
@@ -204,37 +250,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                   /* 
                   */
                   IconButton.filled(
-                    onPressed: 0 == -1
-                        ? null
-                        : () async {
-                            // await showDialog(
-                            //   context: context,
-                            //   builder: (ctx) => AlertDialog(
-                            //     title: const Text('Xác nhận'),
-                            //     content: Text(
-                            //         'Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].fullname}?'),
-                            //     shape: RoundedRectangleBorder(
-                            //       borderRadius: BorderRadius.circular(10),
-                            //     ),
-                            //     actions: [
-                            //       TextButton(
-                            //         onPressed: () {
-                            //           Navigator.of(context).pop();
-                            //         },
-                            //         child: const Text('Huỷ'),
-                            //       ),
-                            //       FilledButton(
-                            //         onPressed: _logicDeleteReader,
-                            //         child: const Text('Có'),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // );
-
-                            // if (_selectedRow >= _readerRows.length) {
-                            //   _selectedRow = -1;
-                            // }
-                          },
+                    onPressed: 0 == -1 ? null : () async {},
                     icon: const Icon(Icons.delete),
                     style: myIconButtonStyle,
                   ),
@@ -263,11 +279,24 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                         ),
                         child: const Row(
                           children: [
+                            SizedBox(
+                              width: 80,
+                              child: Text(
+                                '#',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(right: 15),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
                                 child: Text(
-                                  '#',
+                                  'Tên Đầu sách',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -324,56 +353,64 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                       ),
                       Expanded(
                         child: ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 30),
                           children: List.generate(
-                            _enterbookCards.length,
+                            chiTietPhieuNhaps.length,
                             (index) {
-                              return Row(
+                              return Column(
                                 children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 15,
-                                      ),
-                                      child: Text(_enterbookCards[index].maCTPN.toString()),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {},
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 15,
-                                          vertical: 15,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              _enterbookCards[index].maSach.toString(),
-                                            ),
-                                            const Spacer(),
-                                            const Icon(Icons.open_in_new_rounded)
-                                          ],
+                                  Row(
+                                    children: [
+                                      const Gap(30),
+                                      SizedBox(
+                                        width: 80,
+                                        child: Text(
+                                          (index + 1).toString(),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15,
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 15,
+                                            horizontal: 15,
+                                          ),
+                                          child: Text(
+                                            context.read<TatCaSachCubit>().getTenDauSach(chiTietPhieuNhaps[index].maSach),
+                                          ),
+                                        ),
                                       ),
-                                      child: Text(_enterbookCards[index].soLuong.toString()),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 15,
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          child: Text(
+                                            chiTietPhieuNhaps[index].maSach.toString(),
+                                          ),
+                                        ),
                                       ),
-                                      child: Text(_enterbookCards[index].donGia.toVnCurrencyWithoutSymbolFormat()),
-                                    ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                          ),
+                                          child: Text(chiTietPhieuNhaps[index].soLuong.toString()),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 15,
+                                          ),
+                                          child: Text(chiTietPhieuNhaps[index].donGia.toVnCurrencyWithoutSymbolFormat()),
+                                        ),
+                                      ),
+                                      const Gap(30),
+                                    ],
                                   ),
+                                  if (index < chiTietPhieuNhaps.length - 1)
+                                    const Divider(
+                                      height: 0,
+                                    ),
                                 ],
                               );
                             },
@@ -385,18 +422,25 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 ),
               ),
               Align(
-                alignment: Alignment.center,
-                child: _isProcessing
+                alignment: Alignment.centerRight,
+                child: isProcessing
                     ? const SizedBox(
-                        height: 44,
-                        width: 44,
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: CircularProgressIndicator(),
+                        width: 91,
+                        child: Center(
+                          child: SizedBox(
+                            height: 44,
+                            width: 44,
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              ),
+                            ),
+                          ),
                         ),
                       )
                     : FilledButton(
-                        onPressed: () {},
+                        onPressed: () => savePhieuNhap(setStateNhapSach),
                         style: FilledButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -417,7 +461,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildEnterBookCards() {
+  Widget buildchiTietPhieuNhaps() {
     return const Padding(
       padding: EdgeInsets.fromLTRB(30, 0, 30, 25),
       child: Column(

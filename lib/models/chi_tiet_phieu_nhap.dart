@@ -1,9 +1,9 @@
 class ChiTietPhieuNhap {
-  final int? maCTPN;
-  final int maSach;
-  final int maPhieuNhap;
-  final int soLuong;
-  final int donGia;
+  int? maCTPN;
+  int maSach;
+  int? maPhieuNhap;
+  int soLuong;
+  int donGia;
 
   ChiTietPhieuNhap(
     this.maCTPN,
@@ -12,4 +12,15 @@ class ChiTietPhieuNhap {
     this.soLuong,
     this.donGia,
   );
+
+  int get tongTien => donGia * soLuong;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'MaPhieuNhap': maPhieuNhap,
+      'MaSach': maSach,
+      'SoLuong': soLuong,
+      'DonGia': donGia,
+    };
+  }
 }
