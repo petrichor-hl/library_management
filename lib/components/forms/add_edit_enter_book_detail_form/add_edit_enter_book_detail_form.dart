@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:library_management/components/forms/add_edit_enter_book_detail_form/them_dau_sach_moi_form.dart';
+import 'package:library_management/components/forms/add_edit_enter_book_detail_form/tat_ca_sach.dart';
+import 'package:library_management/components/forms/add_edit_enter_book_detail_form/them_sach_moi_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
-import 'package:library_management/components/my_search_bar.dart';
-import 'package:library_management/models/enter_book_detail.dart';
-import 'package:library_management/utils/common_variables.dart';
+import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 
 class AddEditEnterBookDetailForm extends StatefulWidget {
   const AddEditEnterBookDetailForm({
@@ -11,7 +10,7 @@ class AddEditEnterBookDetailForm extends StatefulWidget {
     this.editEnterBookDetail,
   });
 
-  final EnterBookDetail? editEnterBookDetail;
+  final ChiTietPhieuNhap? editEnterBookDetail;
 
   @override
   State<AddEditEnterBookDetailForm> createState() => _AddEditEnterBookDetailState();
@@ -22,12 +21,6 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
 
   bool _isProcessing = false;
   bool _isOpen = false;
-  bool _isQueryingDauSach = false;
-
-  /* Controller cho những TextField nằm trong Dialog Thêm sách mới */
-
-  final _lanTaiBanController = TextEditingController();
-  final _nhaXuatBanController = TextEditingController();
 
   /* Controller cho những TextField nằm trong Dialog Thêm chi tiết nhập sách */
   final _maSachController = TextEditingController();
@@ -59,124 +52,20 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
         children: [
           Stack(
             children: [
+              /* Danh sách các Sách hiện có */
               AnimatedPadding(
                 padding: EdgeInsets.only(right: _isOpen ? 12 + screenWidth * 0.3 : 0),
                 duration: const Duration(milliseconds: 200),
-                child: Dialog(
-                  backgroundColor: Colors.white,
-                  surfaceTintColor: Colors.transparent,
-                  insetPadding: const EdgeInsets.all(0),
-                  child: SizedBox(
-                    height: 500,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 30,
-                        horizontal: 30,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MySearchBar(
-                            controller: TextEditingController(),
-                            onSearch: () {},
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              const Text(
-                                'Tất cả Sách',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const Spacer(),
-                              FilledButton.icon(
-                                onPressed: () => setState(() {
-                                  _isOpen = true;
-                                }),
-                                icon: const Icon(Icons.add_rounded),
-                                label: const Text('Thêm mới sách'),
-                                style: TextButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              clipBehavior: Clip.antiAlias,
-                              child: DataTable(
-                                /* Set màu cho Heading */
-                                headingRowColor: MaterialStateColor.resolveWith(
-                                  (states) => Theme.of(context).colorScheme.primary,
-                                ),
-                                /* The horizontal margin between the contents of each data column */
-                                columnSpacing: 40,
-                                dataRowColor: MaterialStateProperty.resolveWith(
-                                  (states) => getDataRowColor(context, states),
-                                ),
-                                dataRowMaxHeight: 62,
-                                border: TableBorder.symmetric(),
-                                showCheckboxColumn: false,
-                                columns: const [
-                                  DataColumn(
-                                    label: Text(
-                                      'Mã Sách',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Tên đầu Sách',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Lần Tái Bản',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'NXB',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                rows: [],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                child: TatCaSach(
+                  openThemSachMoiForm: () => setState(() {
+                    _isOpen = true;
+                  }),
                 ),
               ),
+
               /*
-              Thêm Sách mới
-              */
+                Thêm Sách mới
+                */
               Positioned(
                 right: 0,
                 child: IgnorePointer(
@@ -187,7 +76,7 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
                     child: AnimatedSlide(
                       offset: _isOpen ? const Offset(0, 0) : const Offset(-0.15, 0),
                       duration: const Duration(milliseconds: 200),
-                      child: ThemDauSachMoiForm(
+                      child: ThemSachMoiForm(
                         onClose: () => setState(() {
                           _isOpen = false;
                         }),

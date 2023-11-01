@@ -1,9 +1,9 @@
 class DauSach {
-  int? id;
+  int? maDauSach;
   String tenDauSach;
 
   DauSach(
-    this.id,
+    this.maDauSach,
     this.tenDauSach,
   );
 }

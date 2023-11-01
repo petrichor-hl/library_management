@@ -1,6 +1,8 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/screens/library_management.dart';
 import 'package:library_management/screens/login.dart';
 import 'package:library_management/utils/db_process.dart';
@@ -15,7 +17,14 @@ void main() async {
 
   await dbProcess.connect();
 
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => TatCaSachCubit()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 
   doWhenWindowReady(() {
     const initialSize = Size(1280, 900);

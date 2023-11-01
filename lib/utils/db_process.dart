@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:library_management/models/dau_sach.dart';
-import 'package:library_management/models/reader.dart';
+import 'package:library_management/models/doc_gia.dart';
+import 'package:library_management/models/sach.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 import 'package:sqflite/utils/utils.dart';
@@ -135,8 +136,8 @@ class DbProcess {
     return data.first;
   }
 
-  // READER MODEL CODE
-  Future<List<Reader>> queryReader({
+  // DocGia MODEL CODE
+  Future<List<DocGia>> queryDocGia({
     required int numberRowIgnore,
   }) async {
     /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
@@ -148,11 +149,11 @@ class DbProcess {
       [numberRowIgnore],
     );
 
-    List<Reader> readers = [];
+    List<DocGia> danhSachDocGia = [];
 
     for (var element in data) {
-      readers.add(
-        Reader(
+      danhSachDocGia.add(
+        DocGia(
           element['MaDocGia'],
           element['HoTen'],
           vnDateFormat.parse(element['NgaySinh'] as String),
@@ -165,10 +166,10 @@ class DbProcess {
       );
     }
 
-    return readers;
+    return danhSachDocGia;
   }
 
-  Future<List<Reader>> queryReaderFullnameWithString({
+  Future<List<DocGia>> queryDocGiaFullnameWithString({
     required String str,
     required int numberRowIgnore,
   }) async {
@@ -180,11 +181,11 @@ class DbProcess {
       ''',
       ['%$str%', numberRowIgnore],
     );
-    List<Reader> readers = [];
+    List<DocGia> docGias = [];
 
     for (var element in data) {
-      readers.add(
-        Reader(
+      docGias.add(
+        DocGia(
           element['MaDocGia'],
           element['HoTen'],
           vnDateFormat.parse(element['NgaySinh'] as String),
@@ -197,14 +198,14 @@ class DbProcess {
       );
     }
 
-    return readers;
+    return docGias;
   }
 
-  Future<int> queryCountReader() async {
+  Future<int> queryCountDocGia() async {
     return firstIntValue(await _database.rawQuery('select count(MaDocGia) from DocGia'))!;
   }
 
-  Future<int> queryCountReaderFullnameWithString(String str) async {
+  Future<int> queryCountDocGiaFullnameWithString(String str) async {
     return firstIntValue(
       await _database.rawQuery(
         '''
@@ -215,15 +216,15 @@ class DbProcess {
     )!;
   }
 
-  Future<int> insertReader(Reader newReader) async {
-    return await _database.insert('DocGia', newReader.toMap());
+  Future<int> insertDocGia(DocGia newDocGia) async {
+    return await _database.insert('DocGia', newDocGia.toMap());
   }
 
-  Future<void> deleteReader(int readerId) async {
-    await _database.rawDelete('delete from DocGia where MaDocGia  = ?', [readerId]);
+  Future<void> deleteDocGia(int maDocGia) async {
+    await _database.rawDelete('delete from DocGia where MaDocGia  = ?', [maDocGia]);
   }
 
-  Future<void> updateReader(Reader updatedReader) async {
+  Future<void> updateDocGia(DocGia updatedDocGia) async {
     await _database.rawUpdate(
       '''
       update DocGia 
@@ -232,14 +233,14 @@ class DbProcess {
       where MaDocGia  = ?
       ''',
       [
-        updatedReader.fullname,
-        updatedReader.dob.toVnFormat(),
-        updatedReader.address,
-        updatedReader.phoneNumber,
-        updatedReader.creationDate.toVnFormat(),
-        updatedReader.expirationDate.toVnFormat(),
-        updatedReader.totalTiabilities,
-        updatedReader.id,
+        updatedDocGia.hoTen,
+        updatedDocGia.ngaySinh.toVnFormat(),
+        updatedDocGia.diaChi,
+        updatedDocGia.soDienThoai,
+        updatedDocGia.ngayLapThe.toVnFormat(),
+        updatedDocGia.ngayHetHan.toVnFormat(),
+        updatedDocGia.tongNo,
+        updatedDocGia.maDocGia,
       ],
     );
   }
@@ -256,7 +257,10 @@ class DbProcess {
 
     for (var element in data) {
       dauSachs.add(
-        DauSach(element['MaDauSach'], element['TenDauSach']),
+        DauSach(
+          element['MaDauSach'],
+          element['TenDauSach'],
+        ),
       );
     }
 
@@ -269,6 +273,38 @@ class DbProcess {
       {
         'TenDauSach': newDauSach.tenDauSach,
       },
+    );
+  }
+
+  /* SACH CODE */
+  Future<List<Sach>> querySach() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from Sach join DauSach using(MaDauSach)
+      ''',
+    );
+
+    List<Sach> sachs = [];
+
+    for (var element in data) {
+      sachs.add(
+        Sach(
+          element['MaSach'],
+          element['LanTaiBan'],
+          element['NhaXuatBan'],
+          element['MaDauSach'],
+          element['TenDauSach'],
+        ),
+      );
+    }
+
+    return sachs;
+  }
+
+  Future<int> insertSach(Sach newSach) async {
+    return await _database.insert(
+      'Sach',
+      newSach.toMap(),
     );
   }
 
