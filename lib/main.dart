@@ -2,7 +2,9 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:library_management/components/sidebar/sidebar_page.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
+import 'package:library_management/screens/borrow_return.dart';
 import 'package:library_management/screens/library_management.dart';
 import 'package:library_management/screens/login.dart';
 import 'package:library_management/utils/db_process.dart';
@@ -18,19 +20,20 @@ void main() async {
   await dbProcess.connect();
 
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => TatCaSachCubit()),
-      ],
-      child: const MyApp(),
-    ),
+    // MultiBlocProvider(
+    //   providers: [
+    //     BlocProvider(create: (_) => TatCaSachCubit()),
+    //   ],
+    //   child: const MyApp(),
+    // ),
+    MyApp(),
   );
 
   doWhenWindowReady(() {
-    // 
+    //
     // fix size screen for BC
-    // 
-    const initialSize = Size(1280, 600);
+    //
+    const initialSize = Size(1280, 630);
     appWindow.minSize = initialSize;
     appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
@@ -51,7 +54,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
-      home: const LibraryManagement(),
+      //home: const LibraryManagement(),
+      //
+      home: SideBarPage(),
+
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
