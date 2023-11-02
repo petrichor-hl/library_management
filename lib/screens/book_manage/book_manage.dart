@@ -90,7 +90,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
               children: [
                 buildKhoSach(),
                 buildNhapSach(),
-                buildQuanLyPhieuNhap(),
+                const QuanLyPhieuNhap(),
               ],
             ),
           ),

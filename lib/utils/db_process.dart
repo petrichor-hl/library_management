@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
@@ -311,16 +312,6 @@ class DbProcess {
   }
 
   /* PHIEU NHAP CODE */
-  Future<int> insertPhieuNhap(PhieuNhap newPhieuNhap) async {
-    // print("INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}', '${newPhieuNhap.tongTien}');");
-
-    return await _database.insert(
-      'PhieuNhap',
-      newPhieuNhap.toMap(),
-    );
-  }
-
-  /* CHI TIET PHIEU NHAP CODE */
   Future<List<PhieuNhap>> queryPhieuNhap() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
@@ -336,6 +327,43 @@ class DbProcess {
           element['MaPhieuNhap'],
           vnDateFormat.parse(element['NgayLap']),
           element['TongTien'],
+        ),
+      );
+    }
+
+    return phieuNhaps;
+  }
+
+  Future<int> insertPhieuNhap(PhieuNhap newPhieuNhap) async {
+    // print("INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}', '${newPhieuNhap.tongTien}');");
+
+    return await _database.insert(
+      'PhieuNhap',
+      newPhieuNhap.toMap(),
+    );
+  }
+
+  /* CHI TIET PHIEU NHAP CODE */
+  Future<List<ChiTietPhieuNhapDTO>> queryChiTietPhieuNhapDtoWithMaPhieuNhap(int maPhieuNhap) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaCTPN, TenDauSach, SoLuong, DonGia from CT_PhieuNhap 
+      join Sach using(MaSach) 
+      join DauSach using(MaDauSach)
+      where MaPhieuNhap = ?
+      ''',
+      [maPhieuNhap],
+    );
+
+    List<ChiTietPhieuNhapDTO> phieuNhaps = [];
+
+    for (var element in data) {
+      phieuNhaps.add(
+        ChiTietPhieuNhapDTO(
+          element['MaCTPN'],
+          element['TenDauSach'],
+          element['SoLuong'],
+          element['DonGia'],
         ),
       );
     }
