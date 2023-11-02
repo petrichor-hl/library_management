@@ -1,7 +1,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:library_management/screens/book_manage.dart';
+import 'package:library_management/screens/book_manage/book_manage.dart';
 import 'package:library_management/screens/borrow_return.dart';
 import 'package:library_management/screens/reader_manage.dart';
 import 'package:library_management/screens/regulations.dart';

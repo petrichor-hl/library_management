@@ -37,9 +37,12 @@ VALUES ('5', 'Hoàng Nguyên', '4'),
 ('7', 'Thanh niên', '6');
 
 INSERT INTO PhieuNhap(NgayLap, TongTien) 
-VALUES ('01/11/2023', '556000');
+VALUES ('01/11/2023', '556000'),
+('02/11/2023', '255000');
 
 INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) 
-VALUES ('1', '4', '2', '37000'),
+VALUES ('1', '3', '2', '37000'),
 ('1', '4', '2', '37000'),
-('1', '5', '5', '62000');
+('1', '5', '5', '62000'),
+('2', '1', '2', '42000'),
+('2', '5', '3', '57000');

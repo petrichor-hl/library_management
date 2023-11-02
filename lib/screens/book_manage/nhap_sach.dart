@@ -4,146 +4,16 @@ import 'package:gap/gap.dart';
 import 'package:library_management/components/forms/add_edit_enter_book_detail_form/add_edit_enter_book_detail_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
-import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/phieu_nhap.dart';
+import 'package:library_management/screens/book_manage/book_manage.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
-class BookManage extends StatefulWidget {
-  const BookManage({super.key});
-
-  @override
-  State<BookManage> createState() => _BookManageState();
-}
-
-class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
-  late final TabController _tabController;
-  final _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 25, 30, 20),
-            child: Ink(
-              width: 370,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: TabBar(
-                indicatorPadding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                  horizontal: 6,
-                ),
-                controller: _tabController,
-                tabs: const [
-                  Tab(
-                    text: "Kho sách",
-                  ),
-                  Tab(
-                    text: "Nhập sách",
-                  ),
-                  Tab(
-                    text: "Phiếu nhập",
-                  ),
-                ],
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.white,
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                splashBorderRadius: BorderRadius.circular(8),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                ),
-                unselectedLabelColor: Colors.white,
-                overlayColor: MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.hovered)) {
-                    return Colors.white.withOpacity(0.3);
-                  }
-                  if (states.contains(MaterialState.pressed)) {
-                    return Colors.white.withOpacity(0.5);
-                  }
-                  return Colors.transparent;
-                }),
-              ),
-            ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                buildBookWarehouseSection(),
-                buildEnterBook(),
-                buildchiTietPhieuNhaps(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildBookWarehouseSection() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MySearchBar(
-            controller: _searchController,
-            onSearch: () {},
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Danh sách Sách',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Expanded(
-            child: Row(
-              children: [
-                Expanded(child: Text('Đầu sách')),
-                Expanded(
-                  flex: 2,
-                  child: Text('Sách'),
-                ),
-                Expanded(child: Text('Cuốn sách')),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildEnterBook() {
+extension NhapSach on BookManageState {
+  Widget buildNhapSach() {
     final dateAddedController = TextEditingController(
       text: DateTime.now().toVnFormat(),
     );
@@ -190,7 +60,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
             width: 350,
             action: SnackBarAction(
               label: 'Xem',
-              onPressed: () => _tabController.animateTo(2),
+              onPressed: () => tabController.animateTo(2),
             ),
           ),
         );
@@ -224,7 +94,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                       controller: dateAddedController,
                     ),
                   ),
-                  const SizedBox(width: 80),
+                  const SizedBox(width: 50),
                   /* Tổng tiền */
                   Expanded(
                     child: LabelTextFormField(
@@ -450,7 +320,21 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                                               padding: const EdgeInsets.only(
                                                 left: 15,
                                               ),
-                                              child: Text(chiTietPhieuNhaps[index].donGia.toVnCurrencyWithoutSymbolFormat()),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      chiTietPhieuNhaps[index].donGia.toVnCurrencyWithoutSymbolFormat(),
+                                                    ),
+                                                  ),
+                                                  const Gap(10),
+                                                  if (selectedRow == index)
+                                                    Icon(
+                                                      Icons.check,
+                                                      color: Theme.of(context).colorScheme.primary,
+                                                    )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           const Gap(30),
@@ -509,15 +393,6 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
               ),
             ],
           )),
-    );
-  }
-
-  Widget buildchiTietPhieuNhaps() {
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(30, 0, 30, 25),
-      child: Column(
-        children: [],
-      ),
     );
   }
 }
