@@ -214,56 +214,41 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          DateTime? chosenDate = await showDatePicker(
-                            context: context,
-                            initialDate: widget.editDocGia != null ? widget.editDocGia!.ngayLapThe : DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now(),
-                          );
-                          if (chosenDate != null) {
-                            setCreationExpriationDate(chosenDate);
-                          }
-                        },
-                        child: TextFormField(
-                          controller: _creationDateController,
-                          enabled: false,
-                          mouseCursor: SystemMouseCursors.click,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 245, 246, 250),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            contentPadding: const EdgeInsets.all(14),
-                            isCollapsed: true,
-                          ),
-                          style: const TextStyle(color: Colors.black),
+                GestureDetector(
+                  onTap: () async {
+                    DateTime? chosenDate = await showDatePicker(
+                      context: context,
+                      initialDate: widget.editDocGia != null ? widget.editDocGia!.ngayLapThe : DateTime.now(),
+                      firstDate: DateTime(1950),
+                      lastDate: DateTime.now(),
+                    );
+                    if (chosenDate != null) {
+                      setCreationExpriationDate(chosenDate);
+                    }
+                  },
+                  child: TextFormField(
+                    controller: _creationDateController,
+                    enabled: false,
+                    mouseCursor: SystemMouseCursors.click,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 245, 246, 250),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.all(14),
+                      isCollapsed: true,
+                      suffixIcon: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14),
+                        child: Icon(
+                          Icons.calendar_today,
+                          color: Colors.black,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: () async {
-                        DateTime? chosenDate = await showDatePicker(
-                          context: context,
-                          initialDate: widget.editDocGia != null ? widget.editDocGia!.ngayLapThe : DateTime.now(),
-                          firstDate: DateTime(1950),
-                          lastDate: DateTime.now(),
-                        );
-                        if (chosenDate != null) {
-                          setCreationExpriationDate(chosenDate);
-                        }
-                      },
-                      icon: const Icon(Icons.calendar_today),
-                      padding: const EdgeInsets.all(10),
-                    )
-                  ],
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ),
                 //
                 const SizedBox(height: 10),

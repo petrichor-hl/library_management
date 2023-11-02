@@ -313,6 +313,7 @@ class DbProcess {
   /* PHIEU NHAP CODE */
   Future<int> insertPhieuNhap(PhieuNhap newPhieuNhap) async {
     // print("INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}', '${newPhieuNhap.tongTien}');");
+
     return await _database.insert(
       'PhieuNhap',
       newPhieuNhap.toMap(),
@@ -320,13 +321,33 @@ class DbProcess {
   }
 
   /* CHI TIET PHIEU NHAP CODE */
+  Future<List<PhieuNhap>> queryPhieuNhap() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from PhieuNhap
+      ''',
+    );
+
+    List<PhieuNhap> phieuNhaps = [];
+
+    for (var element in data) {
+      phieuNhaps.add(
+        PhieuNhap(
+          element['MaPhieuNhap'],
+          vnDateFormat.parse(element['NgayLap']),
+          element['TongTien'],
+        ),
+      );
+    }
+
+    return phieuNhaps;
+  }
+
   Future<int> insertChiTietPhieuNhap(ChiTietPhieuNhap newChiTietPhieuNhap) async {
-    /*
-    print('''
-      INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) 
-      VALUES ('${newChiTietPhieuNhap.maPhieuNhap}', '${newChiTietPhieuNhap.maSach}', '${newChiTietPhieuNhap.soLuong}', '${newChiTietPhieuNhap.donGia}');
-    ''');
-    */
+    // print('''
+    //   INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia)
+    //   VALUES ('${newChiTietPhieuNhap.maPhieuNhap}', '${newChiTietPhieuNhap.maSach}', '${newChiTietPhieuNhap.soLuong}', '${newChiTietPhieuNhap.donGia}');
+    // ''');
     return await _database.insert(
       'CT_PhieuNhap',
       newChiTietPhieuNhap.toMap(),
