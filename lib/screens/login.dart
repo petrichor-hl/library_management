@@ -40,6 +40,10 @@ class _LoginState extends State<Login> {
     }
 
     if (enteredUsername == accountToLogin['username'] && enteredPassword == accountToLogin['password']) {
+      await Future.delayed(
+        const Duration(milliseconds: 500),
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -55,6 +59,9 @@ class _LoginState extends State<Login> {
           PageTransition(
             type: PageTransitionType.rightToLeft,
             child: const LibraryManagement(),
+            duration: const Duration(
+              milliseconds: 500,
+            ),
           ),
           (route) => false,
         );
@@ -71,11 +78,11 @@ class _LoginState extends State<Login> {
           ),
         );
       }
-    }
 
-    setState(() {
-      _isProcessing = false;
-    });
+      setState(() {
+        _isProcessing = false;
+      });
+    }
   }
 
   @override
@@ -127,7 +134,7 @@ class _LoginState extends State<Login> {
                 ),
                 _isProcessing
                     ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: SizedBox(
                           height: 20,
                           width: 20,

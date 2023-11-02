@@ -50,6 +50,7 @@ class LabelTextFormField extends StatelessWidget {
             contentPadding: const EdgeInsets.all(14),
             isCollapsed: true,
             suffixText: suffixText,
+            errorMaxLines: 2,
           ),
           validator: customValidator ??
               (value) {
