@@ -17,8 +17,8 @@ class ChiTietPhieuNhap {
 
   Map<String, dynamic> toMap() {
     return {
-      'MaPhieuNhap': maPhieuNhap,
       'MaSach': maSach,
+      'MaPhieuNhap': maPhieuNhap,
       'SoLuong': soLuong,
       'DonGia': donGia,
     };
