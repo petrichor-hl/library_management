@@ -27,7 +27,10 @@ void main() async {
   );
 
   doWhenWindowReady(() {
-    const initialSize = Size(1280, 900);
+    // 
+    // fix size screen for BC
+    // 
+    const initialSize = Size(1280, 600);
     appWindow.minSize = initialSize;
     appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
