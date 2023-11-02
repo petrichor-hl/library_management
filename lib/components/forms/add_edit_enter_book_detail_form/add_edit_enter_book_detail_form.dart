@@ -10,10 +10,14 @@ import 'package:library_management/utils/extension.dart';
 class AddEditEnterBookDetailForm extends StatefulWidget {
   const AddEditEnterBookDetailForm({
     super.key,
-    this.editEnterBookDetail,
+    this.danhSachChiTietPhieuNhapDaThem,
+    this.onAddChiTietPhieuNhap,
+    this.editChiTietNhapSach,
   });
 
-  final ChiTietPhieuNhap? editEnterBookDetail;
+  final List<ChiTietPhieuNhap>? danhSachChiTietPhieuNhapDaThem;
+  final void Function(ChiTietPhieuNhap)? onAddChiTietPhieuNhap;
+  final ChiTietPhieuNhap? editChiTietNhapSach;
 
   @override
   State<AddEditEnterBookDetailForm> createState() => _AddEditEnterBookDetailState();
@@ -22,9 +26,6 @@ class AddEditEnterBookDetailForm extends StatefulWidget {
 class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final List<ChiTietPhieuNhap> _chiTietPhieuNhaps = [];
-
-  bool _isProcessing = false;
   bool _isOpen = false;
 
   /* Controller cho những TextField nằm trong Dialog Thêm chi tiết nhập sách */
@@ -32,11 +33,8 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
   final _soLuongController = TextEditingController();
   final _donGiaController = TextEditingController();
 
-  void _saveChiTietNhapSach() {
-    setState(() {
-      _isProcessing = true;
-    });
-
+  void _addChiTietNhapSach() {
+    /* Thêm mới Chi Tiết Phiếu Nhập */
     ChiTietPhieuNhap newChiTietPhieuNhap = ChiTietPhieuNhap(
       null,
       int.parse(_maSachController.text),
@@ -45,16 +43,28 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
       int.parse(_donGiaController.text.replaceAll('.', '')),
     );
 
-    _chiTietPhieuNhaps.add(newChiTietPhieuNhap);
+    widget.onAddChiTietPhieuNhap!(newChiTietPhieuNhap);
+  }
 
-    setState(() {
-      _isProcessing = false;
-    });
+  void _editChiTietNhapSach() {
+    /* Chỉnh sửa Chi Tiết Phiếu Nhập */
+    widget.editChiTietNhapSach!.maSach = int.parse(_maSachController.text);
+    widget.editChiTietNhapSach!.soLuong = int.parse(_soLuongController.text);
+    widget.editChiTietNhapSach!.donGia = int.parse(_donGiaController.text.replaceAll('.', ''));
   }
 
   @override
   void initState() {
     super.initState();
+    /*
+    Nếu là chỉnh sửa Chi Tiết Nhập Sách
+    thì phải fill thông tin vào của Chi Tiết Nhập Sách cần chỉnh sửa vào form
+    */
+    if (widget.editChiTietNhapSach != null) {
+      _maSachController.text = widget.editChiTietNhapSach!.maSach.toString();
+      _soLuongController.text = widget.editChiTietNhapSach!.soLuong.toString();
+      _donGiaController.text = widget.editChiTietNhapSach!.donGia.toString();
+    }
   }
 
   @override
@@ -135,7 +145,7 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
                       Row(
                         children: [
                           Text(
-                            widget.editEnterBookDetail == null ? 'THÊM CHI TIẾT PHIẾU NHẬP' : 'SỬA CHI TIẾT NHẬP SÁCH',
+                            widget.editChiTietNhapSach == null ? 'THÊM CHI TIẾT PHIẾU NHẬP' : 'SỬA CHI TIẾT NHẬP SÁCH',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -168,6 +178,10 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
 
                                 if (!context.read<TatCaSachCubit>().contains(maSach)) {
                                   return 'Mã Sách không tồn tại';
+                                }
+
+                                if (widget.danhSachChiTietPhieuNhapDaThem!.indexWhere((element) => element.maSach == maSach) != -1) {
+                                  return 'Mã Sách này đã được thêm vào Phiếu Nhập';
                                 }
 
                                 return null;
@@ -224,17 +238,36 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
                         ],
                       ),
                       const SizedBox(height: 30),
-                      _isProcessing
-                          ? const Align(
+                      widget.editChiTietNhapSach != null
+                          ? Align(
                               alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 44,
-                                width: 44,
-                                child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
+                              child: FilledButton(
+                                onPressed: () {
+                                  bool isValid = _formKey.currentState!.validate();
+                                  if (isValid) {
+                                    _editChiTietNhapSach();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Chỉnh sửa Chi tiết Nhập sách thành công.'),
+                                        behavior: SnackBarBehavior.floating,
+                                        duration: Duration(seconds: 3),
+                                        width: 300,
+                                      ),
+                                    );
+                                    Navigator.of(context).pop('updated');
+                                  }
+                                },
+                                style: FilledButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 20,
+                                    horizontal: 20,
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Lưu',
                                 ),
                               ),
                             )
@@ -245,8 +278,16 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
                                   onPressed: () {
                                     bool isValid = _formKey.currentState!.validate();
                                     if (isValid) {
-                                      _saveChiTietNhapSach();
-                                      Navigator.of(context).pop(_chiTietPhieuNhaps);
+                                      _addChiTietNhapSach();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Thêm Chi tiết Nhập sách thành công.'),
+                                          behavior: SnackBarBehavior.floating,
+                                          duration: Duration(seconds: 3),
+                                          width: 300,
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
                                     }
                                   },
                                   style: FilledButton.styleFrom(
@@ -267,7 +308,7 @@ class _AddEditEnterBookDetailState extends State<AddEditEnterBookDetailForm> {
                                   onPressed: () {
                                     bool isValid = _formKey.currentState!.validate();
                                     if (isValid) {
-                                      _saveChiTietNhapSach();
+                                      _addChiTietNhapSach();
                                       _maSachController.clear();
                                       _soLuongController.clear();
                                       _donGiaController.clear();

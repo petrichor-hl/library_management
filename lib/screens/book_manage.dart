@@ -26,7 +26,7 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
   }
 
   @override
@@ -152,10 +152,11 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
     final totalAmountController = TextEditingController(text: '0');
 
     List<ChiTietPhieuNhap> chiTietPhieuNhaps = [];
+    int selectedRow = -1;
 
     bool isProcessing = false;
 
-    void savePhieuNhap(Function(void Function()) setStateNhapSach) async {
+    Future<void> savePhieuNhap(Function(void Function()) setStateNhapSach) async {
       setStateNhapSach(() {
         isProcessing = true;
       });
@@ -196,6 +197,20 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
       }
     }
 
+    Future<void> logicEditChiTietPhieuNhap(Function(void Function()) setStateNhapSach) async {
+      String? message = await showDialog(
+        context: context,
+        builder: (ctx) => AddEditEnterBookDetailForm(
+          editChiTietNhapSach: chiTietPhieuNhaps[selectedRow],
+          danhSachChiTietPhieuNhapDaThem: chiTietPhieuNhaps,
+        ),
+      );
+
+      if (message == "updated") {
+        setStateNhapSach(() {});
+      }
+    }
+
     return StatefulBuilder(
       builder: (ctx, setStateNhapSach) => Padding(
           padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
@@ -226,22 +241,23 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 children: [
                   IconButton.filled(
                     onPressed: () async {
-                      List<ChiTietPhieuNhap>? newChiTietPhieuNhaps = await showDialog(
+                      await showDialog(
                         context: context,
                         builder: (ctx) {
-                          return const AddEditEnterBookDetailForm();
+                          return AddEditEnterBookDetailForm(
+                            danhSachChiTietPhieuNhapDaThem: chiTietPhieuNhaps,
+                            onAddChiTietPhieuNhap: (newChiTietPhieuNhap) {
+                              setStateNhapSach(
+                                () {
+                                  totalAmout += newChiTietPhieuNhap.tongTien;
+                                  totalAmountController.text = totalAmout.toVnCurrencyFormat();
+                                  chiTietPhieuNhaps.add(newChiTietPhieuNhap);
+                                },
+                              );
+                            },
+                          );
                         },
                       );
-
-                      if (newChiTietPhieuNhaps != null) {
-                        setStateNhapSach(() {
-                          for (var chiTietPhieuNhap in newChiTietPhieuNhaps) {
-                            totalAmout += chiTietPhieuNhap.tongTien;
-                            chiTietPhieuNhaps.add(chiTietPhieuNhap);
-                          }
-                          totalAmountController.text = totalAmout.toVnCurrencyFormat();
-                        });
-                      }
                     },
                     icon: const Icon(Icons.add_rounded),
                     style: myIconButtonStyle,
@@ -250,7 +266,22 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                   /* 
                   */
                   IconButton.filled(
-                    onPressed: 0 == -1 ? null : () async {},
+                    onPressed: selectedRow == -1
+                        ? null
+                        : () async {
+                            setStateNhapSach(() {
+                              // Cập nhật lại tổng số tiền nhập sách trước khi xóa
+                              totalAmout -= chiTietPhieuNhaps[selectedRow].tongTien;
+                              totalAmountController.text = totalAmout.toVnCurrencyFormat();
+                              // Xóa
+                              chiTietPhieuNhaps.removeAt(selectedRow);
+                              // Nếu SelectedRow nằm ngoài phạm vi của chiTietPhieuNhaps
+                              // thì phải set lại bằng -1 để tránh lỗi
+                              if (selectedRow >= chiTietPhieuNhaps.length) {
+                                selectedRow = -1;
+                              }
+                            });
+                          },
                     icon: const Icon(Icons.delete),
                     style: myIconButtonStyle,
                   ),
@@ -259,7 +290,11 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                   Edit Chi tiết nhập sách
                   */
                   IconButton.filled(
-                    onPressed: 0 == -1 ? null : () {},
+                    onPressed: selectedRow == -1
+                        ? null
+                        : () {
+                            logicEditChiTietPhieuNhap(setStateNhapSach);
+                          },
                     icon: const Icon(Icons.edit),
                     style: myIconButtonStyle,
                   ),
@@ -358,54 +393,70 @@ class _BookManageState extends State<BookManage> with TickerProviderStateMixin {
                             (index) {
                               return Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      const Gap(30),
-                                      SizedBox(
-                                        width: 80,
-                                        child: Text(
-                                          (index + 1).toString(),
-                                        ),
+                                  Ink(
+                                    color: selectedRow == index ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setStateNhapSach(
+                                          () => selectedRow = index,
+                                        );
+                                      },
+                                      onLongPress: () {
+                                        setStateNhapSach(
+                                          () => selectedRow = index,
+                                        );
+                                        logicEditChiTietPhieuNhap(setStateNhapSach);
+                                      },
+                                      child: Row(
+                                        children: [
+                                          const Gap(30),
+                                          SizedBox(
+                                            width: 80,
+                                            child: Text(
+                                              (index + 1).toString(),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 15,
+                                                horizontal: 15,
+                                              ),
+                                              child: Text(
+                                                context.read<TatCaSachCubit>().getTenDauSach(chiTietPhieuNhaps[index].maSach),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                              ),
+                                              child: Text(
+                                                chiTietPhieuNhaps[index].maSach.toString(),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 15,
+                                              ),
+                                              child: Text(chiTietPhieuNhaps[index].soLuong.toString()),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 15,
+                                              ),
+                                              child: Text(chiTietPhieuNhaps[index].donGia.toVnCurrencyWithoutSymbolFormat()),
+                                            ),
+                                          ),
+                                          const Gap(30),
+                                        ],
                                       ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 15,
-                                            horizontal: 15,
-                                          ),
-                                          child: Text(
-                                            context.read<TatCaSachCubit>().getTenDauSach(chiTietPhieuNhaps[index].maSach),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          child: Text(
-                                            chiTietPhieuNhaps[index].maSach.toString(),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                          ),
-                                          child: Text(chiTietPhieuNhaps[index].soLuong.toString()),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 15,
-                                          ),
-                                          child: Text(chiTietPhieuNhaps[index].donGia.toVnCurrencyWithoutSymbolFormat()),
-                                        ),
-                                      ),
-                                      const Gap(30),
-                                    ],
+                                    ),
                                   ),
                                   if (index < chiTietPhieuNhaps.length - 1)
                                     const Divider(

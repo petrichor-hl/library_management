@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
-      home: const Login(),
+      home: const LibraryManagement(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
