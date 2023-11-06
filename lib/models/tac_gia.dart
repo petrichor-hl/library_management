@@ -1,6 +1,6 @@
 class TacGia {
   int? maTacGia;
-  StringSink tenTacGia;
+  String tenTacGia;
 
   TacGia(
     this.maTacGia,

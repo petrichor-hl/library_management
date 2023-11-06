@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:library_management/screens/book_manage/kho_sach.dart';
 import 'package:library_management/screens/book_manage/nhap_sach.dart';
+import 'package:library_management/screens/book_manage/quan_ly_dau_sach.dart';
 import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap.dart';
 
 class BookManage extends StatefulWidget {
@@ -17,7 +18,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    tabController = TabController(length: 4, vsync: this, initialIndex: 1);
   }
 
   @override
@@ -36,7 +37,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 25, 30, 20),
             child: Ink(
-              width: 370,
+              width: 480,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -49,15 +50,10 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 ),
                 controller: tabController,
                 tabs: const [
-                  Tab(
-                    text: "Kho sách",
-                  ),
-                  Tab(
-                    text: "Nhập sách",
-                  ),
-                  Tab(
-                    text: "Phiếu nhập",
-                  ),
+                  Tab(text: "Kho sách"),
+                  Tab(text: 'Đầu Sách'),
+                  Tab(text: "Nhập sách"),
+                  Tab(text: "Phiếu nhập"),
                 ],
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -89,6 +85,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
               controller: tabController,
               children: [
                 buildKhoSach(),
+                const QuanLyDauSach(),
                 buildNhapSach(),
                 const QuanLyPhieuNhap(),
               ],
