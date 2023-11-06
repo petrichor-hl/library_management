@@ -60,3 +60,44 @@ VALUES
 ('2', '5', '3', '57000'),
 ('3', '6', '5', '77600'),
 ('3', '7', '2', '58000');
+
+INSERT INTO TacGia(TenTacGia) 
+VALUES
+('Paulo Coelho'), -- id: 1
+('J. D. Salinger'), -- id: 2
+('Viktor Frankl'),
+('Nguyễn Nhật Ánh'), -- id: 4
+('Cửu Bả Đao'),
+('Cửu Dạ Hồi'),
+('Nguyễn Ngọc Tư'),
+('Robert Kiyosaki'),
+('Sharon L. Lechter');
+
+INSERT INTO TacGia_DauSach(MaTacGia, MaDauSach) 
+VALUES
+('1', '1'),
+('2', '2'),
+('3', '3'),
+('4', '4'),
+('4', '9'),
+('5', '5'),
+('6', '6'),
+('7', '7'),
+('8', '8'),
+('9', '8');
+
+INSERT INTO TheLoai(TenTheLoai) 
+VALUES
+('Tiểu thuyết'),  -- id: 1
+('Hư cấu kỳ ảo'),  -- id: 2
+('Phiêu lưu'),
+('Giáo dục'),
+('Tuổi mới lớn');
+
+INSERT INTO DauSach_TheLoai(MaDauSach, MaTheLoai) 
+VALUES
+('1', '1'),
+('1', '2'),
+('1', '3'),
+('2', '4'),
+('2', '5');

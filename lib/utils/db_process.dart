@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
+import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/sach.dart';
+import 'package:library_management/models/tac_gia.dart';
+import 'package:library_management/models/the_loai.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 import 'package:sqflite/utils/utils.dart';
@@ -265,6 +268,64 @@ class DbProcess {
           element['TenDauSach'],
         ),
       );
+    }
+
+    return dauSachs;
+  }
+
+  Future<List<DauSachDto>> queryDauSachDto() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from DauSach 
+      ''',
+    );
+
+    List<DauSachDto> dauSachs = [];
+
+    for (var element in data) {
+      final dauSach = DauSachDto(
+        element['MaDauSach'],
+        element['TenDauSach'],
+        [],
+        [],
+      );
+
+      List<Map<String, dynamic>> tacGiasData = await _database.rawQuery(
+        '''
+        select MaTacGia, TenTacGia from TacGia_DauSach join TacGia USING(MaTacGia)
+        where MaDauSach = ?
+        ''',
+        [dauSach.maDauSach],
+      );
+
+      for (var tacGiaData in tacGiasData) {
+        dauSach.tacGias.add(
+          TacGia(
+            tacGiaData['MaTacGia'],
+            tacGiaData['TenTacGia'],
+          ),
+        );
+      }
+
+      List<Map<String, dynamic>> theLoaisData = await _database.rawQuery(
+        '''
+        select MaTheLoai, TenTheLoai from DauSach_TheLoai join TheLoai USING(MaTheLoai)
+        where MaDauSach = ?
+        ''',
+        [dauSach.maDauSach],
+      );
+
+      for (var theLoaiData in theLoaisData) {
+        dauSach.theLoais.add(
+          TheLoai(
+            theLoaiData['MaTheLoai'],
+            theLoaiData['TenTheLoai'],
+            "",
+          ),
+        );
+      }
+
+      dauSachs.add(dauSach);
     }
 
     return dauSachs;
