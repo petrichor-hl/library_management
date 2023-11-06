@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:library_management/components/forms/add_edit_dau_sach_form/add_edit_dau_sach_form.dart';
 import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/main.dart';
@@ -22,6 +23,11 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
 
   late final Future<void> _futureDauSachs = _getDauSachs();
   Future<void> _getDauSachs() async {
+    /* 
+    Delay 1 khoảng bằng thời gian animation của TabController 
+    Tạo chuyển động mượt mà 
+    */
+    await Future.delayed(kTabScrollDuration);
     _dauSachs = await dbProcess.queryDauSachDto();
     _filteredDauSachs = List.of(_dauSachs);
   }
@@ -77,7 +83,13 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                   ),
                   const Spacer(),
                   FilledButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      // TODO: Xử lý Thêm Đầu Sách
+                      await showDialog(
+                        context: context,
+                        builder: (ctx) => const AddEditDauSachForm(),
+                      );
+                    },
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('Thêm đầu sách'),
                     style: TextButton.styleFrom(
@@ -162,7 +174,9 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                             ),
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(left: 15),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                ),
                                 child: Text(
                                   'Thể loại',
                                   style: TextStyle(
@@ -170,6 +184,17 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                                     fontSize: 16,
                                     fontStyle: FontStyle.italic,
                                   ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 80,
+                              child: Text(
+                                'Số lượng',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.italic,
                                 ),
                               ),
                             ),
@@ -229,24 +254,30 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                                           ),
                                           Expanded(
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 15,
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 15,
                                               ),
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      _filteredDauSachs[index].theLoaisToString(),
-                                                    ),
+                                              child: Text(
+                                                _filteredDauSachs[index].theLoaisToString(),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 80,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    _filteredDauSachs[index].soLuong.toString(),
                                                   ),
-                                                  const Gap(10),
-                                                  if (_selectedRow == index)
-                                                    Icon(
-                                                      Icons.check,
-                                                      color: Theme.of(context).colorScheme.primary,
-                                                    )
-                                                ],
-                                              ),
+                                                ),
+                                                const Gap(10),
+                                                if (_selectedRow == index)
+                                                  Icon(
+                                                    Icons.check,
+                                                    color: Theme.of(context).colorScheme.primary,
+                                                  )
+                                              ],
                                             ),
                                           ),
                                           const Gap(30),

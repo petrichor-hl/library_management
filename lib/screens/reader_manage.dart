@@ -38,6 +38,11 @@ class _ReaderManageState extends State<ReaderManage> {
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
+    /* 
+    Delay 1 khoảng bằng thời gian animation của TabController 
+    Tạo chuyển động mượt mà 
+    */
+    await Future.delayed(kTabScrollDuration);
     _readerRows = await dbProcess.queryDocGia(numberRowIgnore: 0);
     _readerCount = await dbProcess.queryCountDocGia();
   }

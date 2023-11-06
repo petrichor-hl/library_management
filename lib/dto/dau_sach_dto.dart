@@ -4,12 +4,14 @@ import 'package:library_management/models/the_loai.dart';
 class DauSachDto {
   int? maDauSach;
   String tenDauSach;
+  int soLuong;
   List<TacGia> tacGias;
   List<TheLoai> theLoais;
 
   DauSachDto(
     this.maDauSach,
     this.tenDauSach,
+    this.soLuong,
     this.tacGias,
     this.theLoais,
   );

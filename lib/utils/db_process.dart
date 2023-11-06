@@ -286,11 +286,27 @@ class DbProcess {
       final dauSach = DauSachDto(
         element['MaDauSach'],
         element['TenDauSach'],
+        0,
         [],
         [],
       );
 
-      List<Map<String, dynamic>> tacGiasData = await _database.rawQuery(
+      QueryCursor cur = await _database.rawQueryCursor(
+        '''
+        select sum(SoLuong) as SoLuong
+        from DauSach join Sach using(MaDauSach)
+        join CT_PhieuNhap using(MaSach)
+        where MaDauSach = ?
+        ''',
+        [dauSach.maDauSach],
+      );
+
+      await cur.moveNext();
+      int? soLuong = cur.current['SoLuong'] as int?;
+      dauSach.soLuong = soLuong ?? 0;
+      cur.moveNext();
+
+      cur = await _database.rawQueryCursor(
         '''
         select MaTacGia, TenTacGia from TacGia_DauSach join TacGia USING(MaTacGia)
         where MaDauSach = ?
@@ -298,16 +314,16 @@ class DbProcess {
         [dauSach.maDauSach],
       );
 
-      for (var tacGiaData in tacGiasData) {
+      while (await cur.moveNext()) {
         dauSach.tacGias.add(
           TacGia(
-            tacGiaData['MaTacGia'],
-            tacGiaData['TenTacGia'],
+            cur.current['MaTacGia'] as int,
+            cur.current['TenTacGia'] as String,
           ),
         );
       }
 
-      List<Map<String, dynamic>> theLoaisData = await _database.rawQuery(
+      cur = await _database.rawQueryCursor(
         '''
         select MaTheLoai, TenTheLoai from DauSach_TheLoai join TheLoai USING(MaTheLoai)
         where MaDauSach = ?
@@ -315,15 +331,50 @@ class DbProcess {
         [dauSach.maDauSach],
       );
 
-      for (var theLoaiData in theLoaisData) {
+      while (await cur.moveNext()) {
         dauSach.theLoais.add(
           TheLoai(
-            theLoaiData['MaTheLoai'],
-            theLoaiData['TenTheLoai'],
+            cur.current['MaTheLoai'] as int,
+            cur.current['TenTheLoai'] as String,
             "",
           ),
         );
       }
+
+      // List<Map<String, dynamic>> tacGiasData = await _database.rawQuery(
+      //   '''
+      //   select MaTacGia, TenTacGia from TacGia_DauSach join TacGia USING(MaTacGia)
+      //   where MaDauSach = ?
+      //   ''',
+      //   [dauSach.maDauSach],
+      // );
+
+      // for (var tacGiaData in tacGiasData) {
+      //   dauSach.tacGias.add(
+      //     TacGia(
+      //       tacGiaData['MaTacGia'],
+      //       tacGiaData['TenTacGia'],
+      //     ),
+      //   );
+      // }
+
+      // List<Map<String, dynamic>> theLoaisData = await _database.rawQuery(
+      //   '''
+      //   select MaTheLoai, TenTheLoai from DauSach_TheLoai join TheLoai USING(MaTheLoai)
+      //   where MaDauSach = ?
+      //   ''',
+      //   [dauSach.maDauSach],
+      // );
+
+      // for (var theLoaiData in theLoaisData) {
+      //   dauSach.theLoais.add(
+      //     TheLoai(
+      //       theLoaiData['MaTheLoai'],
+      //       theLoaiData['TenTheLoai'],
+      //       "",
+      //     ),
+      //   );
+      // }
 
       dauSachs.add(dauSach);
     }
@@ -440,6 +491,70 @@ class DbProcess {
     return await _database.insert(
       'CT_PhieuNhap',
       newChiTietPhieuNhap.toMap(),
+    );
+  }
+
+  /* TAC GIA CODE */
+  Future<List<TacGia>> queryTacGias() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TacGia;
+      ''',
+    );
+
+    List<TacGia> tacGias = [];
+
+    for (var element in data) {
+      tacGias.add(
+        TacGia(
+          element['MaTacGia'],
+          element['TenTacGia'],
+        ),
+      );
+    }
+
+    return tacGias;
+  }
+
+  Future<int> insertTacGia(TacGia newTacGia) async {
+    return await _database.insert(
+      'TacGia',
+      {
+        'TenTacGia': newTacGia.tenTacGia,
+      },
+    );
+  }
+
+  /* THE LOAI CODE */
+
+  Future<List<TheLoai>> queryTheLoais() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TheLoai;
+      ''',
+    );
+
+    List<TheLoai> theLoais = [];
+
+    for (var element in data) {
+      theLoais.add(
+        TheLoai(
+          element['MaTheLoai'],
+          element['TenTheLoai'],
+          "",
+        ),
+      );
+    }
+
+    return theLoais;
+  }
+
+  Future<int> insertTheLoai(TheLoai newTheLoai) async {
+    return await _database.insert(
+      'TheLoai',
+      {
+        'TenTacGia': newTheLoai.tenTheLoai,
+      },
     );
   }
 

@@ -22,8 +22,10 @@ class _TatCarSachDState extends State<TatCaSach> {
   final _searchController = TextEditingController();
 
   Future<void> prepareSachData() async {
-    if (context.read<TatCaSachCubit>().state == null) {
-      context.read<TatCaSachCubit>().setList(await dbProcess.querySach());
+    if (mounted) {
+      if (context.read<TatCaSachCubit>().state == null) {
+        context.read<TatCaSachCubit>().setList(await dbProcess.querySach());
+      }
     }
   }
 
