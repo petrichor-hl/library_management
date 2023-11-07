@@ -146,7 +146,10 @@ class _TacGiaFormState extends State<TacGiaForm> {
                             TacGia tacGia = _filteredTacGias[index];
                             final isSelected = context.read<SelectedTacGiaCubit>().contains(tacGia);
                             return MouseRegion(
-                              onEnter: (event) => setStateListItem(
+                              onEnter: (_) => setStateListItem(
+                                () => isHover = true,
+                              ),
+                              onHover: (_) => setStateListItem(
                                 () => isHover = true,
                               ),
                               onExit: (_) => setStateListItem(

@@ -3,14 +3,23 @@ import 'package:library_management/models/tac_gia.dart';
 
 class SelectedTacGiaCubit extends Cubit<List<TacGia>> {
   SelectedTacGiaCubit() : super([]);
+  /* secondary constructor */
+  SelectedTacGiaCubit.of(List<TacGia> tacGias) : super(tacGias);
 
   void add(TacGia tacGia) => emit([...state, tacGia]);
   void remove(TacGia tacGia) {
-    state.remove(tacGia);
+    state.removeWhere(
+      (element) => element.maTacGia == tacGia.maTacGia,
+    );
     emit([...state]);
   }
 
-  bool contains(TacGia tacGia) {
-    return state.contains(tacGia);
+  bool contains(TacGia needCheckTacGia) {
+    for (var tacGia in state) {
+      if (tacGia.maTacGia == needCheckTacGia.maTacGia) {
+        return true;
+      }
+    }
+    return false;
   }
 }

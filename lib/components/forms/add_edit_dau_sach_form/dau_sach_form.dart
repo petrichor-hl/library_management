@@ -6,7 +6,6 @@ import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
 import 'package:library_management/cubit/selected_the_loai_cubit.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
 
@@ -16,7 +15,7 @@ class DauSachForm extends StatefulWidget {
     this.editDauSach,
   });
 
-  final DauSach? editDauSach;
+  final DauSachDto? editDauSach;
 
   @override
   State<DauSachForm> createState() => _DauSachFormState();
@@ -54,12 +53,41 @@ class _DauSachFormState extends State<DauSachForm> {
           Navigator.of(context).pop(newDauSachDto);
         }
       } else {
-        // TODO
+        widget.editDauSach!.tenDauSach = _tenDauSachController.text;
+        // ignore: use_build_context_synchronously
+        widget.editDauSach!.tacGias = context.read<SelectedTacGiaCubit>().state;
+        // ignore: use_build_context_synchronously
+        widget.editDauSach!.theLoais = context.read<SelectedTheLoaiCubit>().state;
+
+        await dbProcess.updateDauSachDto(widget.editDauSach!);
+
+        if (mounted) {
+          Navigator.of(context).pop('updated');
+        }
       }
 
       setState(() {
         _isProcessing = false;
       });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(widget.editDauSach == null ? 'Tạo Đầu sách thành công.' : 'Cập nhật thông tin thành công'),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            width: 300,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editDauSach != null) {
+      _tenDauSachController.text = widget.editDauSach!.tenDauSach;
     }
   }
 

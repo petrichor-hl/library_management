@@ -123,14 +123,16 @@ class _ReaderManageState extends State<ReaderManage> {
       Trường hợp đặc biệt:
       Thủ thư đang ở trang cuối cùng và xóa nốt dòng cuối cùng 
       thì phải chuyển lại sang trang trước đó.
-
-      Nếu không còn trang trước đó, tức _readerCount == 0, thì không cần làm gì cả
+      VD: Xóa hết các dòng ở trang 3 thì tự động chuyển về trang 2
       */
       if (_readerRows.isEmpty && _readerCount > 0) {
         currentPage--;
         _paginationController.text = currentPage.toString();
         _loadReadersOfPageIndex(currentPage);
       }
+      /* 
+      Nếu không còn trang trước đó, tức _readerCount == 0, thì không cần làm gì cả 
+      */
     } else {
       _loadReadersOfPageIndex(currentPage);
     }
@@ -166,6 +168,13 @@ class _ReaderManageState extends State<ReaderManage> {
 
     setState(() {
       _readerRows = newReaderRows;
+      /* 
+      Chuyển sang trang khác phải cho _selectedRow = -1
+      VD: 
+      Đang ở trang 1 và selectedRow = 4 (đang ở dòng 5),
+      mà chuyển sang trang 2, chỉ có 2 dòng
+      => Gây ra LỖI
+      */
       _selectedRow = -1;
     });
   }

@@ -47,15 +47,9 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
           _filteredDauSachs = List.of(_dauSachs);
         } else {
           _filteredDauSachs = _dauSachs.where((element) {
-            if (element.tenDauSach.toLowerCase().contains(searchText)) {
-              return true;
-            }
-
-            if (element.tacGiasToString().toLowerCase().contains(searchText)) {
-              return true;
-            }
-
-            if (element.theLoaisToString().toLowerCase().contains(searchText)) {
+            if (element.tenDauSach.toLowerCase().contains(searchText) ||
+                element.tacGiasToString().toLowerCase().contains(searchText) ||
+                element.theLoaisToString().toLowerCase().contains(searchText)) {
               return true;
             }
             return false;
@@ -90,7 +84,6 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                         builder: (ctx) => const AddEditDauSachForm(),
                       );
 
-                      print(newDauSachDto);
                       if (newDauSachDto != null) {
                         setState(() {
                           _dauSachs.add(newDauSachDto);
@@ -108,9 +101,67 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                   ),
                   const Gap(12),
                   IconButton.filled(
-                    onPressed: _selectedRow == -1 ? null : () async {},
+                    onPressed: (_selectedRow == -1 || _filteredDauSachs[_selectedRow].soLuong != 0)
+                        ? null
+                        : () async {
+                            final readyDeleteDauSach = _filteredDauSachs[_selectedRow];
+                            await showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Xác nhận'),
+                                content: Text('Bạn có chắc xóa Đầu sách ${readyDeleteDauSach.tenDauSach}?'),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Huỷ'),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () async {
+                                      await dbProcess.deleteDauSachWithId(readyDeleteDauSach.maDauSach!);
+
+                                      setState(() {
+                                        _dauSachs.removeWhere((element) => element.maDauSach == readyDeleteDauSach.maDauSach);
+                                        _filteredDauSachs.removeAt(_selectedRow);
+                                        /*
+                                        Phòng trường hợp khi _selectedRow đang ở cuối bảng và ta nhấn xóa dòng cuối của bảng
+                                        Lúc này _selectedRow đã nằm ngoài mảng, và nút "Xóa" vẫn chưa được Disable
+                                        => Có khả năng gây ra lỗi
+                                        Solution: Sau khi xóa phải kiểm tra lại 
+                                        xem _selectedRow có nằm ngoài phạm vi của _filteredDauSachs hay không.
+                                        */
+                                        if (_selectedRow >= _filteredDauSachs.length) {
+                                          _selectedRow = -1;
+                                        }
+                                      });
+                                      if (mounted) {
+                                        Navigator.of(context).pop();
+                                        ScaffoldMessenger.of(context).clearSnackBars();
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Đã xóa Đầu sách ${readyDeleteDauSach.tenDauSach}.',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            behavior: SnackBarBehavior.floating,
+                                            width: 400,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Có'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                     icon: const Icon(Icons.delete),
                     style: myIconButtonStyle,
+                    tooltip: 'Chỉ có thể xóa những Đầu sách có số lượng bằng 0.',
                   ),
                   const Gap(12),
                   /* 
@@ -118,7 +169,20 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                     Logic xử lý _logicEditReader xem ở phần khai báo bên trên
                     */
                   IconButton.filled(
-                    onPressed: _selectedRow == -1 ? null : () {},
+                    onPressed: _selectedRow == -1
+                        ? null
+                        : () async {
+                            String? message = await showDialog(
+                              context: context,
+                              builder: (ctx) => AddEditDauSachForm(
+                                editDauSach: _filteredDauSachs[_selectedRow],
+                              ),
+                            );
+
+                            if (message == 'updated') {
+                              setState(() {});
+                            }
+                          },
                     icon: const Icon(Icons.edit),
                     style: myIconButtonStyle,
                   ),
