@@ -7,7 +7,6 @@ import 'package:library_management/components/forms/add_edit_dau_sach_form/the_l
 import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
 import 'package:library_management/cubit/selected_the_loai_cubit.dart';
 import 'package:library_management/models/dau_sach.dart';
-import 'package:library_management/models/the_loai.dart';
 
 class AddEditDauSachForm extends StatefulWidget {
   const AddEditDauSachForm({

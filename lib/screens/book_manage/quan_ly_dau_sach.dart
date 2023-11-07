@@ -29,7 +29,6 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
     */
     await Future.delayed(kTabScrollDuration);
     _dauSachs = await dbProcess.queryDauSachDto();
-    _filteredDauSachs = List.of(_dauSachs);
   }
 
   @override
@@ -43,6 +42,26 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
           );
         }
 
+        String searchText = _searchController.text.toLowerCase();
+        if (searchText.isEmpty) {
+          _filteredDauSachs = List.of(_dauSachs);
+        } else {
+          _filteredDauSachs = _dauSachs.where((element) {
+            if (element.tenDauSach.toLowerCase().contains(searchText)) {
+              return true;
+            }
+
+            if (element.tacGiasToString().toLowerCase().contains(searchText)) {
+              return true;
+            }
+
+            if (element.theLoaisToString().toLowerCase().contains(searchText)) {
+              return true;
+            }
+            return false;
+          }).toList();
+        }
+
         return Padding(
           padding: const EdgeInsets.fromLTRB(30, 0, 30, 25),
           child: Column(
@@ -50,26 +69,7 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
             children: [
               MySearchBar(
                 controller: _searchController,
-                onSearch: () {
-                  setState(() {
-                    String searchText = _searchController.text.toLowerCase();
-
-                    _filteredDauSachs = _dauSachs.where((element) {
-                      if (element.tenDauSach.toLowerCase().contains(searchText)) {
-                        return true;
-                      }
-
-                      if (element.tacGiasToString().toLowerCase().contains(searchText)) {
-                        return true;
-                      }
-
-                      if (element.theLoaisToString().toLowerCase().contains(searchText)) {
-                        return true;
-                      }
-                      return false;
-                    }).toList();
-                  });
-                },
+                onSearch: () => setState(() {}),
               ),
               const Gap(20),
               Row(
@@ -84,11 +84,18 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                   const Spacer(),
                   FilledButton.icon(
                     onPressed: () async {
-                      // TODO: Xử lý Thêm Đầu Sách
-                      await showDialog(
+                      // Xử lý Thêm Đầu Sách
+                      DauSachDto? newDauSachDto = await showDialog(
                         context: context,
                         builder: (ctx) => const AddEditDauSachForm(),
                       );
+
+                      print(newDauSachDto);
+                      if (newDauSachDto != null) {
+                        setState(() {
+                          _dauSachs.add(newDauSachDto);
+                        });
+                      }
                     },
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('Thêm đầu sách'),

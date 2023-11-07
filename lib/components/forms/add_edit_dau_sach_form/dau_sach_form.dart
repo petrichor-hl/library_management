@@ -4,6 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
 import 'package:library_management/cubit/selected_the_loai_cubit.dart';
+import 'package:library_management/dto/dau_sach_dto.dart';
+import 'package:library_management/main.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -21,9 +23,45 @@ class DauSachForm extends StatefulWidget {
 }
 
 class _DauSachFormState extends State<DauSachForm> {
+  final _formKey = GlobalKey<FormState>();
   final _tenDauSachController = TextEditingController();
 
   bool _isProcessing = false;
+
+  void _saveDauSach() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isProcessing = true;
+      });
+
+      await Future.delayed(const Duration(microseconds: 200));
+
+      if (widget.editDauSach == null) {
+        DauSachDto newDauSachDto = DauSachDto(
+          null,
+          _tenDauSachController.text,
+          0,
+          // ignore: use_build_context_synchronously
+          context.read<SelectedTacGiaCubit>().state,
+          // ignore: use_build_context_synchronously
+          context.read<SelectedTheLoaiCubit>().state,
+        );
+
+        int returningId = await dbProcess.insertDauSachDto(newDauSachDto);
+        newDauSachDto.maDauSach = returningId;
+
+        if (mounted) {
+          Navigator.of(context).pop(newDauSachDto);
+        }
+      } else {
+        // TODO
+      }
+
+      setState(() {
+        _isProcessing = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +95,12 @@ class _DauSachFormState extends State<DauSachForm> {
                   )
                 ],
               ),
-              LabelTextFormField(
-                controller: _tenDauSachController,
-                labelText: 'Tên Đầu sách',
+              Form(
+                key: _formKey,
+                child: LabelTextFormField(
+                  controller: _tenDauSachController,
+                  labelText: 'Tên Đầu sách',
+                ),
               ),
               const Gap(12),
               Expanded(
@@ -112,7 +153,7 @@ class _DauSachFormState extends State<DauSachForm> {
                       ),
                     )
                   : FilledButton(
-                      onPressed: () {},
+                      onPressed: _saveDauSach,
                       style: FilledButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

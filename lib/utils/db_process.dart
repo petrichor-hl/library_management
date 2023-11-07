@@ -356,6 +356,40 @@ class DbProcess {
     );
   }
 
+  Future<int> insertDauSachDto(DauSachDto newDauSachDto) async {
+    // Insert Đầu sách
+    int returningId = await _database.insert(
+      'DauSach',
+      {
+        'TenDauSach': newDauSachDto.tenDauSach,
+      },
+    );
+
+    // Insert TacGia_DauSach
+    for (var tacGia in newDauSachDto.tacGias) {
+      await _database.insert(
+        'TacGia_DauSach',
+        {
+          'MaTacGia': tacGia.maTacGia,
+          'MaDauSach': returningId,
+        },
+      );
+    }
+
+    // Insert DauSach_TheLoai
+    for (var theLoai in newDauSachDto.theLoais) {
+      await _database.insert(
+        'DauSach_TheLoai',
+        {
+          'MaTheLoai': theLoai.maTheLoai,
+          'MaDauSach': returningId,
+        },
+      );
+    }
+
+    return returningId;
+  }
+
   /* SACH CODE */
   Future<List<Sach>> querySach() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
