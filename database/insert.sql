@@ -88,11 +88,12 @@ VALUES
 
 INSERT INTO TheLoai(TenTheLoai) 
 VALUES
-('Tiểu thuyết'),  -- id: 1
-('Hư cấu kỳ ảo'),  -- id: 2
+('Tiểu thuyết'),    -- id: 1
+('Hư cấu kỳ ảo'),   -- id: 2
 ('Phiêu lưu'),
 ('Giáo dục'),
-('Tuổi mới lớn');
+('Tuổi mới lớn'),
+('Tự truyện');      -- id: 6
 
 INSERT INTO DauSach_TheLoai(MaDauSach, MaTheLoai) 
 VALUES
@@ -100,4 +101,5 @@ VALUES
 ('1', '2'),
 ('1', '3'),
 ('2', '4'),
-('2', '5');
+('2', '5'),
+('3', '6');

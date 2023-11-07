@@ -29,6 +29,11 @@ class _QuanLyPhieuNhapState extends State<QuanLyPhieuNhap> {
 
   late final Future<void> _futurePhieuNhaps = getPhieuNhaps();
   Future<void> getPhieuNhaps() async {
+    /* 
+    Delay 1 khoảng bằng thời gian animation của TabController 
+    Tạo chuyển động mượt mà 
+    */
+    await Future.delayed(kTabScrollDuration);
     /* Lấy dữ liệu Phiếu Nhập từ database */
     _phieuNhaps = await dbProcess.queryPhieuNhap();
     /* Sắp xếp các Phiếu nhập theo thứ tặng Ngày Lập tăng dần */
