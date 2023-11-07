@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:library_management/components/forms/add_edit_dau_sach_form/dau_sach_form.dart';
 import 'package:library_management/components/forms/add_edit_dau_sach_form/tac_gia_form.dart';
 import 'package:library_management/components/forms/add_edit_dau_sach_form/the_loai_form.dart';
+import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
+import 'package:library_management/cubit/selected_the_loai_cubit.dart';
 import 'package:library_management/models/dau_sach.dart';
+import 'package:library_management/models/the_loai.dart';
 
 class AddEditDauSachForm extends StatefulWidget {
   const AddEditDauSachForm({
@@ -21,59 +26,35 @@ class _AddEditDauSachFormState extends State<AddEditDauSachForm> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 180),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: Dialog(
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.transparent,
-              insetPadding: const EdgeInsets.all(0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 30,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          widget.editDauSach == null ? 'THÊM ĐẦU SÁCH MỚI' : 'SỬA ĐẦU SÁCH',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: const Icon(Icons.close_rounded),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => SelectedTacGiaCubit()),
+          BlocProvider(create: (_) => SelectedTheLoaiCubit()),
+        ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: DauSachForm(
+                editDauSach: widget.editDauSach,
               ),
             ),
-          ),
-          const Gap(12),
-          const Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  child: TacGiaForm(),
-                ),
-                Gap(12),
-                Expanded(
-                  child: TheLoaiForm(),
-                ),
-              ],
-            ),
-          )
-        ],
+            const Gap(12),
+            const Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: TacGiaForm(),
+                  ),
+                  Gap(12),
+                  Expanded(
+                    child: TheLoaiForm(),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

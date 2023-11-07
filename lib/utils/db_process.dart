@@ -341,41 +341,6 @@ class DbProcess {
         );
       }
 
-      // List<Map<String, dynamic>> tacGiasData = await _database.rawQuery(
-      //   '''
-      //   select MaTacGia, TenTacGia from TacGia_DauSach join TacGia USING(MaTacGia)
-      //   where MaDauSach = ?
-      //   ''',
-      //   [dauSach.maDauSach],
-      // );
-
-      // for (var tacGiaData in tacGiasData) {
-      //   dauSach.tacGias.add(
-      //     TacGia(
-      //       tacGiaData['MaTacGia'],
-      //       tacGiaData['TenTacGia'],
-      //     ),
-      //   );
-      // }
-
-      // List<Map<String, dynamic>> theLoaisData = await _database.rawQuery(
-      //   '''
-      //   select MaTheLoai, TenTheLoai from DauSach_TheLoai join TheLoai USING(MaTheLoai)
-      //   where MaDauSach = ?
-      //   ''',
-      //   [dauSach.maDauSach],
-      // );
-
-      // for (var theLoaiData in theLoaisData) {
-      //   dauSach.theLoais.add(
-      //     TheLoai(
-      //       theLoaiData['MaTheLoai'],
-      //       theLoaiData['TenTheLoai'],
-      //       "",
-      //     ),
-      //   );
-      // }
-
       dauSachs.add(dauSach);
     }
 
@@ -553,7 +518,7 @@ class DbProcess {
     return await _database.insert(
       'TheLoai',
       {
-        'TenTacGia': newTheLoai.tenTheLoai,
+        'TenTheLoai': newTheLoai.tenTheLoai,
       },
     );
   }
