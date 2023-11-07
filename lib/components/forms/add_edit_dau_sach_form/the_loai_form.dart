@@ -150,6 +150,9 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                               onEnter: (event) => setStateListItem(
                                 () => isHover = true,
                               ),
+                              onHover: (_) => setStateListItem(
+                                () => isHover = true,
+                              ),
                               onExit: (_) => setStateListItem(
                                 () => isHover = false,
                               ),

@@ -93,7 +93,11 @@ VALUES
 ('Phiêu lưu'),
 ('Giáo dục'),
 ('Tuổi mới lớn'),
-('Tự truyện');      -- id: 6
+('Tự truyện'),      -- id: 6
+('Tình yêu'),       -- id: 7
+('Đời sống'),
+('Buồn'),           -- id: 9
+('Tài chính');
 
 INSERT INTO DauSach_TheLoai(MaDauSach, MaTheLoai) 
 VALUES
@@ -102,4 +106,10 @@ VALUES
 ('1', '3'),
 ('2', '4'),
 ('2', '5'),
-('3', '6');
+('3', '6'),
+('4', '5'),
+('5', '5'),
+('5', '7'),
+('6', '7'),
+('7', '8'),
+('8', '10');

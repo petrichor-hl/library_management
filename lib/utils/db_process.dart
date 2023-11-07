@@ -390,6 +390,93 @@ class DbProcess {
     return returningId;
   }
 
+  Future<void> updateDauSachDto(DauSachDto updatedDauSachDto) async {
+    /* Delete các Tác giả cũ đang gắn với Đầu sách */
+    await _database.rawDelete(
+      '''
+      delete from TacGia_DauSach
+      where MaDauSach = ?
+      ''',
+      [updatedDauSachDto.maDauSach],
+    );
+    /* Delete các Thể loại cũ đang gắn với Đầu sách */
+    await _database.rawDelete(
+      '''
+      delete from DauSach_TheLoai
+      where MaDauSach = ?
+      ''',
+      [updatedDauSachDto.maDauSach],
+    );
+    /* Cập nhật tên Đầu Sách */
+    await _database.rawUpdate(
+      '''
+      update DauSach
+      set TenDauSach = ?
+      where MaDauSach = ?
+      ''',
+      [
+        updatedDauSachDto.tenDauSach,
+        updatedDauSachDto.maDauSach,
+      ],
+    );
+    /* Thêm mới các Tác giả */
+    for (var tacGia in updatedDauSachDto.tacGias) {
+      await _database.insert(
+        'TacGia_DauSach',
+        {
+          'MaTacGia': tacGia.maTacGia,
+          'MaDauSach': updatedDauSachDto.maDauSach,
+        },
+      );
+    }
+    /* Thêm mới các Thể loại */
+    for (var theLoai in updatedDauSachDto.theLoais) {
+      await _database.insert(
+        'DauSach_TheLoai',
+        {
+          'MaTheLoai': theLoai.maTheLoai,
+          'MaDauSach': updatedDauSachDto.maDauSach,
+        },
+      );
+    }
+    /* DONE */
+  }
+
+  Future<void> deleteDauSachWithId(int maDauSach) async {
+    /* 
+    Vì ON DELETE CASCADE không hoạt động trong flutter 
+    
+    Nhưng khi delete DauSach trong DB Brower for SQLite thì ON DELETE CASCADE lại hoạt động, 
+    nó tự động xoát các dòng liên quan trong bảng TacGia_DauSach, DauSach_TheLoai )
+
+    => Vậy nên, phải tự delete thủ công trong Flutter 
+    */
+    /* Delete các Tác giả cũ đang gắn với Đầu sách */
+    await _database.rawDelete(
+      '''
+      delete from TacGia_DauSach
+      where MaDauSach = ?
+      ''',
+      [maDauSach],
+    );
+    /* Delete các Thể loại cũ đang gắn với Đầu sách */
+    await _database.rawDelete(
+      '''
+      delete from DauSach_TheLoai
+      where MaDauSach = ?
+      ''',
+      [maDauSach],
+    );
+    /* Delete Đầu Sách */
+    await _database.rawDelete(
+      '''
+      delete from DauSach
+      where MaDauSach = ?
+      ''',
+      [maDauSach],
+    );
+  }
+
   /* SACH CODE */
   Future<List<Sach>> querySach() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
