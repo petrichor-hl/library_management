@@ -32,7 +32,7 @@ class _TacGiaFormState extends State<TacGiaForm> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(0),
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 20,
           horizontal: 30,

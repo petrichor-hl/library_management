@@ -5,6 +5,7 @@ import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/utils/common_variables.dart';
+import 'package:library_management/utils/extension.dart';
 
 class QuanLyDauSach extends StatefulWidget {
   const QuanLyDauSach({super.key});
@@ -318,7 +319,7 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                                                 horizontal: 15,
                                               ),
                                               child: Text(
-                                                _filteredDauSachs[index].tenDauSach,
+                                                _filteredDauSachs[index].tenDauSach.capitalizeFirstLetterOfEachWord(),
                                               ),
                                             ),
                                           ),

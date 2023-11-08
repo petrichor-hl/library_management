@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:library_management/components/forms/kho_sach_form/edit_vi_tri_cuon_sach_form.dart';
+import 'package:library_management/components/forms/kho_sach_form/xem_chi_tiet_phieu_nhap_form.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/utils/extension.dart';
@@ -33,7 +34,7 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        // TODO: Add note here
+        // Gọi hàm lấy dữ liệu từ DB mỗi khi build
         future: _getCuonSachs(),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -176,92 +177,107 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                     itemBuilder: (ctx, index) {
                       return Column(
                         children: [
-                          Ink(
-                            // color: _selectedRow == index ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
-                            child: InkWell(
-                              onTap: () {
-                                // setState(() {
-                                //   _selectedRow = index;
-                                // });
-                              },
-                              // onLongPress: () {
-                              //   setState(() {
-                              //     _selectedRow = index;
-                              //   });
-                              //   // logicEditChiTietPhieuNhap(setStateNhapSach);
-                              // },
-                              child: Row(
-                                children: [
-                                  const Gap(30),
-                                  SizedBox(
-                                    width: 50,
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 30),
+                                  child: Text(
+                                    (index + 1).toString(),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  child: Text(
+                                    _cuonSachs[index].tenDauSach.capitalizeFirstLetter(),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  child: Text(
+                                    _cuonSachs[index].lanTaiBan.toString(),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                  ),
+                                  child: Text(
+                                    _cuonSachs[index].nhaXuatBan,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () async {},
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 15,
+                                      horizontal: 15,
+                                    ),
                                     child: Text(
-                                      (index + 1).toString(),
+                                      _cuonSachs[index].tinhTrang,
                                     ),
                                   ),
-                                  Expanded(
+                                ),
+                              ),
+                              SizedBox(
+                                width: 280,
+                                child: StatefulBuilder(builder: (ctx, setStateViTriInkWell) {
+                                  return InkWell(
+                                    onTap: () async {
+                                      String? updatedViTri = await showDialog(context: context, builder: (ctx) => EditViTriCuonSachForm(viTri: _cuonSachs[index].viTri));
+
+                                      if (updatedViTri != null) {
+                                        setStateViTriInkWell(
+                                          () => _cuonSachs[index].viTri = updatedViTri,
+                                        );
+                                        dbProcess.updateViTriCuonSach(_cuonSachs[index]);
+                                      }
+                                    },
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 15,
                                         horizontal: 15,
                                       ),
                                       child: Text(
-                                        _cuonSachs[index].tenDauSach.capitalizeFirstLetter(),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                      ),
-                                      child: Text(
-                                        _cuonSachs[index].lanTaiBan.toString(),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                      ),
-                                      child: Text(
-                                        _cuonSachs[index].nhaXuatBan,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 15,
-                                      ),
-                                      child: Text(
-                                        _cuonSachs[index].tinhTrang,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 280,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                                      child: Text(
                                         _cuonSachs[index].viTri,
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 90,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 15),
-                                      child: Text(
-                                        _cuonSachs[index].maCTPN.toString(),
+                                  );
+                                }),
+                              ),
+                              SizedBox(
+                                width: 120,
+                                child: InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => XemChiTietPhieuNhap(
+                                        maCTPN: _cuonSachs[index].maCTPN,
                                       ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 30),
+                                    child: Text(
+                                      _cuonSachs[index].maCTPN.toString(),
                                     ),
                                   ),
-                                  const Gap(30),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                           if (index < _cuonSachs.length - 1)
                             const Divider(

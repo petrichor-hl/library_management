@@ -753,5 +753,32 @@ class DbProcess {
     return cuonSachs;
   }
 
+  Future<void> updateViTriCuonSach(CuonSachDto updatedCuonSachDto) async {
+    await _database.rawUpdate(
+      '''
+      update CuonSach
+      set ViTri = ?
+      where MaCuonSach = ?
+      ''',
+      [
+        updatedCuonSachDto.viTri,
+        updatedCuonSachDto.maCuonSach,
+      ],
+    );
+  }
+
+  Future<Map<String, dynamic>> queryThongTinChiTietPhieuNhapCuonSach(int maCTPN) async {
+    final data = await _database.rawQuery(
+      '''
+      select MaPhieuNhap, NgayLap, SoLuong, DonGia
+      from PhieuNhap
+      join CT_PhieuNhap using(MaPhieuNhap)
+      where MaCTPN = ?
+      ''',
+      [maCTPN],
+    );
+    return data.first;
+  }
+
   /* REPORT CODE */
 }
