@@ -63,7 +63,16 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
             children: [
               MySearchBar(
                 controller: _searchController,
-                onSearch: () => setState(() {}),
+                onSearch: (value) {
+                  /* 
+                  Phòng trường hợp gõ tiếng việt
+                  VD: o -> (rỗng) -> ỏ
+                  Lúc này, value sẽ bằng '' (rỗng) nhưng _searchController.text lại bằng "ỏ"
+                  */
+                  if (_searchController.text == value) {
+                    setState(() {});
+                  }
+                },
               ),
               const Gap(20),
               Row(

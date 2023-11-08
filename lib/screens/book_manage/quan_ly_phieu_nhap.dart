@@ -25,7 +25,7 @@ class _QuanLyPhieuNhapState extends State<QuanLyPhieuNhap> {
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
 
-  List<ChiTietPhieuNhapDTO> _chiTietPhieuNhap = [];
+  List<ChiTietPhieuNhapDto> _chiTietPhieuNhap = [];
 
   late final Future<void> _futurePhieuNhaps = getPhieuNhaps();
   Future<void> getPhieuNhaps() async {

@@ -209,10 +209,17 @@ class _ReaderManageState extends State<ReaderManage> {
               children: [
                 MySearchBar(
                   controller: _searchController,
-                  onSearch: () async {
-                    _paginationController.text = '1';
-                    _readerCount = await dbProcess.queryCountDocGiaFullnameWithString(_searchController.text);
-                    _loadReadersOfPageIndex(1);
+                  onSearch: (value) async {
+                    /* 
+                    Phòng trường hợp gõ tiếng việt
+                    VD: o -> (rỗng) -> ỏ
+                    Lúc này, value sẽ bằng '' (rỗng) nhưng _searchController.text lại bằng "ỏ"
+                    */
+                    if (_searchController.text == value) {
+                      _paginationController.text = '1';
+                      _readerCount = await dbProcess.queryCountDocGiaFullnameWithString(_searchController.text);
+                      _loadReadersOfPageIndex(1);
+                    }
                   },
                 ),
                 const SizedBox(height: 24),

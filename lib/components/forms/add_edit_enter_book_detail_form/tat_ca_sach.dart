@@ -74,8 +74,15 @@ class _TatCarSachDState extends State<TatCaSach> {
                 children: [
                   MySearchBar(
                     controller: _searchController,
-                    onSearch: () {
-                      setStateColumn(() {});
+                    onSearch: (value) {
+                      /* 
+                      Phòng trường hợp gõ tiếng việt
+                      VD: o -> (rỗng) -> ỏ
+                      Lúc này, value sẽ bằng '' (rỗng) nhưng _searchController.text lại bằng "ỏ"
+                      */
+                      if (_searchController.text == value) {
+                        setStateColumn(() {});
+                      }
                     },
                   ),
                   const SizedBox(height: 10),

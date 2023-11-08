@@ -1,8 +1,8 @@
-class ChiTietPhieuNhapDTO {
+class ChiTietPhieuNhapDto {
   int maCTPN;
   String tenDauSach;
   int soLuong;
   int donGia;
 
-  ChiTietPhieuNhapDTO(this.maCTPN, this.tenDauSach, this.soLuong, this.donGia);
+  ChiTietPhieuNhapDto(this.maCTPN, this.tenDauSach, this.soLuong, this.donGia);
 }
