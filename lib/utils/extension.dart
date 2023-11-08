@@ -12,13 +12,30 @@ extension IntExtension on int {
   }
 
   String toVnCurrencyWithoutSymbolFormat() {
-    return NumberFormat.currency(locale: 'vi_VN', symbol: '')
-        .format(this)
-        .trim();
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '').format(this).trim();
   }
 
   String twoDigits() {
     if (this >= 10) return "$this";
     return "0$this";
+  }
+}
+
+extension StringExtension on String {
+  String capitalizeFirstLetter() {
+    if (isEmpty) {
+      return this;
+    }
+    return this[0].toUpperCase() + substring(1);
+  }
+
+  /* Dùng để format họ tên */
+  String capitalizeFirstLetterOfEachWord() {
+    trim();
+    List<String> words = split(" ");
+    for (int i = 0; i < words.length; i++) {
+      words[i] = words[i][0].toUpperCase() + words[i].substring(1);
+    }
+    return words.join(" ");
   }
 }

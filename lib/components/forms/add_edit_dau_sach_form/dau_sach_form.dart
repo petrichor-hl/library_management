@@ -92,6 +92,12 @@ class _DauSachFormState extends State<DauSachForm> {
   }
 
   @override
+  void dispose() {
+    _tenDauSachController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.white,

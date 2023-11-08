@@ -8,7 +8,7 @@ class MySearchBar extends StatelessWidget {
   });
 
   final TextEditingController controller;
-  final void Function() onSearch;
+  final void Function(String) onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +35,19 @@ class MySearchBar extends StatelessWidget {
               ),
               contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
             ),
-            onEditingComplete: onSearch,
+            onEditingComplete: () => onSearch(controller.text),
+            /* 
+              Khi gõ vào thanh tìm kiếm 1 chữ cái tiếng việt như từ ỏ
+              thì value biến value sẽ lần lượt như sau:
+              o -> rỗng -> ỏ
+              nên khi value rỗng thì nó kích hoạt lệnh if (value.isEmpty)
+              */
             onChanged: (value) async {
               if (value.isEmpty) {
                 await Future.delayed(
                   const Duration(milliseconds: 50),
                 );
-                onSearch();
+                onSearch("");
               }
             },
           ),
@@ -50,7 +56,7 @@ class MySearchBar extends StatelessWidget {
           width: 12,
         ),
         FilledButton(
-          onPressed: () => onSearch(),
+          onPressed: () => onSearch(controller.text),
           style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

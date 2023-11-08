@@ -43,6 +43,7 @@ extension NhapSach on BookManageState {
         chiTietPhieuNhap.maPhieuNhap = maPhieuNhap;
         dbProcess.insertChiTietPhieuNhap(chiTietPhieuNhap);
       }
+
       setStateNhapSach(() {
         totalAmout = 0;
         totalAmountController.text = '0';

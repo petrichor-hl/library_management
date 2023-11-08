@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:library_management/screens/book_manage/kho_sach.dart';
+import 'package:library_management/screens/book_manage/kho_sach/kho_sach.dart';
 import 'package:library_management/screens/book_manage/nhap_sach.dart';
 import 'package:library_management/screens/book_manage/quan_ly_dau_sach.dart';
 import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap.dart';
@@ -13,7 +13,6 @@ class BookManage extends StatefulWidget {
 
 class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   late final TabController tabController;
-  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -24,7 +23,6 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void dispose() {
     tabController.dispose();
-    searchController.dispose();
     super.dispose();
   }
 
@@ -84,7 +82,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
             child: TabBarView(
               controller: tabController,
               children: [
-                buildKhoSach(),
+                const KhoSach(),
                 const QuanLyDauSach(),
                 buildNhapSach(),
                 const QuanLyPhieuNhap(),
