@@ -253,6 +253,8 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                                       ),
                                       child: Text(
                                         _cuonSachs[index].viTri,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   );

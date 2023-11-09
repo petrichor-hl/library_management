@@ -17,7 +17,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this, initialIndex: 1);
+    tabController = TabController(length: 4, vsync: this, initialIndex: 0);
   }
 
   @override

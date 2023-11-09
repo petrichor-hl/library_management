@@ -44,11 +44,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF56BDDE)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF48B8E9)),
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
-      home: const LibraryManagement(),
+      home: const Login(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

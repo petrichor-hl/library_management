@@ -61,7 +61,7 @@ extension NhapSach on BookManageState {
             width: 350,
             action: SnackBarAction(
               label: 'Xem',
-              onPressed: () => tabController.animateTo(2),
+              onPressed: () => tabController.animateTo(3),
             ),
           ),
         );

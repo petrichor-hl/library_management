@@ -5,6 +5,7 @@ import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/sach.dart';
+import 'package:library_management/utils/extension.dart';
 
 class TatCaSach extends StatefulWidget {
   const TatCaSach({
@@ -133,7 +134,8 @@ class _TatCarSachDState extends State<TatCaSach> {
                                     ),
                                   ),
                                 ),
-                                Expanded(
+                                SizedBox(
+                                  width: 240,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 15,
@@ -190,13 +192,14 @@ class _TatCarSachDState extends State<TatCaSach> {
                                             width: 80,
                                             child: Text(filteredSachs[index].maSach.toString()),
                                           ),
-                                          Expanded(
+                                          SizedBox(
+                                            width: 240,
                                             child: Padding(
                                               padding: const EdgeInsets.symmetric(
                                                 horizontal: 15,
                                                 vertical: 15,
                                               ),
-                                              child: Text(filteredSachs[index].tenDauSach.toString()),
+                                              child: Text(filteredSachs[index].tenDauSach.capitalizeFirstLetterOfEachWord()),
                                             ),
                                           ),
                                           Expanded(

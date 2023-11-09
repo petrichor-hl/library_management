@@ -368,7 +368,7 @@ class _ReaderManageState extends State<ReaderManage> {
                                 ConstrainedBox(
                                   constraints: const BoxConstraints(maxWidth: 150),
                                   child: Text(
-                                    reader.hoTen,
+                                    reader.hoTen.capitalizeFirstLetterOfEachWord(),
                                     style: cellTextStyle,
                                   ),
                                 ),
