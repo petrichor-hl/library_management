@@ -93,8 +93,7 @@ class DbProcess {
 
           CREATE TABLE PhieuNhap(
             MaPhieuNhap INTEGER PRIMARY KEY AUTOINCREMENT, 
-            NgayLap TEXT,
-            TongTien INTEGER
+            NgayLap TEXT
             -- MaNCC INTEGER
 
             -- FOREIGN KEY (MaNCC) REFERENCES NhaCungCap(MaNCC) ON DELETE RESTRICT
@@ -520,7 +519,9 @@ class DbProcess {
   Future<List<PhieuNhap>> queryPhieuNhap() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select * from PhieuNhap
+      select PhieuNhap.MaPhieuNhap, NgayLap, SUM(SoLuong * DonGia) as TongTien
+      from PhieuNhap join CT_PhieuNhap using(MaPhieuNhap)
+      group by MaPhieuNhap
       ''',
     );
 
@@ -548,11 +549,22 @@ class DbProcess {
     );
   }
 
+  Future<void> updateNgayLapPhieuNhap(PhieuNhap updatedPhieuNhap) async {
+    await _database.rawUpdate('''
+      update PhieuNhap
+      set NgayLap = ?
+      where MaPhieuNhap = ?
+      ''', [
+      updatedPhieuNhap.ngayLap.toVnFormat(),
+      updatedPhieuNhap.maPhieuNhap,
+    ]);
+  }
+
   /* CHI TIET PHIEU NHAP CODE */
   Future<List<ChiTietPhieuNhapDto>> queryChiTietPhieuNhapDtoWithMaPhieuNhap(int maPhieuNhap) async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select MaCTPN, TenDauSach, SoLuong, DonGia from CT_PhieuNhap 
+      select MaCTPN, TenDauSach, MaSach, SoLuong, DonGia from CT_PhieuNhap 
       join Sach using(MaSach) 
       join DauSach using(MaDauSach)
       where MaPhieuNhap = ?
@@ -567,6 +579,7 @@ class DbProcess {
         ChiTietPhieuNhapDto(
           element['MaCTPN'],
           element['TenDauSach'],
+          element['MaSach'],
           element['SoLuong'],
           element['DonGia'],
         ),
@@ -594,7 +607,7 @@ class DbProcess {
         {
           'MaCuonSach': '${newChiTietPhieuNhap.maSach}_${returningId}_$i',
           'TinhTrang': 'Có sẵn',
-          'ViTri': '',
+          'ViTri': 'Chưa có thông tin',
           'MaCTPN': returningId,
           'MaSach': newChiTietPhieuNhap.maSach,
         },
@@ -602,6 +615,59 @@ class DbProcess {
     }
 
     return returningId;
+  }
+
+  Future<void> updateSoLuongChiTietPhieuNhap(ChiTietPhieuNhapDto updatedChiTietPhieuNhap) async {
+    /* Xóa các cuốn sách có liên quan đến ChiTietPhieuNhap này */
+    await _database.rawDelete(
+      '''
+      delete from CuonSach
+      where MaCTPN = ?
+      ''',
+      [updatedChiTietPhieuNhap.maCTPN],
+    );
+
+    /* Cập nhật lại số lượng cho ChiTietPhieuNhap này */
+    await _database.rawUpdate(
+      '''
+      update CT_PhieuNhap
+      set SoLuong = ?
+      where MaCTPN = ?
+      ''',
+      [
+        updatedChiTietPhieuNhap.soLuong,
+        updatedChiTietPhieuNhap.maCTPN,
+      ],
+    );
+
+    /* Thêm lại các CuonSach với số lượng mới */
+    for (int i = 1; i <= updatedChiTietPhieuNhap.soLuong; ++i) {
+      await _database.insert(
+        'CuonSach',
+        {
+          'MaCuonSach': '${updatedChiTietPhieuNhap.maSach}_${updatedChiTietPhieuNhap.maCTPN}_$i',
+          'TinhTrang': 'Có sẵn',
+          'ViTri': 'Chưa có thông tin',
+          'MaCTPN': updatedChiTietPhieuNhap.maCTPN,
+          'MaSach': updatedChiTietPhieuNhap.maSach,
+        },
+      );
+    }
+  }
+
+  Future<void> updateDonGiaChiTietPhieuNhap(ChiTietPhieuNhapDto updatedChiTietPhieuNhap) async {
+    /* Cập nhật lại Đơn Giá cho ChiTietPhieuNhap này */
+    await _database.rawUpdate(
+      '''
+      update CT_PhieuNhap
+      set DonGia = ?
+      where MaCTPN = ?
+      ''',
+      [
+        updatedChiTietPhieuNhap.donGia,
+        updatedChiTietPhieuNhap.maCTPN,
+      ],
+    );
   }
 
   /* TAC GIA CODE */
