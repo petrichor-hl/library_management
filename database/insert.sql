@@ -46,9 +46,9 @@ VALUES
 ('1', 'NXB Trẻ', '9'),
 ('7', 'Thanh niên', '8');   -- id: 8
 
-INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('19/07/2023', '312000');
-INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('24/08/2023', '408000');
-INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('07/11/2023', '504000');
+INSERT INTO PhieuNhap(NgayLap) VALUES ('19/07/2023');
+INSERT INTO PhieuNhap(NgayLap) VALUES ('24/08/2023');
+INSERT INTO PhieuNhap(NgayLap) VALUES ('07/11/2023');
 
 INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) VALUES ('1', '3', '2', '37000');
 INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) VALUES ('1', '4', '2', '62000');
@@ -69,23 +69,23 @@ INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('4_2_
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('5_3_1', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 4', '3', '5');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('5_3_2', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 4', '3', '5');
 
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_1', 'Có sẵn', '', '4', '1');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_2', 'Có sẵn', '', '4', '1');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_3', 'Có sẵn', '', '4', '1');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_4', 'Có sẵn', '', '4', '1');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_5', 'Có sẵn', '', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_1', 'Có sẵn', 'Chưa có thông tin', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_2', 'Có sẵn', 'Chưa có thông tin', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_3', 'Có sẵn', 'Chưa có thông tin', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_4', 'Có sẵn', 'Chưa có thông tin', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('1_4_5', 'Có sẵn', 'Chưa có thông tin', '4', '1');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('8_5_1', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('8_5_2', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('8_5_3', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
 
 
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_1', 'Có sẵn', '', '6', '6');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('7_7_1', 'Có sẵn', '', '7', '7');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_2', 'Có sẵn', '', '6', '6');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('7_7_2', 'Có sẵn', '', '7', '7');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_3', 'Có sẵn', '', '6', '6');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_4', 'Có sẵn', '', '6', '6');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_5', 'Có sẵn', '', '6', '6');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_1', 'Có sẵn', 'Chưa có thông tin', '6', '6');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('7_7_1', 'Có sẵn', 'Chưa có thông tin', '7', '7');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_2', 'Có sẵn', 'Chưa có thông tin', '6', '6');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('7_7_2', 'Có sẵn', 'Chưa có thông tin', '7', '7');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_3', 'Có sẵn', 'Chưa có thông tin', '6', '6');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_4', 'Có sẵn', 'Chưa có thông tin', '6', '6');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_5', 'Có sẵn', 'Chưa có thông tin', '6', '6');
 
 INSERT INTO LichSuTimKiemCuonSach(SearchTimestamp, TuKhoa)
 VALUES
