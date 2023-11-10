@@ -40,7 +40,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
 
   void setCreationExpriationDate(DateTime date) {
     _creationDateController.text = date.toVnFormat();
-    _expirationDateController.text = date.addMonths(6).toVnFormat();
+    _expirationDateController.text = date.addMonths(ThamSoQuyDinh.thoiHanThe).toVnFormat();
   }
 
   void saveDocGia(BuildContext context) async {
@@ -289,7 +289,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                 ] else ...[
                   const SizedBox(height: 10),
                   Text(
-                    '*Thu tiền tạo thẻ ${Parameters.phiTaoThe.toVnCurrencyFormat()}',
+                    '*Thu tiền tạo thẻ ${ThamSoQuyDinh.phiTaoThe.toVnCurrencyFormat()}',
                     style: const TextStyle(fontStyle: FontStyle.italic),
                   )
                 ],

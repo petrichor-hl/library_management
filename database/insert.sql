@@ -89,11 +89,11 @@ INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_
 
 INSERT INTO LichSuTimKiem(SearchTimestamp, LoaiTimKiem, TuKhoa)
 VALUES
-('1699439023', 'CuonSach', 'cha giàu cha nghèo'),
-('1699439024', 'CuonSach', 'cố định'),
-('1699439025', 'CuonSach', 'paulo coe'),
-('1699439026', 'CuonSach', 'cô gái năm ấy'),
-('1699439027', 'CuonSach', 'thất tịch không mưa');
+('1699439028', 'CuonSach', 'cha giàu cha nghèo'),
+('1699439029', 'CuonSach', 'cố định'),
+('1699439030', 'CuonSach', 'paulo coe'),
+('1699439031', 'CuonSach', 'cô gái năm ấy'),
+('1699439032', 'CuonSach', 'thất tịch không mưa');
 
 INSERT INTO LichSuTimKiem(SearchTimestamp, LoaiTimKiem, TuKhoa)
 VALUES

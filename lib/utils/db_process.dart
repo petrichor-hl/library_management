@@ -40,10 +40,10 @@ class DbProcess {
             MucThuTienPhat INTEGER,     -- 10000
             TuoiToiThieu INTEGER,       -- 12 tuoi
             PhiTaoThe INTEGER,          -- 50000
-            HanThe INTEGER              -- 3 thang
+            ThoiHanThe INTEGER          -- 3 thang
           );
 
-          -- INSERT INTO ThamSoQuyDinh VALUES('14','5', '0', '12', '100000');
+          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -136,6 +136,18 @@ class DbProcess {
             TongNo INTEGER
           );
 
+          CREATE TABLE PhieuMuon(
+            MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
+            MaCuonSach INTEGER,
+            MaDocGia INTEGER,
+            NgayMuon TEXT,
+            HanTra TEXT,
+            TinhTrang TEXT,
+
+            FOREIGN KEY (MaCuonSach) REFERENCES CuonSach(MaCuonSach) ON DELETE RESTRICT,
+            FOREIGN KEY (MaDocGia) REFERENCES DocGia(MaDocGia) ON DELETE RESTRICT
+          );
+
           CREATE TABLE LichSuTimKiem(
             SearchTimestamp INT PRIMARY KEY,
             LoaiTimKiem TEXT,
@@ -147,16 +159,23 @@ class DbProcess {
     );
   }
 
+  /* ACCOUNT CODE */
   Future<Map<String, dynamic>> queryAccount() async {
     List<Map<String, dynamic>> data = await _database.rawQuery('select * from TaiKhoan');
     return data.first;
   }
 
-  // DocGia MODEL CODE
+  /* PARAMETER CODE */
+  Future<Map<String, dynamic>> queryThamSoQuyDinh() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery('select * from ThamSoQuyDinh');
+    return data.first;
+  }
+
+  // ĐỘC GIẢ CODE
   Future<List<DocGia>> queryDocGia({
     required int numberRowIgnore,
   }) async {
-    /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
+    /* Lấy 8 dòng dữ liệu Độc Giả được thêm gần đây */
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select * from DocGia 
@@ -183,6 +202,20 @@ class DbProcess {
     }
 
     return danhSachDocGia;
+  }
+
+  Future<String?> queryHoTenDocGiaWithMaDocGia(int maDocGia) async {
+    final res = (await _database.rawQuery(
+      '''
+      select HoTen from DocGia 
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    ));
+    if (res.isEmpty) {
+      return null;
+    }
+    return res.first['HoTen'] as String;
   }
 
   Future<List<DocGia>> queryDocGiaFullnameWithString({

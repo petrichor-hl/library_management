@@ -16,7 +16,7 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
   }
 
   @override
@@ -78,16 +78,13 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
-              child: TabBarView(
-                controller: tabController,
-                children: const [
-                  QuanLyMuonTra(),
-                  MuonSach(),
-                  TraSach(),
-                ],
-              ),
+            child: TabBarView(
+              controller: tabController,
+              children: const [
+                QuanLyMuonTra(),
+                MuonSach(),
+                TraSach(),
+              ],
             ),
           ),
         ],
