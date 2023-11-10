@@ -14,7 +14,6 @@ class PhieuNhap {
   Map<String, dynamic> toMap() {
     return {
       'NgayLap': ngayLap.toVnFormat(),
-      'TongTien': tongTien,
     };
   }
 }

@@ -1,3 +1,3 @@
 class Parameters {
-  static const int cardCreationFee = 100000;
+  static const int phiTaoThe = 100000;
 }

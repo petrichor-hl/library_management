@@ -289,7 +289,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                 ] else ...[
                   const SizedBox(height: 10),
                   Text(
-                    '*Thu tiền tạo thẻ ${Parameters.cardCreationFee.toVnCurrencyFormat()}',
+                    '*Thu tiền tạo thẻ ${Parameters.phiTaoThe.toVnCurrencyFormat()}',
                     style: const TextStyle(fontStyle: FontStyle.italic),
                   )
                 ],

@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:library_management/screens/book_manage/kho_sach/kho_sach.dart';
-import 'package:library_management/screens/book_manage/nhap_sach.dart';
-import 'package:library_management/screens/book_manage/quan_ly_dau_sach.dart';
-import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap.dart';
-import 'package:library_management/screens/book_manage/quan_ly_tac_gia.dart';
-import 'package:library_management/screens/book_manage/quan_ly_the_loai.dart';
+import 'package:library_management/screens/borrow_return/muon_sach.dart';
+import 'package:library_management/screens/borrow_return/quan_ly_muon_tra/quan_ly_muon_tra.dart';
+import 'package:library_management/screens/borrow_return/tra_sach.dart';
 
-class BookManage extends StatefulWidget {
-  const BookManage({super.key});
+class BorrowReturn extends StatefulWidget {
+  const BorrowReturn({super.key});
 
   @override
-  State<BookManage> createState() => BookManageState();
+  State<BorrowReturn> createState() => _BorrowReturnState();
 }
 
-class BookManageState extends State<BookManage> with TickerProviderStateMixin {
+class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMixin {
   late final TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 6, vsync: this, initialIndex: 0);
+    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -38,7 +35,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 25, 30, 20),
             child: Ink(
-              width: 750,
+              width: 480,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -51,12 +48,9 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 ),
                 controller: tabController,
                 tabs: const [
-                  Tab(text: "Kho sách"),
-                  Tab(text: 'Đầu sách'),
-                  Tab(text: "Nhập sách"),
-                  Tab(text: "Phiếu nhập"),
-                  Tab(text: "Tác giả"),
-                  Tab(text: "Thể loại"),
+                  Tab(text: "Phiếu Mượn/Trả"),
+                  Tab(text: "Cho mượn sách"),
+                  Tab(text: "Nhận trả sách"),
                 ],
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -84,16 +78,16 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
             ),
           ),
           Expanded(
-            child: TabBarView(
-              controller: tabController,
-              children: [
-                const KhoSach(),
-                const QuanLyDauSach(),
-                buildNhapSach(),
-                const QuanLyPhieuNhap(),
-                const QuanLyTacGia(),
-                const QuanLyTheLoai(),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+              child: TabBarView(
+                controller: tabController,
+                children: const [
+                  QuanLyMuonTra(),
+                  MuonSach(),
+                  TraSach(),
+                ],
+              ),
             ),
           ),
         ],

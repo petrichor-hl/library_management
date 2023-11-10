@@ -5,9 +5,11 @@ class MySearchBar extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onSearch,
+    this.hintText,
   });
 
   final TextEditingController controller;
+  final String? hintText;
   final void Function(String) onSearch;
 
   @override
@@ -25,7 +27,7 @@ class MySearchBar extends StatelessWidget {
                 child: Icon(Icons.search),
               ),
               prefixIconColor: const Color.fromARGB(255, 81, 81, 81),
-              hintText: 'Tìm kiếm',
+              hintText: hintText ?? 'Tìm kiếm',
               hintStyle: const TextStyle(
                 color: Color.fromARGB(255, 81, 81, 81),
               ),

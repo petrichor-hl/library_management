@@ -2,7 +2,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:library_management/screens/book_manage/book_manage.dart';
-import 'package:library_management/screens/borrow_return.dart';
+import 'package:library_management/screens/borrow_return/borrow_return.dart';
 import 'package:library_management/screens/reader_manage.dart';
 import 'package:library_management/screens/regulations.dart';
 import 'package:library_management/screens/report_manage.dart';
@@ -20,7 +20,7 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 2);
   }
 
   @override
@@ -38,11 +38,12 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
       body: Column(
         children: [
           Ink(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color.fromARGB(255, 175, 219, 208), Color.fromARGB(255, 236, 237, 182)],
-              ),
-            ),
+            color: Theme.of(context).colorScheme.background,
+            // decoration: const BoxDecoration(
+            //   gradient: LinearGradient(
+            //     colors: [Color.fromARGB(255, 175, 219, 208), Color.fromARGB(255, 236, 237, 182)],
+            //   ),
+            // ),
             child: Column(
               children: [
                 WindowTitleBarBox(
@@ -58,11 +59,11 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Row(
                     children: [
                       Image.asset(
-                        'assets/library.png',
+                        'assets/logo/Asset_1.png',
                         width: 50,
                       ),
                       const SizedBox(
@@ -98,26 +99,27 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                               height: 70,
                             ),
                           ],
-                          indicator: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(8),
-                            ),
+                          indicator: BoxDecoration(
+                            // color: Colors.white,
+                            // borderRadius: BorderRadius.vertical(
+                            //   top: Radius.circular(8),
+                            // ),
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          splashBorderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(8),
-                          ),
+                          splashBorderRadius: BorderRadius.circular(8),
                           indicatorSize: TabBarIndicatorSize.tab,
                           dividerColor: Colors.transparent,
                           overlayColor: MaterialStateProperty.resolveWith((states) {
                             if (states.contains(MaterialState.hovered)) {
-                              return Colors.white.withOpacity(0.5);
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.2);
                             }
                             if (states.contains(MaterialState.pressed)) {
-                              return Colors.white.withOpacity(0.5);
+                              return Theme.of(context).colorScheme.primary.withOpacity(0.2);
                             }
                             return Colors.transparent;
                           }),
+                          labelColor: Colors.white,
                         ),
                       ),
                       const SizedBox(
