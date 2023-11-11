@@ -6,7 +6,7 @@ import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
-import 'package:library_management/models/lich_su_tim_kiem_cuon_sach.dart';
+import 'package:library_management/models/lich_su_tim_kiem.dart';
 import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
@@ -34,12 +34,16 @@ class DbProcess {
 
           INSERT INTO TaiKhoan VALUES('admin','123456');
 
-          CREATE TABLE PARAMETER(
-            SoNgayMuonToiDa INTEGER,
-            SoSachMuonToiDa INTEGER,
-            MucThuTienPhat INTEGER,
-            TuoiToiThieu INTEGER
+          CREATE TABLE ThamSoQuyDinh(
+            SoNgayMuonToiDa INTEGER,    -- 30 ngay
+            SoSachMuonToiDa INTEGER,    -- 5 cuon
+            MucThuTienPhat INTEGER,     -- 10000
+            TuoiToiThieu INTEGER,       -- 12 tuoi
+            PhiTaoThe INTEGER,          -- 50000
+            ThoiHanThe INTEGER          -- 3 thang
           );
+
+          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -132,8 +136,21 @@ class DbProcess {
             TongNo INTEGER
           );
 
-          CREATE TABLE LichSuTimKiemCuonSach(
+          CREATE TABLE PhieuMuon(
+            MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
+            MaCuonSach INTEGER,
+            MaDocGia INTEGER,
+            NgayMuon TEXT,
+            HanTra TEXT,
+            TinhTrang TEXT,
+
+            FOREIGN KEY (MaCuonSach) REFERENCES CuonSach(MaCuonSach) ON DELETE RESTRICT,
+            FOREIGN KEY (MaDocGia) REFERENCES DocGia(MaDocGia) ON DELETE RESTRICT
+          );
+
+          CREATE TABLE LichSuTimKiem(
             SearchTimestamp INT PRIMARY KEY,
+            LoaiTimKiem TEXT,
             TuKhoa TEXT
           );
         ''',
@@ -142,16 +159,23 @@ class DbProcess {
     );
   }
 
+  /* ACCOUNT CODE */
   Future<Map<String, dynamic>> queryAccount() async {
     List<Map<String, dynamic>> data = await _database.rawQuery('select * from TaiKhoan');
     return data.first;
   }
 
-  // DocGia MODEL CODE
+  /* PARAMETER CODE */
+  Future<Map<String, dynamic>> queryThamSoQuyDinh() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery('select * from ThamSoQuyDinh');
+    return data.first;
+  }
+
+  // ĐỘC GIẢ CODE
   Future<List<DocGia>> queryDocGia({
     required int numberRowIgnore,
   }) async {
-    /* Lấy 10 dòng dữ liệu Độc Giả được thêm gần đây */
+    /* Lấy 8 dòng dữ liệu Độc Giả được thêm gần đây */
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select * from DocGia 
@@ -178,6 +202,20 @@ class DbProcess {
     }
 
     return danhSachDocGia;
+  }
+
+  Future<String?> queryHoTenDocGiaWithMaDocGia(int maDocGia) async {
+    final res = (await _database.rawQuery(
+      '''
+      select HoTen from DocGia 
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    ));
+    if (res.isEmpty) {
+      return null;
+    }
+    return res.first['HoTen'] as String;
   }
 
   Future<List<DocGia>> queryDocGiaFullnameWithString({
@@ -541,7 +579,7 @@ class DbProcess {
   }
 
   Future<int> insertPhieuNhap(PhieuNhap newPhieuNhap) async {
-    // print("INSERT INTO PhieuNhap(NgayLap, TongTien) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}', '${newPhieuNhap.tongTien}');");
+    // print("INSERT INTO PhieuNhap(NgayLap) VALUES ('${newPhieuNhap.ngayLap.toVnFormat()}');");
 
     return await _database.insert(
       'PhieuNhap',
@@ -734,20 +772,23 @@ class DbProcess {
   }
 
   /* LỊCH SỬ TÌM KIẾM CUỐN SÁCH CODE */
-  Future<List<LichSuTimKiemCuonSach>> queryLichSuTimKiemCuonSachs() async {
+  Future<List<LichSuTimKiem>> queryLichSuTimKiem({required String loaiTimKiem}) async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select * from LichSuTimKiemCuonSach
+      select * from LichSuTimKiem
+      where LoaiTimKiem = ?
       order by SearchTimestamp desc
       ''',
+      [loaiTimKiem],
     );
 
-    List<LichSuTimKiemCuonSach> lichSuTimKiem = [];
+    List<LichSuTimKiem> lichSuTimKiem = [];
 
     for (var element in data) {
       lichSuTimKiem.add(
-        LichSuTimKiemCuonSach(
+        LichSuTimKiem(
           element['SearchTimestamp'],
+          'CuonSach',
           element['TuKhoa'],
         ),
       );
@@ -756,17 +797,17 @@ class DbProcess {
     return lichSuTimKiem;
   }
 
-  Future<void> insertLichSuTimKiemCuonSach(LichSuTimKiemCuonSach lichSuTimKiemCuonSach) async {
+  Future<void> insertLichSuTimKiem(LichSuTimKiem lichSuTimKiemCuonSach) async {
     await _database.insert(
-      'LichSuTimKiemCuonSach',
+      'LichSuTimKiem',
       lichSuTimKiemCuonSach.toMap(),
     );
   }
 
-  Future<void> updateSearchTimestampLichSuTimKiemCuonSach(LichSuTimKiemCuonSach updatedLichSuTimKiemCuonSach) async {
+  Future<void> updateSearchTimestampLichSuTimKiem(LichSuTimKiem updatedLichSuTimKiemCuonSach) async {
     await _database.rawUpdate(
       '''
-      update LichSuTimKiemCuonSach
+      update LichSuTimKiem
       set SearchTimestamp = ?
       where TuKhoa = ?
       ''',
@@ -777,10 +818,10 @@ class DbProcess {
     );
   }
 
-  Future<void> deleteLichSuTimKiemCuonSach(LichSuTimKiemCuonSach lichSuTimKiemCuonSach) async {
+  Future<void> deleteLichSuTimKiem(LichSuTimKiem lichSuTimKiemCuonSach) async {
     await _database.rawDelete(
       '''
-      delete from LichSuTimKiemCuonSach
+      delete from LichSuTimKiem
       where SearchTimestamp = ?
       ''',
       [lichSuTimKiemCuonSach.searchTimestamp],

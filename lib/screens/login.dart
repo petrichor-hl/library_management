@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/screens/library_management.dart';
+import 'package:library_management/utils/parameters.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Login extends StatefulWidget {
@@ -52,8 +53,9 @@ class _LoginState extends State<Login> {
 
     if (enteredUsername == accountToLogin['username'] && enteredPassword == accountToLogin['password']) {
       await Future.delayed(
-        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 400),
       );
+      ThamSoQuyDinh.thietLapThamSo(await dbProcess.queryThamSoQuyDinh());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
