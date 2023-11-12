@@ -32,7 +32,8 @@ class DbProcess {
             password TEXT
           );
 
-          INSERT INTO TaiKhoan VALUES('admin','123456');
+          INSERT INTO TaiKhoan VALUES('admin','123456'),
+          ('PIN','qltv214');
 
           CREATE TABLE ThamSoQuyDinh(
             SoNgayMuonToiDa INTEGER,    -- 30 ngay
@@ -160,10 +161,40 @@ class DbProcess {
     );
   }
 
+  /* PIN CODE */
+  Future<String> queryPinCode() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      "select * from TaiKhoan where username = 'PIN'",
+    );
+    return data.first['password'];
+  }
+
+  Future<void> updateMaPin(String newMaPin) async {
+    await _database.rawUpdate(
+      '''
+      update TaiKhoan
+      set password = ?
+      where username = 'PIN'
+      ''',
+      [newMaPin],
+    );
+  }
+
   /* ACCOUNT CODE */
   Future<Map<String, dynamic>> queryAccount() async {
     List<Map<String, dynamic>> data = await _database.rawQuery('select * from TaiKhoan');
     return data.first;
+  }
+
+  Future<void> updateAdminPassword(String newPassword) async {
+    await _database.rawUpdate(
+      '''
+      update TaiKhoan
+      set password = ?
+      where username = 'admin'
+      ''',
+      [newPassword],
+    );
   }
 
   /* PARAMETER CODE */

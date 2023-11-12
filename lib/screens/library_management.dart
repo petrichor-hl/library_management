@@ -2,6 +2,8 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:library_management/components/doi_ma_pin.dart';
+import 'package:library_management/components/doi_mat_khau_dialog.dart';
 import 'package:library_management/components/khoa_man_hinh_dialog.dart';
 import 'package:library_management/screens/book_manage/book_manage.dart';
 import 'package:library_management/screens/borrow_return/borrow_return.dart';
@@ -77,23 +79,23 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                         tabs: const [
                           Tab(
                             text: "Độc giả",
-                            height: 70,
+                            height: 60,
                           ),
                           Tab(
                             text: "Quản lý Sách",
-                            height: 70,
+                            height: 60,
                           ),
                           Tab(
                             text: "Mượn trả",
-                            height: 70,
+                            height: 60,
                           ),
                           Tab(
                             text: "Báo cáo",
-                            height: 70,
+                            height: 60,
                           ),
                           Tab(
                             text: "Quy định",
-                            height: 70,
+                            height: 60,
                           ),
                         ],
                         indicator: BoxDecoration(
@@ -127,10 +129,14 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                       ),
                       position: PopupMenuPosition.under,
                       offset: const Offset(0, 8),
-                      itemBuilder: (ctx) => [
+                      itemBuilder: (ctx) => <PopupMenuEntry>[
                         PopupMenuItem(
                           onTap: () {
-                            showDialog(context: context, barrierDismissible: false, builder: (ctx) => const KhoaManHinhDialog());
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (ctx) => const KhoaManHinhDialog(),
+                            );
                           },
                           child: const Row(
                             children: [
@@ -140,12 +146,34 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
-                          child: Row(
+                        const PopupMenuDivider(),
+                        PopupMenuItem(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => const DoiMatKhauDialog(),
+                            );
+                          },
+                          child: const Row(
                             children: [
                               Icon(Icons.password_rounded),
                               Gap(12),
                               Text('Đổi mật khẩu'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => const DoiMaPin(),
+                            );
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.pin),
+                              Gap(12),
+                              Text('Đổi mã PIN'),
                             ],
                           ),
                         ),

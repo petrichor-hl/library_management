@@ -66,7 +66,7 @@ class _KhoaManHinhDialogState extends State<KhoaManHinhDialog> {
             Icon(
               Icons.lock,
               size: 44,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.primary,
             ),
             const Gap(20),
             Text(
