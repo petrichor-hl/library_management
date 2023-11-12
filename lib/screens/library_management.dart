@@ -8,7 +8,7 @@ import 'package:library_management/components/khoa_man_hinh_dialog.dart';
 import 'package:library_management/screens/book_manage/book_manage.dart';
 import 'package:library_management/screens/borrow_return/borrow_return.dart';
 import 'package:library_management/screens/reader_manage.dart';
-import 'package:library_management/screens/regulations.dart';
+import 'package:library_management/screens/regulations/regulations.dart';
 import 'package:library_management/screens/report_manage.dart';
 
 class LibraryManagement extends StatefulWidget {
@@ -67,10 +67,13 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
                     const Gap(30),
                     Image.asset(
                       'assets/logo/Asset_1.png',
-                      width: 50,
+                      width: 44,
                     ),
                     const Gap(20),
-                    SvgPicture.asset('assets/LibraryBOOKS.svg'),
+                    SvgPicture.asset(
+                      'assets/LibraryBOOKS.svg',
+                      width: 160,
+                    ),
                     const Gap(70),
                     Expanded(
                       child: TabBar(

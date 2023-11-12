@@ -1,3 +1,5 @@
+import 'package:library_management/utils/extension.dart';
+
 class ThamSoQuyDinh {
   static int soNgayMuonToiDa = 0; // đơn vị ngày
   static int soSachMuonToiDa = 0; // đơn vị số nguyên
@@ -15,5 +17,32 @@ class ThamSoQuyDinh {
     phiTaoThe = thamSo['PhiTaoThe'];
     thoiHanThe = thamSo['ThoiHanThe'];
     noiQuy = thamSo['NoiQuy'];
+  }
+
+  static String getThamSo(String tenThamSo) {
+    String value = '';
+
+    switch (tenThamSo) {
+      case 'SoNgayMuonToiDa':
+        value = '$soNgayMuonToiDa ngày';
+        break;
+      case 'SoSachMuonToiDa':
+        value = '$soSachMuonToiDa sách';
+        break;
+      case 'MucThuTienPhat':
+        value = mucThuTienPhat.toVnCurrencyFormat();
+        break;
+      case 'TuoiToiThieu':
+        value = '$tuoiToiThieu tuổi';
+        break;
+      case 'PhiTaoThe':
+        value = phiTaoThe.toVnCurrencyFormat();
+        break;
+      case 'ThoiHanThe':
+        value = '$thoiHanThe tháng';
+        break;
+    }
+
+    return value;
   }
 }
