@@ -5,6 +5,7 @@ class ThamSoQuyDinh {
   static int tuoiToiThieu = 0; // đơn vị tuổi
   static int phiTaoThe = 0; // đơn vị VND
   static int thoiHanThe = 0; // đơn vị tháng
+  static String noiQuy = '';
 
   static void thietLapThamSo(Map<String, dynamic> thamSo) {
     soNgayMuonToiDa = thamSo['SoNgayMuonToiDa'];
@@ -13,5 +14,6 @@ class ThamSoQuyDinh {
     tuoiToiThieu = thamSo['TuoiToiThieu'];
     phiTaoThe = thamSo['PhiTaoThe'];
     thoiHanThe = thamSo['ThoiHanThe'];
+    noiQuy = thamSo['NoiQuy'];
   }
 }

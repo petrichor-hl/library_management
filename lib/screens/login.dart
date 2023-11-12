@@ -124,13 +124,23 @@ class _LoginState extends State<Login> {
             clipBehavior: Clip.antiAlias,
             surfaceTintColor: Colors.transparent,
             elevation: 12,
-            child: Container(
-              width: screenWidth * 0.35,
-              margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.13),
+            child: SizedBox(
+              width: screenWidth * 0.61,
+              // margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.13),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Gap(50),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6, right: 6),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        onPressed: () => appWindow.close(),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ),
+                  ),
+                  const Gap(20),
                   Image.asset(
                     'assets/logo/Asset_1.png',
                     width: 44,
@@ -145,6 +155,7 @@ class _LoginState extends State<Login> {
                   ),
                   const Gap(24),
                   Container(
+                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.13),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.black, // Màu sắc của border
@@ -179,21 +190,27 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   const Gap(14),
-                  _PasswordTextField(passwordController: _passwordController),
+                  _PasswordTextField(
+                    passwordController: _passwordController,
+                    onEditingComplete: _submit,
+                  ),
                   const Gap(4),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {},
-                      child: const Text('Quên mật khẩu'),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.13),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {},
+                        child: const Text('Quên mật khẩu'),
+                      ),
                     ),
                   ),
-                  const Gap(14),
+                  const Gap(10),
                   Text(
                     _errorText,
                     style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
-                  const Gap(16),
+                  const Gap(12),
                   _isProcessing
                       ? const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
@@ -238,8 +255,12 @@ class _LoginState extends State<Login> {
 }
 
 class _PasswordTextField extends StatefulWidget {
-  const _PasswordTextField({required this.passwordController});
+  const _PasswordTextField({
+    required this.passwordController,
+    required this.onEditingComplete,
+  });
   final TextEditingController passwordController;
+  final void Function() onEditingComplete;
 
   @override
   State<_PasswordTextField> createState() => _PasswordTextFieldState();
@@ -252,6 +273,7 @@ class _PasswordTextFieldState extends State<_PasswordTextField> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.13),
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.black, // Màu sắc của border
@@ -308,6 +330,7 @@ class _PasswordTextFieldState extends State<_PasswordTextField> {
               }
               if (value.length <= 1) setState(() {});
             },
+            onEditingComplete: widget.onEditingComplete,
           ),
         ],
       ),

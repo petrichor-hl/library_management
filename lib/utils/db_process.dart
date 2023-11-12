@@ -40,10 +40,11 @@ class DbProcess {
             MucThuTienPhat INTEGER,     -- 10000
             TuoiToiThieu INTEGER,       -- 12 tuoi
             PhiTaoThe INTEGER,          -- 50000
-            ThoiHanThe INTEGER          -- 3 thang
+            ThoiHanThe INTEGER,         -- 3 thang
+            NoiQuy TEXT
           );
 
-          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3);
+          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3, 'Độc lập - Tự do - Hạnh Phúc');
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
