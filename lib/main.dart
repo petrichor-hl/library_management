@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
-import 'package:library_management/screens/library_management.dart';
-import 'package:library_management/screens/login.dart';
+import 'package:library_management/screens/auth/auth.dart';
 import 'package:library_management/utils/db_process.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
-      home: const Login(),
+      home: const LoginLayout(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
