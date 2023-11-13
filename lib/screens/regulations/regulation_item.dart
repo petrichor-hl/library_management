@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:library_management/main.dart';
+import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/parameters.dart';
 
 class RegulationItem extends StatefulWidget {
@@ -16,10 +19,57 @@ class RegulationItem extends StatefulWidget {
 }
 
 class _RegulationItemState extends State<RegulationItem> {
+  late final _controller = TextEditingController();
   bool _isHover = false;
+  String _errorText = '';
+
+  Future<void> _onSavedThamSo() async {
+    _errorText = '';
+    if (_controller.text.isEmpty) {
+      setState(() {
+        _errorText = 'Bạn chưa nhập giá trị cho tham số';
+      });
+      return;
+    }
+
+    if (int.tryParse(_controller.text) == null || int.parse(_controller.text) < 0) {
+      setState(() {
+        _errorText = 'Giá trị phải là một con số lớn hơn 0';
+      });
+      return;
+    }
+
+    /* Cập nhật trong database */
+    await dbProcess.updateGiaTriThamSo(
+      thamSo: widget.regulation,
+      giaTri: _controller.text,
+    );
+
+    /* Cập nhật trong app */
+    ThamSoQuyDinh.setThamSo(
+      widget.regulation,
+      _controller.text,
+    );
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cập nhật thành công.'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+          width: 300,
+        ),
+      );
+    }
+
+    _controller.clear();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.sizeOf(context).width;
     return MouseRegion(
       onEnter: (event) => setState(
         () => _isHover = true,
@@ -35,11 +85,15 @@ class _RegulationItemState extends State<RegulationItem> {
           color: _isHover ? Colors.grey.shade100 : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
-        padding: const EdgeInsets.only(left: 30),
+        padding: const EdgeInsets.only(left: 30, top: 8, bottom: 8),
         child: Row(
           children: [
+            /* SizedBox này có tác dụng quy định chiều cao của ROW */
+            const SizedBox(
+              height: 44,
+            ),
             SizedBox(
-              width: 700,
+              width: screenWidth * 0.5,
               child: Text(
                 widget.content,
                 style: const TextStyle(
@@ -48,42 +102,82 @@ class _RegulationItemState extends State<RegulationItem> {
                 ),
               ),
             ),
-            Text(
-              ThamSoQuyDinh.getThamSo(widget.regulation),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+            SizedBox(
+              width: 120,
+              child: Text(
+                ThamSoQuyDinh.getThamSo(widget.regulation),
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Spacer(),
-            AnimatedSwitcher(
-              /* Thời gian hiệu ứng xuất hiện */
-              duration: const Duration(milliseconds: 150),
-              /* Thời gian hiệu ứng biến mất */
-              reverseDuration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) => ScaleTransition(
-                scale: animation,
-                child: child,
+            SizedBox(
+              width: 90,
+              child: Text(
+                '  ${ThamSoQuyDinh.getDonVi(widget.regulation)}',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-              child: _isHover
-                  ? IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.edit_rounded),
-                      style: IconButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        foregroundColor: Colors.white,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            const Gap(30),
+            Expanded(
+              child: Text(
+                _errorText,
+                style: errorTextStyle(context),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Gap(50),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    )
-                  : const SizedBox(),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 6,
+                        horizontal: 14,
+                      ),
+                      isCollapsed: true,
+                    ),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onEditingComplete: _onSavedThamSo,
+                  ),
+                ),
+                const Gap(8),
+                IconButton(
+                  onPressed: _onSavedThamSo,
+                  icon: const Icon(Icons.save_rounded),
+                  style: IconButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+              ],
             ),
+            const Gap(8)
           ],
         ),
       ),

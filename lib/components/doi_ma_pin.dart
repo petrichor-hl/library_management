@@ -116,6 +116,7 @@ class _DoiMaPinState extends State<DoiMaPin> {
                       contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                       isCollapsed: true,
                     ),
+                    obscureText: true,
                   ),
                 ],
               ),

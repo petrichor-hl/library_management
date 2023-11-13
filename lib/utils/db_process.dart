@@ -41,44 +41,10 @@ class DbProcess {
             MucThuTienPhat INTEGER,     -- 10000
             TuoiToiThieu INTEGER,       -- 12 tuoi
             PhiTaoThe INTEGER,          -- 50000
-            ThoiHanThe INTEGER,         -- 3 thang
-            NoiQuy TEXT
+            ThoiHanThe INTEGER          -- 3 thang
           );
 
-          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3, '1. Bảo quản sách:
-    - Yêu cầu đội ngũ thư viện và độc giả giữ sách một cách sạch sẽ và an toàn.
-    - Hướng dẫn cách đặt sách trở lại đúng vị trí sau khi sử dụng.
-
-2. Quy tắc mượn sách:
-    - Thiết lập thời hạn mượn và quy tắc gia hạn mượn.
-    - Áp đặt quy tắc trễ trả sách và xử phạt cho những trường hợp vi phạm.
-
-3. Đăng ký thành viên:
-    - Yêu cầu độc giả đăng ký thành viên để mượn sách.
-    - Xác minh thông tin cá nhân của độc giả trước khi cấp thẻ thành viên.
-
-4. Phí và xử phạt:
-    - Mô tả chi tiết về các khoản phí và xử phạt liên quan đến việc trễ trả sách hoặc mất sách.
-
-5. Bảo mật thông tin:
-    - Bảo vệ thông tin cá nhân của độc giả.
-    - Sử dụng các biện pháp bảo mật để ngăn chặn truy cập trái phép vào dữ liệu thư viện.
-
-6. Kiểm soát tiếp cận:
-    - Xác định quy tắc về ai được phép truy cập vào thư viện và mượn sách.
-    - Thực hiện các biện pháp kiểm soát an ninh để ngăn chặn mất cắp sách.
-
-7. Thông tin trên sách:
-    - Thêm nhãn với mã số sách và thông tin liên quan để dễ dàng xác định và tra cứu.
-
-8. Tổ chức sách:
-    - Sắp xếp sách theo hệ thống phân loại rõ ràng.
-    - Cung cấp biểu đồ tìm kiếm hoặc chỉ dẫn để giúp độc giả dễ dàng tìm sách.
-
-9. Chính sách mua sách mới:
-    - Mô tả quy trình và tiêu chí cho việc thêm sách mới vào thư viện.
-    - Xác định nguồn cung sách và phương pháp chọn sách.
-');
+          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -234,6 +200,16 @@ class DbProcess {
   Future<Map<String, dynamic>> queryThamSoQuyDinh() async {
     List<Map<String, dynamic>> data = await _database.rawQuery('select * from ThamSoQuyDinh');
     return data.first;
+  }
+
+  Future<void> updateGiaTriThamSo({required String thamSo, required String giaTri}) async {
+    await _database.rawUpdate(
+      '''
+      update ThamSoQuyDinh
+      set $thamSo = ?
+      ''',
+      [giaTri],
+    );
   }
 
   // ĐỘC GIẢ CODE
