@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
+import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/models/lich_su_tim_kiem.dart';
+import 'package:library_management/models/phieu_muon.dart';
 import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
@@ -139,7 +141,7 @@ class DbProcess {
 
           CREATE TABLE PhieuMuon(
             MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
-            MaCuonSach INTEGER,
+            MaCuonSach TEXT,
             MaDocGia INTEGER,
             NgayMuon TEXT,
             HanTra TEXT,
@@ -196,7 +198,7 @@ class DbProcess {
     );
   }
 
-  /* PARAMETER CODE */
+  /* THAM SỐ CODE */
   Future<Map<String, dynamic>> queryThamSoQuyDinh() async {
     List<Map<String, dynamic>> data = await _database.rawQuery('select * from ThamSoQuyDinh');
     return data.first;
@@ -337,7 +339,7 @@ class DbProcess {
     );
   }
 
-  /* DAU SACH CODE */
+  /* ĐẦU SÁCH CODE */
   Future<List<DauSach>> queryDauSach() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
@@ -684,7 +686,7 @@ class DbProcess {
       await _database.insert(
         'CuonSach',
         {
-          'MaCuonSach': '${newChiTietPhieuNhap.maSach}_${returningId}_$i',
+          'MaCuonSach': '${newChiTietPhieuNhap.maSach}$returningId$i',
           'TinhTrang': 'Có sẵn',
           'ViTri': 'Chưa có thông tin',
           'MaCTPN': returningId,
@@ -695,6 +697,8 @@ class DbProcess {
 
     return returningId;
   }
+
+  // 311  531 282 144 771
 
   Future<void> updateSoLuongChiTietPhieuNhap(ChiTietPhieuNhapDto updatedChiTietPhieuNhap) async {
     /* Xóa các cuốn sách có liên quan đến ChiTietPhieuNhap này */
@@ -724,7 +728,7 @@ class DbProcess {
       await _database.insert(
         'CuonSach',
         {
-          'MaCuonSach': '${updatedChiTietPhieuNhap.maSach}_${updatedChiTietPhieuNhap.maCTPN}_$i',
+          'MaCuonSach': '${updatedChiTietPhieuNhap.maSach}${updatedChiTietPhieuNhap.maCTPN}$i',
           'TinhTrang': 'Có sẵn',
           'ViTri': 'Chưa có thông tin',
           'MaCTPN': updatedChiTietPhieuNhap.maCTPN,
@@ -869,17 +873,23 @@ class DbProcess {
     );
   }
 
-  /* CUON SACH CODE */
-  Future<List<CuonSachDto>> queryCuonSachWithKeyword(String keyword) async {
+  /* CUỐN SÁCH CODE */
+  Future<List<CuonSachDto>> queryCuonSachDtoWithKeyword(String keyword) async {
+    /* 
+    Truy vấn các cuốn sách có MaCuonSach hoặc TenDauSach chứa keyword
+    */
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select MaCuonSach, TenDauSach, LanTaiBan, NhaXuatBan, TinhTrang, ViTri, MaCTPN
       from DauSach join Sach using(MaDauSach) 
       join CT_PhieuNhap using(MaSach)
       join CuonSach using(MaSach, MaCTPN)
-      where TenDauSach like ?
+      where TenDauSach like ? or MaCuonSach like ?
       ''',
-      ['%${keyword.toLowerCase()}%'],
+      [
+        '%${keyword.toLowerCase()}%',
+        '%${keyword.toLowerCase()}%',
+      ],
     );
 
     List<CuonSachDto> cuonSachs = [];
@@ -901,6 +911,109 @@ class DbProcess {
     return cuonSachs;
   }
 
+  Future<List<CuonSachDto2th>> queryCuonSachDto2thSanCoWithKeyword(String keyword) async {
+    /* 
+    Truy vấn các cuốn sách có MaCuonSach hoặc TenDauSach chứa keyword
+    và tình trạng là có sẵn
+    */
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaCuonSach, MaDauSach, MaSach, TenDauSach, LanTaiBan, NhaXuatBan, ViTri
+      from DauSach join Sach using(MaDauSach) 
+      join CT_PhieuNhap using(MaSach)
+      join CuonSach using(MaSach, MaCTPN)
+      where (TenDauSach like ? or MaCuonSach like ?) and CuonSach.TinhTrang = 'Có sẵn'
+      ''',
+      [
+        '%${keyword.toLowerCase()}%',
+        '%${keyword.toLowerCase()}%',
+      ],
+    );
+
+    List<CuonSachDto2th> cuonSachs = [];
+
+    for (var element in data) {
+      final cuonSach = CuonSachDto2th(
+        element['MaCuonSach'],
+        element['MaSach'],
+        element['TenDauSach'],
+        element['LanTaiBan'],
+        element['NhaXuatBan'],
+        element['ViTri'],
+        [],
+      );
+
+      final tacGiasData = await _database.rawQuery(
+        '''
+        select TenTacGia 
+        from TacGia_DauSach join TacGia USING(MaTacGia)
+        where MaDauSach = ?
+        ''',
+        [
+          element['MaDauSach'],
+        ],
+      );
+
+      for (var tacGia in tacGiasData) {
+        cuonSach.tacGias.add(
+          tacGia['TenTacGia'] as String,
+        );
+      }
+
+      cuonSachs.add(cuonSach);
+    }
+
+    return cuonSachs;
+  }
+
+  Future<CuonSachDto2th?> queryCuonSachDto2thSanCoWithMaCuonSach(String maCuonSach) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaCuonSach, MaDauSach, MaSach, TenDauSach
+      from DauSach join Sach using(MaDauSach) 
+      join CT_PhieuNhap using(MaSach)
+      join CuonSach using(MaSach, MaCTPN)
+      where MaCuonSach = ? and CuonSach.TinhTrang = 'Có sẵn'
+      ''',
+      [maCuonSach],
+    );
+
+    if (data.isEmpty) {
+      return null;
+    }
+
+    final element = data.first;
+
+    final cuonSach = CuonSachDto2th(
+      element['MaCuonSach'],
+      element['MaSach'],
+      element['TenDauSach'],
+      -1,
+      '',
+      '',
+      [],
+    );
+
+    final tacGiasData = await _database.rawQuery(
+      '''
+        select TenTacGia 
+        from TacGia_DauSach join TacGia USING(MaTacGia)
+        where MaDauSach = ?
+        ''',
+      [
+        element['MaDauSach'],
+      ],
+    );
+
+    for (var tacGia in tacGiasData) {
+      cuonSach.tacGias.add(
+        tacGia['TenTacGia'] as String,
+      );
+    }
+
+    return cuonSach;
+  }
+
   Future<void> updateViTriCuonSach(CuonSachDto updatedCuonSachDto) async {
     await _database.rawUpdate(
       '''
@@ -915,6 +1028,17 @@ class DbProcess {
     );
   }
 
+  Future<void> updateTinhTrangCuonSachWithMaCuonSach(String maCuonSach) async {
+    await _database.rawUpdate(
+      '''
+      update CuonSach
+      set TinhTrang = 'Đang mượn'
+      where MaCuonSach = ?
+      ''',
+      [maCuonSach],
+    );
+  }
+
   Future<Map<String, dynamic>> queryThongTinChiTietPhieuNhapCuonSach(int maCTPN) async {
     final data = await _database.rawQuery(
       '''
@@ -926,6 +1050,26 @@ class DbProcess {
       [maCTPN],
     );
     return data.first;
+  }
+
+  /* PHIẾU MƯỢN CODE */
+  Future<void> insertPhieuMuon(PhieuMuon phieuMuon) async {
+    await _database.insert(
+      'PhieuMuon',
+      phieuMuon.toMap(),
+    );
+  }
+
+  Future<int> querySoSachDaMuonCuaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select count(MaPhieuMuon) as count from PhieuMuon
+      where TinhTrang = 'Đang mượn' and MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    return data.first['count'];
   }
 
   /* REPORT CODE */

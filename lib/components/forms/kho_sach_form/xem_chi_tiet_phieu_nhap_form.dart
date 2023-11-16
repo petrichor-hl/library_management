@@ -58,9 +58,17 @@ class XemChiTietPhieuNhap extends StatelessWidget {
                     const Gap(16),
                     Row(
                       children: [
+                        const Text(
+                          'Mã phiếu nhập ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                         Text(
-                          'Mã phiếu nhập #${thongTinChiTiet['MaPhieuNhap']}',
-                          style: const TextStyle(
+                          '#${thongTinChiTiet['MaPhieuNhap']}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -78,17 +86,33 @@ class XemChiTietPhieuNhap extends StatelessWidget {
                     const Gap(8),
                     Row(
                       children: [
+                        const Text(
+                          'Số lượng: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                         Text(
-                          'Số lượng: ${thongTinChiTiet['SoLuong']}',
-                          style: const TextStyle(
+                          '${thongTinChiTiet['SoLuong']}',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         const Spacer(),
+                        const Text(
+                          'Đơn giá: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                         Text(
-                          'Đơn giá: ${(thongTinChiTiet['DonGia'] as int).toVnCurrencyFormat()}',
-                          style: const TextStyle(
+                          (thongTinChiTiet['DonGia'] as int).toVnCurrencyFormat(),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
