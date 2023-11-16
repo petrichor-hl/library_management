@@ -87,13 +87,20 @@ INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_4', 'Có sẵn', 'Chưa có thông tin', '6', '6');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('6_6_5', 'Có sẵn', 'Chưa có thông tin', '6', '6');
 
-INSERT INTO LichSuTimKiemCuonSach(SearchTimestamp, TuKhoa)
+INSERT INTO LichSuTimKiem(SearchTimestamp, LoaiTimKiem, TuKhoa)
 VALUES
-('1699439023', 'cha giàu cha nghèo'),
-('1699439024', 'cố định'),
-('1699439025', 'paulo coe'),
-('1699439026', 'cô gái năm ấy'),
-('1699439027', 'thất tịch không mưa');
+('1699439028', 'CuonSach', 'cha giàu cha nghèo'),
+('1699439029', 'CuonSach', 'cố định'),
+('1699439030', 'CuonSach', 'paulo coe'),
+('1699439031', 'CuonSach', 'cô gái năm ấy'),
+('1699439032', 'CuonSach', 'thất tịch không mưa');
+
+INSERT INTO LichSuTimKiem(SearchTimestamp, LoaiTimKiem, TuKhoa)
+VALUES
+('1699439023', 'DocGia', 'MDG007'),
+('1699439024', 'DocGia', 'Trần Lê Hoàng Lâm'),
+('1699439025', 'DocGia', '5'),
+('1699439026', 'DocGia', 'Cường bún');
 
 INSERT INTO TacGia(TenTacGia) 
 VALUES

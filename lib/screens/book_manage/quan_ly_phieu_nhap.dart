@@ -38,14 +38,18 @@ class _QuanLyPhieuNhapState extends State<QuanLyPhieuNhap> {
     await Future.delayed(kTabScrollDuration);
     /* Lấy dữ liệu Phiếu Nhập từ database */
     _phieuNhaps = await dbProcess.queryPhieuNhap();
-    /* Sắp xếp các Phiếu nhập theo thứ tặng Ngày Lập tăng dần */
-    _phieuNhaps.sort((a, b) => a.ngayLap.compareTo(b.ngayLap));
-    // for (var phieuNhap in phieuNhaps) {
-    //   print("('${phieuNhap.maPhieuNhap}', '${phieuNhap.ngayLap.toVnFormat()}', '${phieuNhap.tongTien}')");
-    // }
+
     if (_phieuNhaps.isNotEmpty) {
-      _startDateController.text = _phieuNhaps.first.ngayLap.toVnFormat();
-      _endDateController.text = _phieuNhaps.last.ngayLap.toVnFormat();
+      /* 
+      Sắp xếp các Phiếu nhập theo thứ tặng Ngày Lập giảm dần 
+      => Phiếu Nhập mới nhất sẽ lên đầu bảng 
+      */
+      _phieuNhaps.sort((a, b) => b.ngayLap.compareTo(a.ngayLap));
+      // for (var phieuNhap in phieuNhaps) {
+      //   print("('${phieuNhap.maPhieuNhap}', '${phieuNhap.ngayLap.toVnFormat()}', '${phieuNhap.tongTien}')");
+      // }
+      _startDateController.text = _phieuNhaps.last.ngayLap.toVnFormat();
+      _endDateController.text = _phieuNhaps.first.ngayLap.toVnFormat();
     }
   }
 
