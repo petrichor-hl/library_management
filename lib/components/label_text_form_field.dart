@@ -9,6 +9,7 @@ class LabelTextFormField extends StatelessWidget {
     this.hint = "",
     this.initText,
     this.onEditingComplete,
+    this.customValidator,
     this.onTap,
     this.suffixText,
   });
@@ -18,6 +19,7 @@ class LabelTextFormField extends StatelessWidget {
   final bool isEnable;
   final String hint;
   final String? initText;
+  final String? Function(String?)? customValidator;
   final void Function()? onEditingComplete;
   final void Function()? onTap;
   final String? suffixText;
@@ -38,9 +40,7 @@ class LabelTextFormField extends StatelessWidget {
           initialValue: initText,
           decoration: InputDecoration(
             filled: true,
-            fillColor: isEnable
-                ? const Color.fromARGB(255, 245, 246, 250)
-                : const Color(0xffEFEFEF),
+            fillColor: isEnable ? const Color.fromARGB(255, 245, 246, 250) : const Color(0xffEFEFEF),
             hintText: hint,
             hintStyle: const TextStyle(color: Color(0xFF888888)),
             border: OutlineInputBorder(
@@ -50,13 +50,15 @@ class LabelTextFormField extends StatelessWidget {
             contentPadding: const EdgeInsets.all(14),
             isCollapsed: true,
             suffixText: suffixText,
+            errorMaxLines: 2,
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Bạn chưa nhập $labelText';
-            }
-            return null;
-          },
+          validator: customValidator ??
+              (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Bạn chưa nhập $labelText';
+                }
+                return null;
+              },
           onEditingComplete: onEditingComplete,
           onTap: onTap,
         ),

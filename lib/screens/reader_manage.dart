@@ -6,10 +6,9 @@ import 'package:library_management/components/forms/add_edit_reader_form.dart';
 import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/components/pagination.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/reader.dart';
+import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
-import 'package:library_management/utils/common_variables.dart';
 
 class ReaderManage extends StatefulWidget {
   const ReaderManage({super.key});
@@ -34,13 +33,18 @@ class _ReaderManageState extends State<ReaderManage> {
   int _selectedRow = -1;
 
   /* 2 biến này không set final bởi vì nó sẽ thay đổi giá trị khi người dùng tương tác */
-  late List<Reader> _readerRows;
+  late List<DocGia> _readerRows;
   late int _readerCount;
 
   late final Future<void> _futureRecentReaders = _getRecentReaders();
   Future<void> _getRecentReaders() async {
-    _readerRows = await dbProcess.queryReader(numberRowIgnore: 0);
-    _readerCount = await dbProcess.queryCountReader();
+    /* 
+    Delay 1 khoảng bằng thời gian animation của TabController 
+    Tạo chuyển động mượt mà 
+    */
+    await Future.delayed(kTabScrollDuration);
+    _readerRows = await dbProcess.queryDocGia(numberRowIgnore: 0);
+    _readerCount = await dbProcess.queryCountDocGia();
   }
 
   final _searchController = TextEditingController();
@@ -50,9 +54,9 @@ class _ReaderManageState extends State<ReaderManage> {
   thì phương thức showDialog() sẽ trả về một Reader mới
   */
   Future<void> _logicAddReader() async {
-    Reader? newReader = await showDialog(
+    DocGia? newReader = await showDialog(
       context: context,
-      builder: (ctx) => const AddEditReaderForm(),
+      builder: (ctx) => const AddEditDocGiaForm(),
     );
 
     // print(newReader);
@@ -78,8 +82,8 @@ class _ReaderManageState extends State<ReaderManage> {
   Future<void> _logicEditReader() async {
     String? message = await showDialog(
       context: context,
-      builder: (ctx) => AddEditReaderForm(
-        editReader: _readerRows[_selectedRow],
+      builder: (ctx) => AddEditDocGiaForm(
+        editDocGia: _readerRows[_selectedRow],
       ),
     );
 
@@ -93,11 +97,11 @@ class _ReaderManageState extends State<ReaderManage> {
   Hàm này là logic Xóa Độc giả 
   */
   Future<void> _logicDeleteReader() async {
-    var deleteReaderName = _readerRows[_selectedRow].fullname;
+    var deleteReaderName = _readerRows[_selectedRow].hoTen;
 
     /* Xóa dòng dữ liệu*/
-    await dbProcess.deleteReader(
-      _readerRows[_selectedRow].id!,
+    await dbProcess.deleteDocGia(
+      _readerRows[_selectedRow].maDocGia!,
     );
 
     /* 
@@ -119,14 +123,16 @@ class _ReaderManageState extends State<ReaderManage> {
       Trường hợp đặc biệt:
       Thủ thư đang ở trang cuối cùng và xóa nốt dòng cuối cùng 
       thì phải chuyển lại sang trang trước đó.
-
-      Nếu không còn trang trước đó, tức _readerCount == 0, thì không cần làm gì cả
+      VD: Xóa hết các dòng ở trang 3 thì tự động chuyển về trang 2
       */
       if (_readerRows.isEmpty && _readerCount > 0) {
         currentPage--;
         _paginationController.text = currentPage.toString();
         _loadReadersOfPageIndex(currentPage);
       }
+      /* 
+      Nếu không còn trang trước đó, tức _readerCount == 0, thì không cần làm gì cả 
+      */
     } else {
       _loadReadersOfPageIndex(currentPage);
     }
@@ -153,15 +159,22 @@ class _ReaderManageState extends State<ReaderManage> {
   Future<void> _loadReadersOfPageIndex(int pageIndex) async {
     String searchText = _searchController.text;
 
-    List<Reader> newReaderRows = searchText.isEmpty
-        ? await dbProcess.queryReader(numberRowIgnore: (pageIndex - 1) * 8)
-        : await dbProcess.queryReaderFullnameWithString(
+    List<DocGia> newReaderRows = searchText.isEmpty
+        ? await dbProcess.queryDocGia(numberRowIgnore: (pageIndex - 1) * 8)
+        : await dbProcess.queryDocGiaFullnameWithString(
             numberRowIgnore: (pageIndex - 1) * 8,
             str: searchText,
           );
 
     setState(() {
       _readerRows = newReaderRows;
+      /* 
+      Chuyển sang trang khác phải cho _selectedRow = -1
+      VD: 
+      Đang ở trang 1 và selectedRow = 4 (đang ở dòng 5),
+      mà chuyển sang trang 2, chỉ có 2 dòng
+      => Gây ra LỖI
+      */
       _selectedRow = -1;
     });
   }
@@ -196,12 +209,17 @@ class _ReaderManageState extends State<ReaderManage> {
               children: [
                 MySearchBar(
                   controller: _searchController,
-                  onSearch: () async {
-                    _paginationController.text = '1';
-                    _readerCount =
-                        await dbProcess.queryCountReaderFullnameWithString(
-                            _searchController.text);
-                    _loadReadersOfPageIndex(1);
+                  onSearch: (value) async {
+                    /* 
+                    Phòng trường hợp gõ tiếng việt
+                    VD: o -> (rỗng) -> ỏ
+                    Lúc này, value sẽ bằng '' (rỗng) nhưng _searchController.text lại bằng "ỏ"
+                    */
+                    if (_searchController.text == value) {
+                      _paginationController.text = '1';
+                      _readerCount = await dbProcess.queryCountDocGiaFullnameWithString(_searchController.text);
+                      _loadReadersOfPageIndex(1);
+                    }
                   },
                 ),
                 const SizedBox(height: 24),
@@ -220,8 +238,7 @@ class _ReaderManageState extends State<ReaderManage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 18, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -241,8 +258,7 @@ class _ReaderManageState extends State<ReaderManage> {
                                 context: context,
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Xác nhận'),
-                                  content: Text(
-                                      'Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].fullname}?'),
+                                  content: Text('Bạn có chắc xóa Độc giả ${_readerRows[_selectedRow].hoTen}?'),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -316,23 +332,16 @@ class _ReaderManageState extends State<ReaderManage> {
                       rows: List.generate(
                         _readerRows.length,
                         (index) {
-                          Reader reader = _readerRows[index];
+                          DocGia reader = _readerRows[index];
                           /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black26) */
-                          TextStyle cellTextStyle = TextStyle(
-                              color: reader.expirationDate < DateTime.now()
-                                  ? Colors.black26
-                                  : Colors.black);
+                          TextStyle cellTextStyle = TextStyle(color: reader.ngayHetHan < DateTime.now() ? Colors.black26 : Colors.black);
 
                           return DataRow(
                             /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black12) */
-                            color: reader.expirationDate < DateTime.now()
+                            color: reader.ngayHetHan < DateTime.now()
                                 ? MaterialStateProperty.resolveWith((states) {
-                                    if (states
-                                        .contains(MaterialState.selected)) {
-                                      return Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.3);
+                                    if (states.contains(MaterialState.selected)) {
+                                      return Theme.of(context).colorScheme.primary.withOpacity(0.3);
                                     }
                                     return Colors.black12;
                                   })
@@ -350,24 +359,23 @@ class _ReaderManageState extends State<ReaderManage> {
                             cells: [
                               DataCell(
                                 Text(
-                                  reader.id!.toString(),
+                                  reader.maDocGia!.toString(),
                                   style: cellTextStyle,
                                 ),
                               ),
                               DataCell(
                                 /* Ràng buộc cho Chiều rộng Tối đa của cột Họ Tên = 150 */
                                 ConstrainedBox(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 150),
+                                  constraints: const BoxConstraints(maxWidth: 150),
                                   child: Text(
-                                    reader.fullname,
+                                    reader.hoTen.capitalizeFirstLetterOfEachWord(),
                                     style: cellTextStyle,
                                   ),
                                 ),
                               ),
                               DataCell(
                                 Text(
-                                  reader.dob.toVnFormat(),
+                                  reader.ngaySinh.toVnFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
@@ -377,36 +385,34 @@ class _ReaderManageState extends State<ReaderManage> {
                                 phòng trường hợp địa chỉ quá dài
                                 */
                                 ConstrainedBox(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 250),
+                                  constraints: const BoxConstraints(maxWidth: 250),
                                   child: Text(
-                                    reader.address,
+                                    reader.diaChi,
                                     style: cellTextStyle,
                                   ),
                                 ),
                               ),
                               DataCell(
                                 Text(
-                                  reader.phoneNumber,
+                                  reader.soDienThoai,
                                   style: cellTextStyle,
                                 ),
                               ),
                               DataCell(
                                 Text(
-                                  reader.creationDate.toVnFormat(),
+                                  reader.ngayLapThe.toVnFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
                               DataCell(
                                 Text(
-                                  reader.expirationDate.toVnFormat(),
+                                  reader.ngayHetHan.toVnFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
                               DataCell(
                                 Text(
-                                  reader.totalTiabilities
-                                      .toVnCurrencyWithoutSymbolFormat(),
+                                  reader.tongNo.toVnCurrencyWithoutSymbolFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
@@ -428,8 +434,7 @@ class _ReaderManageState extends State<ReaderManage> {
                         child: Center(
                           child: Text(
                             'Chưa có dữ liệu Độc Giả',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black54),
+                            style: TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                         ),
                       ),
