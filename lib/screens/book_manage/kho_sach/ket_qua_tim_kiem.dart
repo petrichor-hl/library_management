@@ -28,7 +28,7 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
     Tạo chuyển động mượt mà 
     */
     await Future.delayed(const Duration(milliseconds: 300));
-    _cuonSachs = await dbProcess.queryCuonSachWithKeyword(widget.keyword);
+    _cuonSachs = await dbProcess.queryCuonSachDtoWithKeyword(widget.keyword);
   }
 
   @override
@@ -183,7 +183,7 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 30, right: 15),
                                   child: Text(
-                                    (index + 1).toString(),
+                                    _cuonSachs[index].maCuonSach,
                                   ),
                                 ),
                               ),

@@ -173,16 +173,6 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                     )
                   ],
                 ),
-                //
-                // if (widget.editDocGia != null) ...[
-                //   const SizedBox(height: 10),
-                //   LabelTextFormField(
-                //     labelText: 'Mã độc giả',
-                //     initText: widget.editDocGia!.id.toString(),
-                //     isEnable: false,
-                //   ),
-                // ],
-                //
                 const SizedBox(height: 10),
                 LabelTextFormField(
                   labelText: 'Họ Tên',
@@ -193,7 +183,8 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                 LabelTextFieldDatePicker(
                   labelText: 'Ngày sinh',
                   controller: _dobController,
-                  initialDateInPicker: widget.editDocGia != null ? widget.editDocGia!.ngaySinh : DateTime.now(),
+                  initialDateInPicker: widget.editDocGia != null ? widget.editDocGia!.ngaySinh : DateTime.now().subYears(ThamSoQuyDinh.tuoiToiThieu),
+                  lastDate: DateTime.now().subYears(ThamSoQuyDinh.tuoiToiThieu),
                 ),
                 //
                 const SizedBox(height: 10),

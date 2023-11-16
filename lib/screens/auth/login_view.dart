@@ -65,7 +65,10 @@ class _LoginViewState extends State<LoginView> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Đăng nhập thành công.'),
+            content: Text(
+              'Đăng nhập thành công.',
+              textAlign: TextAlign.center,
+            ),
             behavior: SnackBarBehavior.floating,
             duration: Duration(seconds: 3),
             width: 300,

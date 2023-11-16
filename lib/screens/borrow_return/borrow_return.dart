@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:library_management/cubit/selected_cuon_sach_cho_muon.dart';
 import 'package:library_management/screens/borrow_return/muon_sach.dart';
 import 'package:library_management/screens/borrow_return/quan_ly_muon_tra/quan_ly_muon_tra.dart';
 import 'package:library_management/screens/borrow_return/tra_sach.dart';
@@ -80,10 +82,13 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
           Expanded(
             child: TabBarView(
               controller: tabController,
-              children: const [
-                QuanLyMuonTra(),
-                MuonSach(),
-                TraSach(),
+              children: [
+                const QuanLyMuonTra(),
+                BlocProvider(
+                  create: (_) => SelectedCuonSachChoMuonCubit(),
+                  child: const MuonSach(),
+                ),
+                const TraSach(),
               ],
             ),
           ),
