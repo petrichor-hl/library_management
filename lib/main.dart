@@ -1,8 +1,9 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:library_management/screens/library_management.dart';
-import 'package:library_management/screens/login.dart';
+import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
+import 'package:library_management/screens/auth/auth.dart';
 import 'package:library_management/utils/db_process.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,7 +16,14 @@ void main() async {
 
   await dbProcess.connect();
 
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => TatCaSachCubit()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 
   doWhenWindowReady(() {
     const initialSize = Size(1280, 900);
@@ -35,11 +43,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF56BDDE)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF48B8E9)),
         useMaterial3: true,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
       ),
-      home: const LibraryManagement(),
+      home: const LoginLayout(),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
