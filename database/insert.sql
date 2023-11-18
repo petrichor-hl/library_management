@@ -62,7 +62,7 @@ INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) VALUES ('3', '7',
 
 -- MaCuonSach = MaSach_MaCTPN_index 
 -- (1 <= index <= ChiTietPhieuNhap.soLuong)
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('311', 'Có sẵn', 'B5.14 - Kệ sách 9 - Tầng 1 (dưới cùng)', '1', '3');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('311', 'Đang mượn', 'B5.14 - Kệ sách 9 - Tầng 1 (dưới cùng)', '1', '3');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('312', 'Có sẵn', 'B5.14 - Kệ sách 9 - Tầng 1 (dưới cùng)', '1', '3');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('421', 'Có sẵn', 'C3.09 - Kệ sách 2 - Tầng 7', '2', '4');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('422', 'Có sẵn', 'C3.09 - Kệ sách 2 - Tầng 7', '2', '4');
@@ -72,10 +72,10 @@ INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('532'
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('141', 'Có sẵn', 'Chưa có thông tin', '4', '1');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('142', 'Có sẵn', 'Chưa có thông tin', '4', '1');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('143', 'Có sẵn', 'Chưa có thông tin', '4', '1');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('144', 'Có sẵn', 'Chưa có thông tin', '4', '1');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('144', 'Đang mượn', 'Chưa có thông tin', '4', '1');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('145', 'Có sẵn', 'Chưa có thông tin', '4', '1');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('851', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
-INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('852', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
+INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('852', 'Đang mượn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
 INSERT INTO CuonSach(MaCuonSach, TinhTrang, ViTri, MaCTPN, MaSach) VALUES ('853', 'Có sẵn', 'B4.20 - Kệ sách 1 - Tầng 5 (trên cùng)', '5', '8');
 
 
@@ -154,3 +154,9 @@ VALUES
 ('6', '7'),
 ('7', '8'),
 ('8', '10');
+
+INSERT INTO PhieuMuon(MaCuonSach, MaDocGia, NgayMuon, HanTra, TinhTrang)
+VALUES 
+('852', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
+('311', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
+('144', '2', '18/11/2023', '18/12/2023', 'Đang mượn');

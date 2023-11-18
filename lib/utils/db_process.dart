@@ -4,12 +4,14 @@ import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
+import 'package:library_management/dto/phieu_muon_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/models/lich_su_tim_kiem.dart';
 import 'package:library_management/models/phieu_muon.dart';
 import 'package:library_management/models/phieu_nhap.dart';
+import 'package:library_management/models/phieu_tra.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -149,6 +151,15 @@ class DbProcess {
 
             FOREIGN KEY (MaCuonSach) REFERENCES CuonSach(MaCuonSach) ON DELETE RESTRICT,
             FOREIGN KEY (MaDocGia) REFERENCES DocGia(MaDocGia) ON DELETE RESTRICT
+          );
+
+          CREATE TABLE PhieuTra(
+            MaPhieuTra INTEGER PRIMARY KEY AUTOINCREMENT,
+            MaPhieuMuon INTEGER,
+            NgayTra TEXT,
+            SoTienPhat INTEGER,
+
+            FOREIGN KEY (MaPhieuMuon) REFERENCES PhieuMuon(MaPhieuMuon) ON DELETE RESTRICT
           );
 
           CREATE TABLE LichSuTimKiem(
@@ -1028,14 +1039,17 @@ class DbProcess {
     );
   }
 
-  Future<void> updateTinhTrangCuonSachWithMaCuonSach(String maCuonSach) async {
+  Future<void> updateTinhTrangCuonSachWithMaCuonSach(String maCuonSach, String tinhTrang) async {
     await _database.rawUpdate(
       '''
       update CuonSach
-      set TinhTrang = 'Đang mượn'
+      set TinhTrang = ?
       where MaCuonSach = ?
       ''',
-      [maCuonSach],
+      [
+        tinhTrang,
+        maCuonSach,
+      ],
     );
   }
 
@@ -1054,6 +1068,10 @@ class DbProcess {
 
   /* PHIẾU MƯỢN CODE */
   Future<void> insertPhieuMuon(PhieuMuon phieuMuon) async {
+//     print('''
+// INSERT INTO PhieuMuon(MaPhieuMuon, MaCuonSach, MaDocGia, NgayMuon, HanTra, TinhTrang)
+// VALUES ('${phieuMuon.maCuonSach}', '${phieuMuon.maDocGia}', '${phieuMuon.ngayMuon.toVnFormat()}', '${phieuMuon.hanTra.toVnFormat()}', 'Đang mượn');
+// ''');
     await _database.insert(
       'PhieuMuon',
       phieuMuon.toMap(),
@@ -1070,6 +1088,77 @@ class DbProcess {
     );
 
     return data.first['count'];
+  }
+
+  Future<List<PhieuMuonCanTraDto>> queryPhieuMuonCanTraDtoWithMaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaPhieuMuon, MaCuonSach, MaDauSach, TenDauSach, LanTaiBan, NhaXuatBan, NgayMuon, HanTra
+      from PhieuMuon join CuonSach using(MaCuonSach) 
+      join Sach using(MaSach)
+      join DauSach using(MaDauSach)
+      where MaDocGia = ? and PhieuMuon.TinhTrang = 'Đang mượn'
+      ''',
+      [maDocGia],
+    );
+
+    List<PhieuMuonCanTraDto> phieuMuons = [];
+
+    for (var element in data) {
+      final phieuMuon = PhieuMuonCanTraDto(
+        element['MaPhieuMuon'],
+        element['MaCuonSach'],
+        element['TenDauSach'],
+        element['LanTaiBan'],
+        element['NhaXuatBan'],
+        vnDateFormat.parse(element['NgayMuon']),
+        vnDateFormat.parse(element['HanTra']),
+        [],
+      );
+
+      final tacGiasData = await _database.rawQuery(
+        '''
+        select TenTacGia 
+        from TacGia_DauSach join TacGia USING(MaTacGia)
+        where MaDauSach = ?
+        ''',
+        [
+          element['MaDauSach'],
+        ],
+      );
+
+      for (var tacGia in tacGiasData) {
+        phieuMuon.tacGias.add(
+          tacGia['TenTacGia'] as String,
+        );
+      }
+
+      phieuMuons.add(phieuMuon);
+    }
+
+    return phieuMuons;
+  }
+
+  Future<void> updateTinhTrangPhieuMuonWithMaPhieuMuon(int maPhieuMuon, String tinhTrang) async {
+    await _database.rawUpdate(
+      '''
+      update PhieuMuon
+      set TinhTrang = ?
+      where MaPhieuMuon = ?
+      ''',
+      [
+        tinhTrang,
+        maPhieuMuon,
+      ],
+    );
+  }
+
+  /* PHIẾU TRẢ CODE */
+  Future<void> insertPhieuTra(PhieuTra phieuTra) async {
+    await _database.insert(
+      'PhieuTra',
+      phieuTra.toMap(),
+    );
   }
 
   /* REPORT CODE */

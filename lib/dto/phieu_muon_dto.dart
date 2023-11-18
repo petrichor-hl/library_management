@@ -1,21 +1,21 @@
-class PhieuMuon {
+class PhieuMuonCanTraDto {
   int? maPhieuMuon;
   String maCuonSach;
+  String tenDauSach;
   int lanTaiBan;
   String nhaXuatBan;
   DateTime ngayMuon;
   DateTime hanTra;
-  String tinhTrang;
   List<String> tacGias;
 
-  PhieuMuon(
+  PhieuMuonCanTraDto(
     this.maPhieuMuon,
     this.maCuonSach,
+    this.tenDauSach,
     this.lanTaiBan,
     this.nhaXuatBan,
     this.ngayMuon,
     this.hanTra,
-    this.tinhTrang,
     this.tacGias,
   );
 
