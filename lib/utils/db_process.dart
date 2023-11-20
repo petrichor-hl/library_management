@@ -8,6 +8,7 @@ import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
 import 'package:library_management/models/lich_su_tim_kiem_cuon_sach.dart';
 import 'package:library_management/models/phieu_nhap.dart';
+import 'package:library_management/models/report_doc_gia.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -847,4 +848,29 @@ class DbProcess {
   }
 
   /* REPORT CODE */
+
+  // REPORT DOCGIA THEO THANG
+  Future<List<TKDocGia>> queryDocGiaTheoThang() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaDocGia, NgayLapThe 
+      from DocGia 
+
+      ''',
+    );
+
+    List<TKDocGia> danhSachDocGia = [];
+
+    for (var element in data) {
+      DateTime createCardDate = vnDateFormat.parse(element['NgayLapThe'] as String);
+      danhSachDocGia.add(
+        TKDocGia(
+          createCardDate.month,
+          createCardDate.year,
+          element['MaDocGia'],
+        ),
+      );
+    }
+    return danhSachDocGia;
+  }
 }
