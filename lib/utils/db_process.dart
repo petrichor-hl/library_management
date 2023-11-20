@@ -40,15 +40,21 @@ class DbProcess {
           ('PIN','qltv214');
 
           CREATE TABLE ThamSoQuyDinh(
+            TenThuVien TEXT,
+            DiaChi TEXT,
+            SoDienThoai TEXT,
+            Email TEXT,
             SoNgayMuonToiDa INTEGER,    -- 30 ngay
             SoSachMuonToiDa INTEGER,    -- 5 cuon
             MucThuTienPhat INTEGER,     -- 10000
             TuoiToiThieu INTEGER,       -- 12 tuoi
             PhiTaoThe INTEGER,          -- 50000
             ThoiHanThe INTEGER          -- 3 thang
+                           
           );
 
-          INSERT INTO ThamSoQuyDinh VALUES('30','5', '10000', '12', '50000', 3);
+          INSERT INTO ThamSoQuyDinh 
+          VALUES('Thư viện READER', '506 Hùng Vương, Hội An, Quảng Nam', '0905743143', 'tvReader@gmail.com', '30','5', '10000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -980,7 +986,7 @@ class DbProcess {
   Future<CuonSachDto2th?> queryCuonSachDto2thSanCoWithMaCuonSach(String maCuonSach) async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select MaCuonSach, MaDauSach, MaSach, TenDauSach
+      select MaCuonSach, MaDauSach, MaSach, TenDauSach, LanTaiBan, NhaXuatBan
       from DauSach join Sach using(MaDauSach) 
       join CT_PhieuNhap using(MaSach)
       join CuonSach using(MaSach, MaCTPN)
@@ -999,8 +1005,8 @@ class DbProcess {
       element['MaCuonSach'],
       element['MaSach'],
       element['TenDauSach'],
-      -1,
-      '',
+      element['LanTaiBan'],
+      element['NhaXuatBan'],
       '',
       [],
     );

@@ -16,6 +16,28 @@ SE214.O11
 Flutter 3.13.1  
 SQLite 3
 
+### Screenshots
+
+- Login
+
 <p align="center">
     <img src="decor/login-page.png"/>
+</p>
+
+- Cho mượn sách
+
+<p align="center">
+    <img src="decor/muon_sach.png"/>
+</p>
+
+- Xuất file Phiếu mượn PDF
+
+<p align="center">
+    <img src="decor/phieu_muon.png"/>
+</p>
+
+- Nhận trả sách
+
+<p align="center">
+    <img src="decor/tra_sach.png"/>
 </p>

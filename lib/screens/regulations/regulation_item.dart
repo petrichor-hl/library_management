@@ -55,7 +55,7 @@ class _RegulationItemState extends State<RegulationItem> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Cập nhật thành công.'),
+          content: Text('Cập nhật Tham số thành công.'),
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 3),
           width: 300,
@@ -85,7 +85,7 @@ class _RegulationItemState extends State<RegulationItem> {
           color: _isHover ? Colors.grey.shade100 : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
-        padding: const EdgeInsets.only(left: 30, top: 8, bottom: 8),
+        padding: const EdgeInsets.only(left: 30, top: 4, bottom: 4),
         child: Row(
           children: [
             /* SizedBox này có tác dụng quy định chiều cao của ROW */
@@ -177,7 +177,6 @@ class _RegulationItemState extends State<RegulationItem> {
                 )
               ],
             ),
-            const Gap(8)
           ],
         ),
       ),

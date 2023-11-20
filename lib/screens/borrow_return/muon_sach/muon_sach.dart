@@ -1,19 +1,22 @@
 import 'package:dart_date/dart_date.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/cubit/selected_cuon_sach_cho_muon.dart';
 import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/phieu_muon.dart';
-import 'package:library_management/screens/borrow_return/muon_sach/in_phieu_muon_switch.dart';
+import 'package:library_management/screens/borrow_return/muon_sach/xuat_phieu_muon_switch.dart';
 import 'package:library_management/screens/borrow_return/muon_sach/sach_da_chon.dart';
 import 'package:library_management/screens/borrow_return/muon_sach/sach_trong_kho.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 import 'package:library_management/utils/parameters.dart';
+import 'package:library_management/utils/pdf_api.dart';
 
 class MuonSach extends StatefulWidget {
   const MuonSach({super.key});
@@ -27,7 +30,7 @@ class _MuonSachState extends State<MuonSach> {
   final _ngayMuonController = TextEditingController(
     text: DateTime.now().toVnFormat(),
   );
-  final _ngayTraController = TextEditingController(
+  final _hanTraController = TextEditingController(
     text: DateTime.now().addDays(ThamSoQuyDinh.soNgayMuonToiDa).toVnFormat(),
   );
 
@@ -47,7 +50,7 @@ class _MuonSachState extends State<MuonSach> {
   String _maDocGia = '';
   String _hoTenDocGia = '';
   String _soSachDaMuon = '';
-  bool _isInPhieuMuon = false;
+  bool _isInPhieuMuon = true;
 
   Future<void> _searchMaDocGia() async {
     _errorText = '';
@@ -94,7 +97,7 @@ class _MuonSachState extends State<MuonSach> {
     /* Kiểm tra mã độc giả đã được nhập đúng đắn chưa */
     if (_maDocGia.isEmpty) {
       await _searchMaDocGia();
-      if (_hoTenDocGia.isEmpty) {
+      if (_maDocGia.isEmpty) {
         return;
       }
     }
@@ -111,8 +114,9 @@ class _MuonSachState extends State<MuonSach> {
       _isProcessingLuuPhieuMuon = true;
     });
 
+    int maDocGia = int.parse(_maDocGia);
+
     for (var cuonSach in cuonSachs) {
-      int maDocGia = int.parse(_searchMaDocGiaController.text);
       DateTime ngayMuon = vnDateFormat.parse(_ngayMuonController.text);
 
       final phieuMuon = PhieuMuon(
@@ -131,15 +135,6 @@ class _MuonSachState extends State<MuonSach> {
     await Future.delayed(const Duration(milliseconds: 200));
 
     if (mounted) {
-      /* Sau khi lưu xong dữ liệu vào DB thì ta reset lại trang */
-      _searchMaDocGiaController.clear();
-      _maDocGia = '';
-      _hoTenDocGia = '';
-      _soSachDaMuon = '';
-      setState(() {
-        _searchCuonSachController.clear();
-        _maCuonSachToAddCuonSachController.clear();
-      });
       context.read<SelectedCuonSachChoMuonCubit>().clear();
 
       /* Hiện thị thông báo lưu Phiếu mượn thành công */
@@ -157,6 +152,33 @@ class _MuonSachState extends State<MuonSach> {
       );
     }
 
+    if (_isInPhieuMuon) {
+      final phieuMuonDocument = await PdfApi.generatePhieuMuon(
+        maDocGia: _maDocGia,
+        hoTen: _hoTenDocGia,
+        ngayMuon: _ngayMuonController.text,
+        hanTra: _hanTraController.text,
+        cuonSachs: cuonSachs,
+      );
+      final phieuMuonPdfFile = await PdfApi.saveDocument(
+        name: removeDiacritics(_hoTenDocGia).replaceAll(' ', '') + DateFormat('_ddMMyyyy_Hms').format(DateTime.now()),
+        pdfDoc: phieuMuonDocument,
+      );
+
+      PdfApi.openFile(phieuMuonPdfFile);
+    }
+
+    /* Sau khi lưu xong dữ liệu vào DB thì ta reset lại trang */
+    _searchMaDocGiaController.clear();
+
+    _searchCuonSachController.clear();
+    _maCuonSachToAddCuonSachController.clear();
+    setState(() {
+      _maDocGia = '';
+      _hoTenDocGia = '';
+      _soSachDaMuon = '';
+    });
+
     setState(() {
       _isProcessingLuuPhieuMuon = false;
     });
@@ -166,7 +188,7 @@ class _MuonSachState extends State<MuonSach> {
   void initState() {
     super.initState();
     _ngayMuonController.addListener(() {
-      _ngayTraController.text = vnDateFormat.parse(_ngayMuonController.text).addDays(ThamSoQuyDinh.soNgayMuonToiDa).toVnFormat();
+      _hanTraController.text = vnDateFormat.parse(_ngayMuonController.text).addDays(ThamSoQuyDinh.soNgayMuonToiDa).toVnFormat();
     });
   }
 
@@ -252,7 +274,7 @@ class _MuonSachState extends State<MuonSach> {
               Expanded(
                 child: LabelTextFormField(
                   labelText: 'Hạn trả',
-                  controller: _ngayTraController,
+                  controller: _hanTraController,
                   isEnable: false,
                 ),
               ),
@@ -323,7 +345,7 @@ class _MuonSachState extends State<MuonSach> {
               ),
               const Gap(30),
               Expanded(
-                child: InPhieuMuonSwitch(
+                child: XuatPhieuMuonSwitch(
                   onSwitchChanged: (value) => _isInPhieuMuon = value,
                 ),
               ),

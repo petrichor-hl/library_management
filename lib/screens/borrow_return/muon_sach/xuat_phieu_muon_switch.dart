@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class InPhieuMuonSwitch extends StatefulWidget {
-  const InPhieuMuonSwitch({
+class XuatPhieuMuonSwitch extends StatefulWidget {
+  const XuatPhieuMuonSwitch({
     super.key,
     required this.onSwitchChanged,
   });
@@ -10,18 +10,18 @@ class InPhieuMuonSwitch extends StatefulWidget {
   final void Function(bool) onSwitchChanged;
 
   @override
-  State<InPhieuMuonSwitch> createState() => _InPhieuMuonSwitchState();
+  State<XuatPhieuMuonSwitch> createState() => _XuatPhieuMuonSwitchState();
 }
 
-class _InPhieuMuonSwitchState extends State<InPhieuMuonSwitch> {
-  bool _isInPhieuMuon = false;
+class _XuatPhieuMuonSwitchState extends State<XuatPhieuMuonSwitch> {
+  bool _isInPhieuMuon = true;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         const Text(
-          'In Phiếu mượn',
+          'Xuất file Phiếu mượn',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -32,6 +32,7 @@ class _InPhieuMuonSwitchState extends State<InPhieuMuonSwitch> {
           value: _isInPhieuMuon,
           onChanged: (value) {
             setState(() => _isInPhieuMuon = value);
+            widget.onSwitchChanged(value);
           },
         ),
       ],

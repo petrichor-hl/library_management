@@ -193,11 +193,11 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                ReaderManage(),
-                BookManage(),
-                BorrowReturn(),
-                ReportManage(),
+              children: [
+                const ReaderManage(),
+                const BookManage(),
+                const BorrowReturn(),
+                const ReportManage(),
                 Regulations(),
               ],
             ),
