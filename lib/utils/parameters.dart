@@ -1,6 +1,10 @@
 import 'package:library_management/utils/extension.dart';
 
 class ThamSoQuyDinh {
+  static String tenThuVien = '';
+  static String diaChi = '';
+  static String soDienThoai = '';
+  static String email = '';
   static int soNgayMuonToiDa = 0; // đơn vị ngày
   static int soSachMuonToiDa = 0; // đơn vị số nguyên
   static int mucThuTienPhat = 0; // đơn vị VND
@@ -9,6 +13,11 @@ class ThamSoQuyDinh {
   static int thoiHanThe = 0; // đơn vị tháng
 
   static void thietLapThamSo(Map<String, dynamic> thamSo) {
+    tenThuVien = thamSo['TenThuVien'];
+    diaChi = thamSo['DiaChi'];
+    soDienThoai = thamSo['SoDienThoai'];
+    email = thamSo['Email'];
+
     soNgayMuonToiDa = thamSo['SoNgayMuonToiDa'];
     soSachMuonToiDa = thamSo['SoSachMuonToiDa'];
     mucThuTienPhat = thamSo['MucThuTienPhat'];
@@ -21,6 +30,18 @@ class ThamSoQuyDinh {
     String value = '';
 
     switch (tenThamSo) {
+      case 'TenThuVien':
+        value = tenThuVien;
+        break;
+      case 'DiaChi':
+        value = diaChi;
+        break;
+      case 'SoDienThoai':
+        value = soDienThoai;
+        break;
+      case 'Email':
+        value = email;
+        break;
       case 'SoNgayMuonToiDa':
         value = soNgayMuonToiDa.toString();
         break;

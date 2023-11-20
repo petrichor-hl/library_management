@@ -67,7 +67,7 @@ class _PhieuTraSectionState extends State<PhieuTraSection> {
     dbProcess.updateTinhTrangPhieuMuonWithMaPhieuMuon(widget.maPhieuMuon!, 'Đã trả');
 
     /* Cập nhật Trạng thái Cuốn sách = 'Có Sẵn' */
-    dbProcess.updateTinhTrangCuonSachWithMaCuonSach(widget.maCuonSach!, 'Có Sẵn');
+    dbProcess.updateTinhTrangCuonSachWithMaCuonSach(widget.maCuonSach!, 'Có sẵn');
 
     /* Gọi phương thức từ Widget cha là TraSach để xử lý xóa phiếu mượn và trả */
     widget.onTraPhieu();
