@@ -28,7 +28,7 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
     Tạo chuyển động mượt mà 
     */
     await Future.delayed(const Duration(milliseconds: 300));
-    _cuonSachs = await dbProcess.queryCuonSachWithKeyword(widget.keyword);
+    _cuonSachs = await dbProcess.queryCuonSachDtoWithKeyword(widget.keyword);
   }
 
   @override
@@ -61,16 +61,15 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                   color: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(
                     vertical: 15,
-                    horizontal: 30,
                   ),
                   child: const Row(
                     children: [
                       SizedBox(
-                        width: 50,
+                        width: 100,
                         child: Padding(
-                          padding: EdgeInsets.only(right: 15),
+                          padding: EdgeInsets.only(left: 30, right: 15),
                           child: Text(
-                            '#',
+                            'Mã CS',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -156,9 +155,9 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                         ),
                       ),
                       SizedBox(
-                        width: 90,
+                        width: 120,
                         child: Padding(
-                          padding: EdgeInsets.only(left: 15),
+                          padding: EdgeInsets.only(left: 15, right: 30),
                           child: Text(
                             'Mã CTPN',
                             style: TextStyle(
@@ -180,11 +179,11 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                           Row(
                             children: [
                               SizedBox(
-                                width: 80,
+                                width: 100,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 30),
+                                  padding: const EdgeInsets.only(left: 30, right: 15),
                                   child: Text(
-                                    (index + 1).toString(),
+                                    _cuonSachs[index].maCuonSach,
                                   ),
                                 ),
                               ),

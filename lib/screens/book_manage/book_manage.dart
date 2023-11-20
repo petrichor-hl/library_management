@@ -3,6 +3,8 @@ import 'package:library_management/screens/book_manage/kho_sach/kho_sach.dart';
 import 'package:library_management/screens/book_manage/nhap_sach.dart';
 import 'package:library_management/screens/book_manage/quan_ly_dau_sach.dart';
 import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap.dart';
+import 'package:library_management/screens/book_manage/quan_ly_tac_gia.dart';
+import 'package:library_management/screens/book_manage/quan_ly_the_loai.dart';
 
 class BookManage extends StatefulWidget {
   const BookManage({super.key});
@@ -17,7 +19,7 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    tabController = TabController(length: 6, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -29,13 +31,14 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 25, 30, 20),
             child: Ink(
-              width: 480,
+              width: 750,
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -49,9 +52,11 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 controller: tabController,
                 tabs: const [
                   Tab(text: "Kho sách"),
-                  Tab(text: 'Đầu Sách'),
+                  Tab(text: 'Đầu sách'),
                   Tab(text: "Nhập sách"),
                   Tab(text: "Phiếu nhập"),
+                  Tab(text: "Tác giả"),
+                  Tab(text: "Thể loại"),
                 ],
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -86,6 +91,8 @@ class BookManageState extends State<BookManage> with TickerProviderStateMixin {
                 const QuanLyDauSach(),
                 buildNhapSach(),
                 const QuanLyPhieuNhap(),
+                const QuanLyTacGia(),
+                const QuanLyTheLoai(),
               ],
             ),
           ),

@@ -40,7 +40,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
 
   void setCreationExpriationDate(DateTime date) {
     _creationDateController.text = date.toVnFormat();
-    _expirationDateController.text = date.addMonths(6).toVnFormat();
+    _expirationDateController.text = date.addMonths(ThamSoQuyDinh.thoiHanThe).toVnFormat();
   }
 
   void saveDocGia(BuildContext context) async {
@@ -173,16 +173,6 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                     )
                   ],
                 ),
-                //
-                // if (widget.editDocGia != null) ...[
-                //   const SizedBox(height: 10),
-                //   LabelTextFormField(
-                //     labelText: 'Mã độc giả',
-                //     initText: widget.editDocGia!.id.toString(),
-                //     isEnable: false,
-                //   ),
-                // ],
-                //
                 const SizedBox(height: 10),
                 LabelTextFormField(
                   labelText: 'Họ Tên',
@@ -193,7 +183,8 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                 LabelTextFieldDatePicker(
                   labelText: 'Ngày sinh',
                   controller: _dobController,
-                  initialDateInPicker: widget.editDocGia != null ? widget.editDocGia!.ngaySinh : DateTime.now(),
+                  initialDateInPicker: widget.editDocGia != null ? widget.editDocGia!.ngaySinh : DateTime.now().subYears(ThamSoQuyDinh.tuoiToiThieu),
+                  lastDate: DateTime.now().subYears(ThamSoQuyDinh.tuoiToiThieu),
                 ),
                 //
                 const SizedBox(height: 10),
@@ -289,7 +280,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                 ] else ...[
                   const SizedBox(height: 10),
                   Text(
-                    '*Thu tiền tạo thẻ ${Parameters.cardCreationFee.toVnCurrencyFormat()}',
+                    '*Thu tiền tạo thẻ ${ThamSoQuyDinh.phiTaoThe.toVnCurrencyFormat()}',
                     style: const TextStyle(fontStyle: FontStyle.italic),
                   )
                 ],
