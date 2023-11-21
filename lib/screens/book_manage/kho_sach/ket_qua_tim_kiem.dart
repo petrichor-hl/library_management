@@ -242,6 +242,21 @@ class _KetQuaTimKiemState extends State<KetQuaTimKiem> {
                                         setStateViTriInkWell(
                                           () => _cuonSachs[index].viTri = updatedViTri,
                                         );
+
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context).clearSnackBars();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Cập nhật Vị trí cuốn sách thành công.',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              behavior: SnackBarBehavior.floating,
+                                              width: 400,
+                                            ),
+                                          );
+                                        }
+
                                         dbProcess.updateViTriCuonSach(_cuonSachs[index]);
                                       }
                                     },

@@ -5,6 +5,7 @@ import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/dto/phieu_muon_dto.dart';
+import 'package:library_management/dto/tac_gia_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
@@ -451,6 +452,27 @@ class DbProcess {
     return dauSachs;
   }
 
+  Future<List<String>> queryDauSachWithMaTacGia(int maTacGia) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select TenDauSach
+      from DauSach join TacGia_DauSach using(MaDauSach)
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+
+    List<String> dauSachs = [];
+
+    for (var element in data) {
+      dauSachs.add(
+        element['TenDauSach'],
+      );
+    }
+
+    return dauSachs;
+  }
+
   Future<int> insertDauSach(DauSach newDauSach) async {
     return await _database.insert(
       'DauSach',
@@ -770,7 +792,7 @@ class DbProcess {
     );
   }
 
-  /* TAC GIA CODE */
+  /* TÁC GIẢ CODE */
   Future<List<TacGia>> queryTacGias() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
@@ -792,12 +814,81 @@ class DbProcess {
     return tacGias;
   }
 
+  Future<List<TacGiaDto>> queryTacGiaDtos() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TacGia;
+      ''',
+    );
+
+    List<TacGiaDto> tacGias = [];
+
+    for (var element in data) {
+      final tacGia = TacGiaDto(
+        element['MaTacGia'],
+        element['TenTacGia'],
+        0,
+      );
+
+      List<Map<String, dynamic>> soLuongSachData = await _database.rawQuery(
+        '''
+        select count(MaDauSach) as SoLuong
+        from TacGia join TacGia_DauSach using (MaTacGia)
+        where MaTacGia = ?
+        ''',
+        [tacGia.maTacGia],
+      );
+
+      if (soLuongSachData.isNotEmpty) {
+        tacGia.soLuongSach = soLuongSachData[0]['SoLuong'];
+      }
+
+      tacGias.add(tacGia);
+    }
+
+    return tacGias;
+  }
+
   Future<int> insertTacGia(TacGia newTacGia) async {
     return await _database.insert(
       'TacGia',
       {
         'TenTacGia': newTacGia.tenTacGia,
       },
+    );
+  }
+
+  Future<void> deleteTacGiaWithMaTacGia(int maTacGia) async {
+    /* Delete TacGia_DauSach có liên quan */
+    await _database.rawDelete(
+      '''
+      delete from TacGia_DauSach
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+
+    /* Delete TacGia */
+    await _database.rawDelete(
+      '''
+      delete from TacGia 
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+  }
+
+  Future<void> updateTacGia(int maTacGia, String tenTacGia) async {
+    await _database.rawUpdate(
+      '''
+      update TacGia
+      set TenTacGia = ?
+      where MaTacGia = ?
+      ''',
+      [
+        tenTacGia,
+        maTacGia,
+      ],
     );
   }
 

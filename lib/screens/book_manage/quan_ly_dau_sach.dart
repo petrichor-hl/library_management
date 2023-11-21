@@ -175,7 +175,7 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                   ),
                   const Gap(12),
                   /* 
-                    Nút "Sửa thông tin Độc Giả" 
+                    Nút "Sửa thông tin Đầu sách" 
                     Logic xử lý _logicEditReader xem ở phần khai báo bên trên
                     */
                   IconButton.filled(
@@ -297,11 +297,20 @@ class _QuanLyDauSachState extends State<QuanLyDauSach> {
                                           _selectedRow = index;
                                         });
                                       },
-                                      onLongPress: () {
+                                      onLongPress: () async {
                                         setState(() {
                                           _selectedRow = index;
                                         });
-                                        // logicEditChiTietPhieuNhap(setStateNhapSach);
+                                        String? message = await showDialog(
+                                          context: context,
+                                          builder: (ctx) => AddEditDauSachForm(
+                                            editDauSach: _filteredDauSachs[_selectedRow],
+                                          ),
+                                        );
+
+                                        if (message == 'updated') {
+                                          setState(() {});
+                                        }
                                       },
                                       child: Row(
                                         children: [
