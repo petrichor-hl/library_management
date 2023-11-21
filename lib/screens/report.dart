@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:library_management/main.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:library_management/models/report_doc_gia.dart';
+import 'package:library_management/screens/report_docgia_chitiet.dart';
 
 class BaoCaoDocGia extends StatefulWidget {
   const BaoCaoDocGia({required this.selectedYear, super.key});
@@ -14,8 +15,14 @@ class BaoCaoDocGia extends StatefulWidget {
 class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
   int _highestNum = 0;
   late List<TKDocGia> _readers;
-  Color mainColor = const Color.fromARGB(255, 4, 104, 138);
 
+  //màu chính và màu phụ
+  Color mainColor = const Color.fromARGB(255, 4, 104, 138);
+  Color secondaryColor = const Color.fromARGB(255, 229, 239, 243);
+  Color thirdColor = const Color.fromARGB(255, 72, 184, 233);
+
+  //Tính tổng độc giả theo 12 tháng trong năm
+  //Truyền vào danh sách độc giả và năm được chọn
   List<int> _reportDocGiaInYear(List<TKDocGia> list, int selectedYear) {
     List<int> reportList = List<int>.filled(12, 0, growable: false);
     for (TKDocGia tkDocGia in list) {
@@ -48,42 +55,80 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
           );
         }
         return Padding(
-          padding: const EdgeInsets.fromLTRB(50, 50, 70, 60),
-          child: LineChart(_lineChartData()),
+          padding: const EdgeInsets.fromLTRB(50, 10, 70, 60),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'Số lượng các độc giả mới được thêm vào',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Expanded(child: LineChart(_lineChartData()))
+            ],
+          ),
         );
       },
     );
   }
 
+  //
+  // Dữ liệu cho chart Line
+  //
   LineChartData _lineChartData() {
     final List<int> countDocGia = _reportDocGiaInYear(_readers, widget.selectedYear);
     int topValue = _highestNum - _highestNum % 10 + 10;
+    late int showingTooltipSpot = -1;
     final List<FlSpot> list = <FlSpot>[];
+    final LineChartBarData _lineChartBarData = _linesData(list, mainColor);
     for (var i = 0; i < 12; i++) {
       list.add(FlSpot(i + 1, countDocGia[i].toDouble()));
-      //if(highest_state < );
     }
 
     return LineChartData(
-      //backgroundColor: Color.fromARGB(255, 2, 4, 44),
       titlesData: _buildAxes(),
       minX: 1,
       maxX: 12,
       baselineX: 1,
       minY: 0,
       maxY: topValue.toDouble(),
+      showingTooltipIndicators: showingTooltipSpot != -1
+          ? [
+              ShowingTooltipIndicators([
+                LineBarSpot(_lineChartBarData, showingTooltipSpot, _lineChartBarData.spots[showingTooltipSpot]),
+              ])
+            ]
+          : [],
+      //Xử lí khi tương tác với dữ liệu
       lineTouchData: LineTouchData(
           enabled: true,
-          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-            // TODO : Utilize touch event here to perform any operation
+          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) async {
+            if (touchResponse?.lineBarSpots != null && event is FlTapUpEvent) {
+              setState(() {
+                final spotIndex = touchResponse?.lineBarSpots?[0].spotIndex ?? -1;
+                if (spotIndex == showingTooltipSpot) {
+                  showingTooltipSpot = -1;
+                } else {
+                  showingTooltipSpot = spotIndex;
+                }
+              });
+            }
           },
           touchTooltipData: LineTouchTooltipData(
-            tooltipBgColor: Colors.transparent,
+            tooltipBgColor: secondaryColor,
             tooltipRoundedRadius: 5,
-            tooltipBorder: BorderSide(width: 2, color: Colors.black),
-            showOnTopOfTheChartBoxArea: false,
+            tooltipBorder: const BorderSide(width: 1, color: Colors.transparent),
+            showOnTopOfTheChartBoxArea: true,
             fitInsideHorizontally: true,
-            tooltipMargin: 0,
+            tooltipMargin: -50,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map(
                 (LineBarSpot touchedSpot) {
@@ -104,28 +149,23 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
             return indicators.map(
               (int index) {
                 const line = FlLine(color: Colors.grey, strokeWidth: 1, dashArray: [2, 7]);
-                return const TouchedSpotIndicatorData(
+                return TouchedSpotIndicatorData(
                   line,
-                  FlDotData(show: false),
+                  FlDotData(
+                    show: true,
+                    getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                      radius: 5,
+                      color: secondaryColor,
+                    ),
+                  ),
                 );
               },
             ).toList();
           },
           getTouchLineEnd: (_, __) => double.infinity),
-      borderData: FlBorderData(border: const Border(bottom: BorderSide(), left: BorderSide())),
+      borderData: FlBorderData(border: const Border(bottom: BorderSide(width: 1), left: BorderSide(width: 1))),
       lineBarsData: [
-        LineChartBarData(
-            color: mainColor,
-            spots: list,
-            isStepLineChart: false,
-            isCurved: false,
-            barWidth: 2,
-            dotData: FlDotData(show: false),
-            belowBarData: BarAreaData(
-              show: true,
-              //gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [mainColor, Color.fromARGB(35, 4, 104, 138)]),
-              color: Color.fromARGB(255, 4, 104, 138),
-            ))
+        _lineChartBarData,
       ],
       gridData: FlGridData(
         drawHorizontalLine: false,
@@ -146,8 +186,13 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         // Build X axis.
         bottomTitles: AxisTitles(sideTitles: _bottomTitles),
         leftTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: true, getTitlesWidget: defaultGetTitle, reservedSize: 30, interval: (topValue / 5).toDouble()),
-        ),
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: defaultGetTitle,
+              reservedSize: 30,
+              interval: (topValue / 5).toDouble(),
+            ),
+            axisNameWidget: const Text('ĐỘC GIẢ')),
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
@@ -203,5 +248,19 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         },
       );
 
-  // tooltip giá trị
+  // Dữ liệu một line
+  LineChartBarData _linesData(List<FlSpot> listA, Color colorA) {
+    return LineChartBarData(
+        color: mainColor,
+        spots: listA,
+        isStepLineChart: false,
+        isCurved: false,
+        barWidth: 2,
+        dotData: FlDotData(show: false),
+        belowBarData: BarAreaData(
+          show: true,
+          //gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [mainColor, Color.fromARGB(35, 4, 104, 138)]),
+          color: colorA,
+        ));
+  }
 }
