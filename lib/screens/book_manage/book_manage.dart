@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:library_management/screens/book_manage/kho_sach/kho_sach.dart';
-import 'package:library_management/screens/book_manage/nhap_sach.dart';
-import 'package:library_management/screens/book_manage/quan_ly_dau_sach.dart';
-import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap.dart';
+import 'package:library_management/screens/book_manage/nhap_sach/nhap_sach.dart';
+import 'package:library_management/screens/book_manage/quan_ly_dau_sach/quan_ly_dau_sach.dart';
+import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap/quan_ly_phieu_nhap.dart';
 import 'package:library_management/screens/book_manage/quan_ly_tac_gia/quan_ly_tac_gia.dart';
 import 'package:library_management/screens/book_manage/quan_ly_the_loai/quan_ly_the_loai.dart';
 

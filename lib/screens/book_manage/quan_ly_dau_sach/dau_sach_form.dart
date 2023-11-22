@@ -8,6 +8,7 @@ import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
+import 'package:library_management/utils/extension.dart';
 
 class DauSachForm extends StatefulWidget {
   const DauSachForm({
@@ -147,15 +148,60 @@ class _DauSachFormState extends State<DauSachForm> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
-                      BlocBuilder<SelectedTacGiaCubit, List<TacGia>>(builder: (ctx, tacGias) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                            tacGias.length,
-                            (index) => Text(tacGias[index].tenTacGia),
-                          ),
-                        );
-                      }),
+                      BlocBuilder<SelectedTacGiaCubit, List<TacGia>>(
+                        builder: (ctx, tacGias) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List.generate(
+                              tacGias.length,
+                              (index) {
+                                bool isTacGiaHover = false;
+                                return StatefulBuilder(
+                                  builder: (ctx, setStateTacGiaItem) {
+                                    return MouseRegion(
+                                      onEnter: (_) => setStateTacGiaItem(
+                                        () => isTacGiaHover = true,
+                                      ),
+                                      onHover: (_) {
+                                        if (isTacGiaHover == false) {
+                                          setStateTacGiaItem(
+                                            () => isTacGiaHover = true,
+                                          );
+                                        }
+                                      },
+                                      onExit: (_) => setStateTacGiaItem(
+                                        () => isTacGiaHover = false,
+                                      ),
+                                      child: Ink(
+                                        padding: const EdgeInsets.fromLTRB(16, 4, 24, 4),
+                                        color: isTacGiaHover ? Colors.grey.withOpacity(0.1) : Colors.transparent,
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(
+                                              height: 40,
+                                            ),
+                                            Expanded(
+                                              child: Text(tacGias[index].tenTacGia.capitalizeFirstLetterOfEachWord()),
+                                            ),
+                                            const Gap(12),
+                                            if (isTacGiaHover)
+                                              IconButton(
+                                                onPressed: () {
+                                                  context.read<SelectedTacGiaCubit>().remove(tacGias[index]);
+                                                },
+                                                icon: const Icon(Icons.horizontal_rule),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                       const Gap(12),
                       const Text(
                         'Thể loại',
@@ -167,7 +213,51 @@ class _DauSachFormState extends State<DauSachForm> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: List.generate(
                             theLoais.length,
-                            (index) => Text(theLoais[index].tenTheLoai),
+                            // (index) => Text(theLoais[index].tenTheLoai.capitalizeFirstLetter()),
+                            (index) {
+                              bool isTheLoaiHover = false;
+                              return StatefulBuilder(
+                                builder: (ctx, setStateTheLoaiItem) {
+                                  return MouseRegion(
+                                    onEnter: (_) => setStateTheLoaiItem(
+                                      () => isTheLoaiHover = true,
+                                    ),
+                                    onHover: (_) {
+                                      if (isTheLoaiHover == false) {
+                                        setStateTheLoaiItem(
+                                          () => isTheLoaiHover = true,
+                                        );
+                                      }
+                                    },
+                                    onExit: (_) => setStateTheLoaiItem(
+                                      () => isTheLoaiHover = false,
+                                    ),
+                                    child: Ink(
+                                      padding: const EdgeInsets.fromLTRB(16, 4, 24, 4),
+                                      color: isTheLoaiHover ? Colors.grey.withOpacity(0.1) : Colors.transparent,
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(
+                                            height: 40,
+                                          ),
+                                          Expanded(
+                                            child: Text(theLoais[index].tenTheLoai.capitalizeFirstLetter()),
+                                          ),
+                                          const Gap(12),
+                                          if (isTheLoaiHover)
+                                            IconButton(
+                                              onPressed: () {
+                                                context.read<SelectedTheLoaiCubit>().remove(theLoais[index]);
+                                              },
+                                              icon: const Icon(Icons.horizontal_rule),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         );
                       }),

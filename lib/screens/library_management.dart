@@ -7,7 +7,7 @@ import 'package:library_management/components/doi_mat_khau_dialog.dart';
 import 'package:library_management/components/khoa_man_hinh_dialog.dart';
 import 'package:library_management/screens/book_manage/book_manage.dart';
 import 'package:library_management/screens/borrow_return/borrow_return.dart';
-import 'package:library_management/screens/reader_manage.dart';
+import 'package:library_management/screens/reader_manage/reader_manage.dart';
 import 'package:library_management/screens/regulations/regulations.dart';
 import 'package:library_management/screens/report_manage.dart';
 

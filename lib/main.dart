@@ -20,7 +20,9 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => TatCaSachCubit()),
+        BlocProvider(
+          create: (_) => TatCaSachCubit(),
+        ),
       ],
       child: const MyApp(),
     ),

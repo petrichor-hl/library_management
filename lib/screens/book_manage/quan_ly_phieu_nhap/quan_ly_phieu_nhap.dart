@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/components/forms/quan_ly_phieu_nhap/edit_don_gia_form.dart';
-import 'package:library_management/components/forms/quan_ly_phieu_nhap/edit_so_luong_form.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/phieu_nhap.dart';
+import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap/edit_don_gia_form.dart';
+import 'package:library_management/screens/book_manage/quan_ly_phieu_nhap/edit_so_luong_form.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
