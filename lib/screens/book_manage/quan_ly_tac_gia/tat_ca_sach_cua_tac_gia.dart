@@ -26,7 +26,7 @@ class _TatCaSachCuaTacGiaState extends State<TatCaSachCuaTacGia> {
     Tạo chuyển động mượt mà 
     */
     await Future.delayed(kTabScrollDuration);
-    _dauSachs = await dbProcess.queryDauSachWithMaTacGia(widget.tacGia.maTacGia!);
+    _dauSachs = await dbProcess.queryDauSachWithMaTacGia(widget.tacGia.maTacGia);
   }
 
   @override

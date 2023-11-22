@@ -1,5 +1,6 @@
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
+import 'package:library_management/utils/extension.dart';
 
 class DauSachDto {
   int? maDauSach;
@@ -23,7 +24,7 @@ class DauSachDto {
 
     String str = "";
     for (var tacGia in tacGias) {
-      str += '${tacGia.tenTacGia}, ';
+      str += '${tacGia.tenTacGia.capitalizeFirstLetterOfEachWord()}, ';
     }
     return str.substring(0, str.length - 2);
   }
@@ -35,7 +36,7 @@ class DauSachDto {
 
     String str = "";
     for (var theLoai in theLoais) {
-      str += '${theLoai.tenTheLoai}, ';
+      str += '${theLoai.tenTheLoai.capitalizeFirstLetter()}, ';
     }
     return str.substring(0, str.length - 2);
   }
