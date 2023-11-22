@@ -5,6 +5,7 @@ import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/sach.dart';
+import 'package:library_management/utils/extension.dart';
 
 class ThemSachMoiForm extends StatefulWidget {
   const ThemSachMoiForm({
@@ -195,11 +196,15 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
                                             */
                                             child: StatefulBuilder(
                                               builder: (ctx, setStateColumn) {
-                                                String searchText = _timTenDauSachController.text;
+                                                String searchText = _timTenDauSachController.text.toLowerCase();
                                                 if (searchText.isEmpty) {
                                                   _filteredDauSachs = List.of(_dauSachs);
                                                 } else {
-                                                  _filteredDauSachs = _dauSachs.where((element) => element.tenDauSach.toLowerCase().contains(searchText.toLowerCase())).toList();
+                                                  _filteredDauSachs = _dauSachs
+                                                      .where(
+                                                        (element) => element.tenDauSach.toLowerCase().contains(searchText),
+                                                      )
+                                                      .toList();
                                                 }
                                                 return Column(
                                                   mainAxisSize: MainAxisSize.min,
@@ -270,6 +275,7 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
                                                         },
                                                         onChanged: (value) async {
                                                           if (value.isEmpty) {
+                                                            /* Delay tạo hiệu ứng mượt */
                                                             await Future.delayed(const Duration(milliseconds: 50));
                                                             setStateColumn(() {});
                                                           }
@@ -290,7 +296,7 @@ class _ThemSachMoiFormState extends State<ThemSachMoiForm> {
                                                                 );
                                                                 Navigator.of(context).pop();
                                                               },
-                                                              title: Text(_filteredDauSachs[index].tenDauSach),
+                                                              title: Text(_filteredDauSachs[index].tenDauSach.capitalizeFirstLetterOfEachWord()),
                                                             ),
                                                           ),
                                                         ),

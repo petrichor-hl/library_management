@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:library_management/components/forms/kho_sach_form/edit_vi_tri_cuon_sach_form.dart';
-import 'package:library_management/components/forms/kho_sach_form/xem_chi_tiet_phieu_nhap_form.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/main.dart';
+import 'package:library_management/screens/book_manage/kho_sach/edit_vi_tri_cuon_sach_form.dart';
+import 'package:library_management/screens/book_manage/kho_sach/xem_chi_tiet_phieu_nhap_form.dart';
 import 'package:library_management/utils/extension.dart';
 
 class KetQuaTimKiem extends StatefulWidget {

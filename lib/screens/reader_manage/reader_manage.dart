@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
-import 'package:library_management/components/forms/add_edit_reader_form.dart';
+import 'package:library_management/screens/reader_manage/add_edit_reader_form.dart';
 import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/components/pagination.dart';
 import 'package:library_management/main.dart';

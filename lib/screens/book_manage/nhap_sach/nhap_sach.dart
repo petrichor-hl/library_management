@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/components/forms/add_edit_enter_book_detail_form/add_edit_enter_book_detail_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/components/label_text_form_field_datepicker.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:library_management/main.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/screens/book_manage/book_manage.dart';
+import 'package:library_management/screens/book_manage/nhap_sach/add_edit_enter_book_detail_form.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
@@ -294,7 +294,7 @@ extension NhapSach on BookManageState {
                                                 horizontal: 15,
                                               ),
                                               child: Text(
-                                                context.read<TatCaSachCubit>().getTenDauSach(chiTietPhieuNhaps[index].maSach),
+                                                context.read<TatCaSachCubit>().getTenDauSach(chiTietPhieuNhaps[index].maSach).capitalizeFirstLetterOfEachWord(),
                                               ),
                                             ),
                                           ),

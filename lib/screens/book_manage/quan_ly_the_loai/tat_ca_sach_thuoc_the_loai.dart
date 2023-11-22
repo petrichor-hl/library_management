@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:library_management/dto/the_loai_dto.dart';
 import 'package:library_management/main.dart';
+import 'package:library_management/utils/extension.dart';
 
 class TatCaSachThuocTheLoai extends StatefulWidget {
   const TatCaSachThuocTheLoai({
@@ -29,6 +31,82 @@ class _TatCaSachThuocTheLoaiState extends State<TatCaSachThuocTheLoai> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Dialog(
+      child: SizedBox(
+        width: 350,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 20,
+            horizontal: 30,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Tên thể loại',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                widget.theLoai.tenTheLoai,
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const Gap(20),
+              const Text(
+                'Các cuốn sách',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 150),
+                child: FutureBuilder(
+                  future: _futureDauSachTheLoais,
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: List.generate(
+                          _dauSachs.length,
+                          (index) => SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              _dauSachs[index].capitalizeFirstLetterOfEachWord(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const Gap(20),
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+                ),
+                child: const Text('Đóng'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

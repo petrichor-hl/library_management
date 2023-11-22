@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/components/forms/add_edit_dau_sach_form/dau_sach_form.dart';
-import 'package:library_management/components/forms/add_edit_dau_sach_form/tac_gia_form.dart';
-import 'package:library_management/components/forms/add_edit_dau_sach_form/the_loai_form.dart';
 import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
 import 'package:library_management/cubit/selected_the_loai_cubit.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
+import 'package:library_management/screens/book_manage/quan_ly_dau_sach/dau_sach_form.dart';
+import 'package:library_management/screens/book_manage/quan_ly_dau_sach/tac_gia_form.dart';
+import 'package:library_management/screens/book_manage/quan_ly_dau_sach/the_loai_form.dart';
 
 class AddEditDauSachForm extends StatefulWidget {
   const AddEditDauSachForm({

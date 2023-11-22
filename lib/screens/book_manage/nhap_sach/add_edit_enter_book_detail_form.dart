@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:library_management/components/forms/add_edit_enter_book_detail_form/tat_ca_sach.dart';
-import 'package:library_management/components/forms/add_edit_enter_book_detail_form/them_sach_moi_form.dart';
 import 'package:library_management/components/label_text_form_field.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
+import 'package:library_management/screens/book_manage/nhap_sach/tat_ca_sach.dart';
+import 'package:library_management/screens/book_manage/nhap_sach/them_sach_moi_form.dart';
 import 'package:library_management/utils/extension.dart';
 
 class AddEditEnterBookDetailForm extends StatefulWidget {

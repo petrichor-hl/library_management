@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/cubit/selected_the_loai_cubit.dart';
+import 'package:library_management/cubit/selected_tac_gia_cubit.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/the_loai.dart';
+import 'package:library_management/models/tac_gia.dart';
+import 'package:library_management/utils/extension.dart';
 
-class TheLoaiForm extends StatefulWidget {
-  const TheLoaiForm({
+class TacGiaForm extends StatefulWidget {
+  const TacGiaForm({
     super.key,
   });
 
   @override
-  State<TheLoaiForm> createState() => _TheLoaiFormState();
+  State<TacGiaForm> createState() => _TacGiaFormState();
 }
 
-class _TheLoaiFormState extends State<TheLoaiForm> {
-  late final List<TheLoai> _theLoais;
-  late List<TheLoai> _filteredTheLoais;
+class _TacGiaFormState extends State<TacGiaForm> {
+  late final List<TacGia> _tacGias;
+  late List<TacGia> _filteredTacGias;
 
   late final Future<void> _futureTacGias = _getTacGias();
   Future<void> _getTacGias() async {
-    _theLoais = await dbProcess.queryTheLoais();
+    _tacGias = await dbProcess.queryTacGias();
   }
 
-  final _themTheLoaiController = TextEditingController();
-  final _timTheLoaiController = TextEditingController();
+  final _themTacGiaController = TextEditingController();
+  final _timTacTacController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +47,17 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
               );
             }
 
-            String searchText = _timTheLoaiController.text;
+            String searchText = _timTacTacController.text;
             if (searchText.isEmpty) {
-              _filteredTheLoais = List.of(_theLoais);
+              _filteredTacGias = List.of(_tacGias);
             } else {
-              _filteredTheLoais = _theLoais.where((element) => element.tenTheLoai.toLowerCase().contains(searchText.toLowerCase())).toList();
+              _filteredTacGias = _tacGias.where((element) => element.tenTacGia.toLowerCase().contains(searchText.toLowerCase())).toList();
             }
 
             return Column(
               children: [
                 const Text(
-                  'THỂ LOẠI',
+                  'TÁC GIẢ',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -66,7 +67,7 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextField(
-                    controller: _themTheLoaiController,
+                    controller: _themTacGiaController,
                     decoration: InputDecoration(
                       prefixIcon: const Padding(
                         padding: EdgeInsets.only(
@@ -77,7 +78,7 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                       prefixIconConstraints: const BoxConstraints(
                         maxWidth: 32,
                       ),
-                      hintText: 'Thêm Thể loại',
+                      hintText: 'Thêm Tác giả',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -86,26 +87,26 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                     ),
                     onEditingComplete: () async {
                       // Thêm Tác Giả mới vào Database
-                      TheLoai newTheLoai = TheLoai(
+                      TacGia newTacGia = TacGia(
                         null,
-                        _themTheLoaiController.text,
+                        _themTacGiaController.text,
                       );
-                      int returningId = await dbProcess.insertTheLoai(newTheLoai);
-                      newTheLoai.maTheLoai = returningId;
+                      int returningId = await dbProcess.insertTacGia(newTacGia);
+                      newTacGia.maTacGia = returningId;
 
                       /* Cập nhật lại danh sách Tác Giả */
                       setState(() {
-                        _theLoais.insert(0, newTheLoai);
-                        _themTheLoaiController.clear();
+                        _tacGias.insert(0, newTacGia);
+                        _themTacGiaController.clear();
                       });
                     },
                   ),
                 ),
-                /* Tìm kiếm Thể loại */
+                /* Tìm kiếm Tác Giả */
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextField(
-                    controller: _timTheLoaiController,
+                    controller: _timTacTacController,
                     decoration: InputDecoration(
                       prefixIcon: const Padding(
                         padding: EdgeInsets.only(
@@ -116,7 +117,7 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                       prefixIconConstraints: const BoxConstraints(
                         maxWidth: 32,
                       ),
-                      hintText: 'Tìm tên Thể loại',
+                      hintText: 'Tìm tên Tác giả',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -134,24 +135,27 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                     },
                   ),
                 ),
-                /* Danh sách thể loại */
+                /* Danh sách Tác Giả */
                 Expanded(
                   child: ListView(
                     children: List.generate(
-                      _filteredTheLoais.length,
+                      _filteredTacGias.length,
                       (index) {
+                        TacGia tacGia = _filteredTacGias[index];
                         bool isHover = false;
                         return StatefulBuilder(
                           builder: (ctx, setStateListItem) {
-                            final theLoai = _filteredTheLoais[index];
-                            final isSelected = context.read<SelectedTheLoaiCubit>().contains(theLoai);
                             return MouseRegion(
-                              onEnter: (event) => setStateListItem(
+                              onEnter: (_) => setStateListItem(
                                 () => isHover = true,
                               ),
-                              onHover: (_) => setStateListItem(
-                                () => isHover = true,
-                              ),
+                              onHover: (_) {
+                                if (isHover == false) {
+                                  setStateListItem(
+                                    () => isHover = true,
+                                  );
+                                }
+                              },
                               onExit: (_) => setStateListItem(
                                 () => isHover = false,
                               ),
@@ -164,34 +168,45 @@ class _TheLoaiFormState extends State<TheLoaiForm> {
                                     const SizedBox(
                                       height: 40,
                                     ),
-                                    Text(_filteredTheLoais[index].tenTheLoai),
+                                    Text(_filteredTacGias[index].tenTacGia.capitalizeFirstLetterOfEachWord()),
                                     const Spacer(),
-                                    if (isHover || isSelected)
-                                      AnimatedSwitcher(
-                                        duration: const Duration(milliseconds: 200),
-                                        transitionBuilder: (child, animation) => ScaleTransition(
-                                          scale: animation,
-                                          child: child,
-                                        ),
-                                        child: !isSelected
-                                            ? IconButton(
-                                                key: const ValueKey('check-button'),
-                                                onPressed: () {
-                                                  context.read<SelectedTheLoaiCubit>().add(theLoai);
+                                    if (isHover)
+                                      BlocBuilder<SelectedTacGiaCubit, List<TacGia>>(builder: (ctx, selectedTacGias) {
+                                        bool isSelected = false;
+                                        for (var selectedTacGia in selectedTacGias) {
+                                          if (selectedTacGia.maTacGia == tacGia.maTacGia) {
+                                            isSelected = true;
+                                            break;
+                                          }
+                                        }
 
-                                                  setStateListItem(() {});
-                                                },
-                                                icon: const Icon(Icons.check),
-                                              )
-                                            : IconButton(
-                                                key: const ValueKey('remove-button'),
-                                                onPressed: () {
-                                                  context.read<SelectedTheLoaiCubit>().remove(theLoai);
-                                                  setStateListItem(() {});
-                                                },
-                                                icon: const Icon(Icons.horizontal_rule),
-                                              ),
-                                      ),
+                                        return AnimatedSwitcher(
+                                          duration: const Duration(milliseconds: 200),
+                                          transitionBuilder: (child, animation) => ScaleTransition(
+                                            scale: animation,
+                                            child: child,
+                                          ),
+                                          child: !isSelected
+                                              ? IconButton(
+                                                  key: const ValueKey('check-button'),
+                                                  onPressed: () {
+                                                    context.read<SelectedTacGiaCubit>().add(tacGia);
+
+                                                    setStateListItem(() {});
+                                                  },
+                                                  icon: const Icon(Icons.check),
+                                                )
+                                              : IconButton(
+                                                  key: const ValueKey('remove-button'),
+                                                  onPressed: () {
+                                                    context.read<SelectedTacGiaCubit>().remove(tacGia);
+
+                                                    setStateListItem(() {});
+                                                  },
+                                                  icon: const Icon(Icons.horizontal_rule),
+                                                ),
+                                        );
+                                      }),
                                   ],
                                 ),
                               ),
