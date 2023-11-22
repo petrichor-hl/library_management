@@ -158,5 +158,9 @@ VALUES
 INSERT INTO PhieuMuon(MaCuonSach, MaDocGia, NgayMuon, HanTra, TinhTrang)
 VALUES 
 ('852', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
-('311', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
+('311', '2', '17/10/2023', '16/11/2023', 'Đã trả'),
 ('144', '2', '18/11/2023', '18/12/2023', 'Đang mượn');
+
+INSERT INTO PhieuTra(MaPhieuMuon, NgayTra, SoTienPhat)
+VALUES
+(2, '20/11/2023', '8000')

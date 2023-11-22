@@ -39,7 +39,14 @@ class _PhieuTraSectionState extends State<PhieuTraSection> {
       lastDate: DateTime.now(),
     );
     if (chosenDate != null) {
-      _ngayTraController.text = chosenDate.toVnFormat();
+      setState(() {
+        _ngayTraController.text = chosenDate.toVnFormat();
+      });
+      /* 
+      Bản chất, 
+      giá trị của TextField chứa _ngayTraController vẫn sẽ thay đổi và không cần gọi setState 
+      nhưng, PHẢI gọi setState để cập nhật lại số tiền được hiển thị phụ thuộc vào ngày trả.
+      */
     }
   }
 
@@ -178,7 +185,7 @@ class _PhieuTraSectionState extends State<PhieuTraSection> {
                           const SizedBox(height: 4),
                           GestureDetector(
                             onTap: () => openDatePicker(context),
-                            child: TextFormField(
+                            child: TextField(
                               controller: _ngayTraController,
                               enabled: false,
                               mouseCursor: SystemMouseCursors.click,

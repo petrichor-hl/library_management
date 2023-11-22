@@ -4,6 +4,7 @@ import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
+import 'package:library_management/dto/phieu_muon_can_tra_dto.dart';
 import 'package:library_management/dto/phieu_muon_dto.dart';
 import 'package:library_management/dto/tac_gia_dto.dart';
 import 'package:library_management/dto/the_loai_dto.dart';
@@ -56,7 +57,7 @@ class DbProcess {
           );
 
           INSERT INTO ThamSoQuyDinh 
-          VALUES('Thư viện READER', '506 Hùng Vương, Hội An, Quảng Nam', '0905743143', 'tvReader@gmail.com', '30','5', '10000', '12', '50000', 3);
+          VALUES('Thư viện READER', '506 Hùng Vương, Hội An, Quảng Nam', '0905743143', 'tvReader@gmail.com', '30','5', '2000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -1032,7 +1033,7 @@ class DbProcess {
       lichSuTimKiem.add(
         LichSuTimKiem(
           element['SearchTimestamp'],
-          'CuonSach',
+          loaiTimKiem,
           element['TuKhoa'],
         ),
       );
@@ -1341,12 +1342,74 @@ class DbProcess {
     );
   }
 
+  Future<List<PhieuMuonDto>> queryPhieuMuonDtoWithMaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaPhieuMuon, MaCuonSach, TenDauSach, NgayMuon, HanTra, PhieuMuon.TinhTrang 
+      from PhieuMuon join CuonSach using(MaCuonSach) 
+      join Sach using(MaSach)
+      join DauSach using(MaDauSach)
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    List<PhieuMuonDto> phieuMuons = [];
+
+    for (var element in data) {
+      final phieuMuon = PhieuMuonDto(
+        element['MaPhieuMuon'],
+        element['MaCuonSach'],
+        element['TenDauSach'],
+        vnDateFormat.parse(element['NgayMuon']),
+        vnDateFormat.parse(element['HanTra']),
+        element['TinhTrang'],
+      );
+
+      if (phieuMuon.tinhTrang == 'Đang mượn' && phieuMuon.hanTra.endOfDay().isBefore(DateTime.now())) {
+        phieuMuon.tinhTrang = 'Quá hạn';
+      }
+
+      phieuMuons.add(
+        phieuMuon,
+      );
+    }
+
+    return phieuMuons;
+  }
+
   /* PHIẾU TRẢ CODE */
   Future<void> insertPhieuTra(PhieuTra phieuTra) async {
     await _database.insert(
       'PhieuTra',
       phieuTra.toMap(),
     );
+  }
+
+  Future<List<PhieuTra>> queryPhieuTraWithMaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaPhieuTra, MaPhieuMuon, NgayTra, SoTienPhat
+      from PhieuTra join PhieuMuon using(MaPhieuMuon)
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    List<PhieuTra> phieuTras = [];
+
+    for (var element in data) {
+      phieuTras.add(
+        PhieuTra(
+          element['MaPhieuTra'],
+          element['MaPhieuMuon'],
+          vnDateFormat.parse(element['NgayTra']),
+          element['SoTienPhat'],
+        ),
+      );
+    }
+
+    return phieuTras;
   }
 
   /* REPORT CODE */
