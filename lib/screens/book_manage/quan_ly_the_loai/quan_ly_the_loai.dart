@@ -1,64 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:library_management/components/my_search_bar.dart';
-import 'package:library_management/dto/tac_gia_dto.dart';
+import 'package:library_management/dto/the_loai_dto.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/tac_gia.dart';
-import 'package:library_management/screens/book_manage/quan_ly_tac_gia/edit_ten_tac_gia.dart';
-import 'package:library_management/screens/book_manage/quan_ly_tac_gia/tat_ca_sach_cua_tac_gia.dart';
+import 'package:library_management/models/the_loai.dart';
+import 'package:library_management/screens/book_manage/quan_ly_the_loai/edit_ten_the_loai.dart';
+import 'package:library_management/screens/book_manage/quan_ly_the_loai/tat_ca_sach_thuoc_the_loai.dart';
 import 'package:library_management/utils/common_variables.dart';
 import 'package:library_management/utils/extension.dart';
 
-class QuanLyTacGia extends StatefulWidget {
-  const QuanLyTacGia({super.key});
+class QuanLyTheLoai extends StatefulWidget {
+  const QuanLyTheLoai({super.key});
 
   @override
-  State<QuanLyTacGia> createState() => _QuanLyTacGiaState();
+  State<QuanLyTheLoai> createState() => _QuanLyTheLoaiState();
 }
 
-class _QuanLyTacGiaState extends State<QuanLyTacGia> {
-  /* _tacGias lưu chứa những tác giả ở dạng chữ in thường */
-  late final List<TacGiaDto> _tacGias;
-  late List<TacGiaDto> _filteredTacGias;
+class _QuanLyTheLoaiState extends State<QuanLyTheLoai> {
+  /* _theLoais lưu chứa những thể loại ở dạng chữ in thường */
+  late final List<TheLoaiDto> _theLoais;
+  late List<TheLoaiDto> _filteredTheLoais;
 
   int _selectedRow = -1;
 
   final _searchController = TextEditingController();
-  final _themTacGiaController = TextEditingController();
+  final _themTheLoaiController = TextEditingController();
 
   late final Future<void> _futureTacGias = _getTacGias();
   Future<void> _getTacGias() async {
-    /* 
-    Delay 1 khoảng bằng thời gian animation của TabController 
-    Tạo chuyển động mượt mà 
+    /*
+    Delay 1 khoảng bằng thời gian animation của TabController
+    Tạo chuyển động mượt mà
     */
     await Future.delayed(kTabScrollDuration);
-    _tacGias = await dbProcess.queryTacGiaDtos();
+    _theLoais = await dbProcess.queryTheLoaiDtos();
   }
 
-  void _addTacGia() async {
-    final tenTacGia = _themTacGiaController.text.trim();
-    if (tenTacGia.isEmpty) {
+  void _addTheLoai() async {
+    final tenTheLoai = _themTheLoaiController.text.trim();
+    if (tenTheLoai.isEmpty) {
       return;
     }
 
-    final tenTacGiaInThuong = tenTacGia.toLowerCase();
+    final tenTheLoaiInThuong = tenTheLoai.toLowerCase();
 
-    /* Kiểm tra tenTacGia được nhập đã tồn tại chưa */
-    for (var tacGia in _tacGias) {
-      if (tacGia.tenTacGia == tenTacGiaInThuong) {
+    /* Kiểm tra tenTheLoai được nhập đã tồn tại chưa */
+    for (var theLoai in _theLoais) {
+      if (theLoai.tenTheLoai == tenTheLoaiInThuong) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
+                /* 
+                Sử dụng theLoai.tenTheLoai thay vì tenTheLoai ở dòng 34
+                vì theLoai.tenTheLoai đã được chuẩn hóa
+                */
                 Text(
-                  'Tác giả ${tacGia.tenTacGia.capitalizeFirstLetterOfEachWord()} đã tồn tại.',
+                  'Thể loại ${theLoai.tenTheLoai.capitalizeFirstLetter()} đã tồn tại.',
                   textAlign: TextAlign.center,
                 ),
                 const Spacer(),
                 Text(
-                  'Mã tác giả: ${tacGia.maTacGia}',
+                  'Mã thể loại: ${theLoai.maTheLoai}',
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -72,15 +76,15 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
       }
     }
 
-    final returningId = await dbProcess.insertTacGia(
-      TacGia(null, tenTacGiaInThuong),
+    final returningId = await dbProcess.insertTheLoai(
+      TheLoai(null, tenTheLoaiInThuong),
     );
 
-    _themTacGiaController.clear();
+    _themTheLoaiController.clear();
 
     setState(() {
-      _tacGias.add(
-        TacGiaDto(returningId, tenTacGiaInThuong, 0),
+      _theLoais.add(
+        TheLoaiDto(returningId, tenTheLoaiInThuong, 0),
       );
     });
 
@@ -89,7 +93,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Thêm tác giả thành công',
+            'Thêm Thể loại thành công',
             textAlign: TextAlign.center,
           ),
           behavior: SnackBarBehavior.floating,
@@ -113,10 +117,10 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
 
         String searchText = _searchController.text.toLowerCase();
         if (searchText.isEmpty) {
-          _filteredTacGias = List.of(_tacGias);
+          _filteredTheLoais = List.of(_theLoais);
         } else {
-          _filteredTacGias = _tacGias.where((element) {
-            if (element.maTacGia.toString().contains(searchText) || element.tenTacGia.toLowerCase().contains(searchText)) {
+          _filteredTheLoais = _theLoais.where((element) {
+            if (element.maTheLoai.toString().contains(searchText) || element.tenTheLoai.toLowerCase().contains(searchText)) {
               return true;
             }
             return false;
@@ -144,7 +148,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
               Row(
                 children: [
                   const Text(
-                    'Danh sách Tác giả',
+                    'Danh sách Thể loại',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -154,11 +158,11 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                   SizedBox(
                     width: 300,
                     child: TextField(
-                      controller: _themTacGiaController,
+                      controller: _themTheLoaiController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color.fromARGB(255, 245, 246, 250),
-                        hintText: 'Tên tác giả',
+                        hintText: 'Tên thể loại',
                         hintStyle: const TextStyle(
                           color: Color.fromARGB(255, 81, 81, 81),
                         ),
@@ -168,14 +172,14 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                         ),
                         contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
                       ),
-                      onEditingComplete: _addTacGia,
+                      onEditingComplete: _addTheLoai,
                     ),
                   ),
                   const Gap(12),
                   FilledButton.icon(
-                    onPressed: _addTacGia,
+                    onPressed: _addTheLoai,
                     icon: const Icon(Icons.add_rounded),
-                    label: const Text('Thêm Tác giả'),
+                    label: const Text('Thêm Thể loại'),
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -188,12 +192,12 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                     onPressed: (_selectedRow == -1)
                         ? null
                         : () async {
-                            final readyDeleteTacGia = _filteredTacGias[_selectedRow];
+                            final readyDeleteTheLoai = _filteredTheLoais[_selectedRow];
                             await showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
                                 title: const Text('Xác nhận'),
-                                content: Text('Bạn có chắc xóa Tác giả ${readyDeleteTacGia.tenTacGia.capitalizeFirstLetterOfEachWord()}?'),
+                                content: Text('Bạn có chắc xóa Thể loại ${readyDeleteTheLoai.tenTheLoai.capitalizeFirstLetter()}?'),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -206,19 +210,19 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                   ),
                                   FilledButton(
                                     onPressed: () {
-                                      dbProcess.deleteTacGiaWithMaTacGia(readyDeleteTacGia.maTacGia);
+                                      dbProcess.deleteTheLoaiWithMaTheLoai(readyDeleteTheLoai.maTheLoai);
 
                                       setState(() {
-                                        _tacGias.removeWhere((element) => element.maTacGia == readyDeleteTacGia.maTacGia);
-                                        _filteredTacGias.removeAt(_selectedRow);
+                                        _theLoais.removeWhere((element) => element.maTheLoai == readyDeleteTheLoai.maTheLoai);
+                                        _filteredTheLoais.removeAt(_selectedRow);
                                         /*
                                         Phòng trường hợp khi _selectedRow đang ở cuối bảng và ta nhấn xóa dòng cuối của bảng
                                         Lúc này _selectedRow đã nằm ngoài mảng, và nút "Xóa" vẫn chưa được Disable
                                         => Có khả năng gây ra lỗi
                                         Solution: Sau khi xóa phải kiểm tra lại
-                                        xem _selectedRow có nằm ngoài phạm vi của _filteredTacGias hay không.
+                                        xem _selectedRow có nằm ngoài phạm vi của _filteredTheLoais hay không.
                                         */
-                                        if (_selectedRow >= _filteredTacGias.length) {
+                                        if (_selectedRow >= _filteredTheLoais.length) {
                                           _selectedRow = -1;
                                         }
                                       });
@@ -228,7 +232,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            'Đã xóa Tác giả ${readyDeleteTacGia.tenTacGia.capitalizeFirstLetterOfEachWord()}.',
+                                            'Đã xóa Thể loại ${readyDeleteTheLoai.tenTheLoai.capitalizeFirstLetter()}.',
                                             textAlign: TextAlign.center,
                                           ),
                                           behavior: SnackBarBehavior.floating,
@@ -254,21 +258,21 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                     onPressed: _selectedRow == -1
                         ? null
                         : () async {
-                            String? updatedTenTacGia = await showDialog(
+                            String? updatedTenTheLoai = await showDialog(
                               context: context,
-                              builder: (ctx) => EditTenTacGia(tenTacGia: _tacGias[_selectedRow].tenTacGia),
+                              builder: (ctx) => EditTenTheLoai(tenTheLoai: _theLoais[_selectedRow].tenTheLoai),
                             );
 
-                            if (updatedTenTacGia != null) {
+                            if (updatedTenTheLoai != null) {
                               setState(() {
-                                _tacGias[_selectedRow].tenTacGia = updatedTenTacGia.toLowerCase();
+                                _theLoais[_selectedRow].tenTheLoai = updatedTenTheLoai.toLowerCase();
                               });
                               if (mounted) {
                                 ScaffoldMessenger.of(context).clearSnackBars();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Cập nhật tên Tác giả thành công.',
+                                      'Cập nhật tên Thể loại thành công.',
                                       textAlign: TextAlign.center,
                                     ),
                                     behavior: SnackBarBehavior.floating,
@@ -277,9 +281,9 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                 );
                               }
                               /* Kh cần await */
-                              dbProcess.updateTacGia(
-                                _tacGias[_selectedRow].maTacGia,
-                                _tacGias[_selectedRow].tenTacGia,
+                              dbProcess.updateTheLoai(
+                                _theLoais[_selectedRow].maTheLoai,
+                                _theLoais[_selectedRow].tenTheLoai,
                               );
                             }
                           },
@@ -306,7 +310,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                               child: Padding(
                                 padding: EdgeInsets.only(left: 30, right: 15),
                                 child: Text(
-                                  'Mã Tác giả',
+                                  'Mã Thể loại',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -321,7 +325,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                   horizontal: 15,
                                 ),
                                 child: Text(
-                                  'Tên Tác giả',
+                                  'Tên Thể loại',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -352,7 +356,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                       Expanded(
                         child: ListView(
                           children: List.generate(
-                            _filteredTacGias.length,
+                            _filteredTheLoais.length,
                             (index) {
                               bool isTenTacGiaHover = false;
                               return Column(
@@ -380,7 +384,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                                 right: 15,
                                               ),
                                               child: Text(
-                                                _filteredTacGias[index].maTacGia.toString(),
+                                                _filteredTheLoais[index].maTheLoai.toString(),
                                               ),
                                             ),
                                           ),
@@ -391,8 +395,8 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                                 onTap: () {
                                                   showDialog(
                                                     context: context,
-                                                    builder: (ctx) => TatCaSachCuaTacGia(
-                                                      tacGia: _filteredTacGias[index],
+                                                    builder: (ctx) => TatCaSachThuocTheLoai(
+                                                      theLoai: _filteredTheLoais[index],
                                                     ),
                                                   );
                                                 },
@@ -412,7 +416,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                                       const SizedBox(height: 54),
                                                       Expanded(
                                                         child: Text(
-                                                          _filteredTacGias[index].tenTacGia.capitalizeFirstLetterOfEachWord(),
+                                                          _filteredTheLoais[index].tenTheLoai.capitalizeFirstLetter(),
                                                         ),
                                                       ),
                                                       const Gap(12),
@@ -433,7 +437,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                                 children: [
                                                   Expanded(
                                                     child: Text(
-                                                      _filteredTacGias[index].soLuongSach.toString(),
+                                                      _filteredTheLoais[index].soLuongSach.toString(),
                                                     ),
                                                   ),
                                                   const Gap(10),
@@ -450,7 +454,7 @@ class _QuanLyTacGiaState extends State<QuanLyTacGia> {
                                       ),
                                     ),
                                   ),
-                                  if (index < _filteredTacGias.length - 1)
+                                  if (index < _filteredTheLoais.length - 1)
                                     const Divider(
                                       height: 0,
                                     ),

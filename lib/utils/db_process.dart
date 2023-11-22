@@ -6,6 +6,7 @@ import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
 import 'package:library_management/dto/phieu_muon_dto.dart';
 import 'package:library_management/dto/tac_gia_dto.dart';
+import 'package:library_management/dto/the_loai_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
@@ -473,6 +474,27 @@ class DbProcess {
     return dauSachs;
   }
 
+  Future<List<String>> queryDauSachWithMaTheLoai(int maTheLoai) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select TenDauSach
+      from DauSach join DauSach_TheLoai using(MaDauSach)
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
+    );
+
+    List<String> dauSachs = [];
+
+    for (var element in data) {
+      dauSachs.add(
+        element['TenDauSach'],
+      );
+    }
+
+    return dauSachs;
+  }
+
   Future<int> insertDauSach(DauSach newDauSach) async {
     return await _database.insert(
       'DauSach',
@@ -833,7 +855,7 @@ class DbProcess {
       List<Map<String, dynamic>> soLuongSachData = await _database.rawQuery(
         '''
         select count(MaDauSach) as SoLuong
-        from TacGia join TacGia_DauSach using (MaTacGia)
+        from TacGia_DauSach
         where MaTacGia = ?
         ''',
         [tacGia.maTacGia],
@@ -858,6 +880,20 @@ class DbProcess {
     );
   }
 
+  Future<void> updateTacGia(int maTacGia, String tenTacGia) async {
+    await _database.rawUpdate(
+      '''
+      update TacGia
+      set TenTacGia = ?
+      where MaTacGia = ?
+      ''',
+      [
+        tenTacGia,
+        maTacGia,
+      ],
+    );
+  }
+
   Future<void> deleteTacGiaWithMaTacGia(int maTacGia) async {
     /* Delete TacGia_DauSach có liên quan */
     await _database.rawDelete(
@@ -878,21 +914,7 @@ class DbProcess {
     );
   }
 
-  Future<void> updateTacGia(int maTacGia, String tenTacGia) async {
-    await _database.rawUpdate(
-      '''
-      update TacGia
-      set TenTacGia = ?
-      where MaTacGia = ?
-      ''',
-      [
-        tenTacGia,
-        maTacGia,
-      ],
-    );
-  }
-
-  /* THE LOAI CODE */
+  /* THỂ LOẠI CODE */
 
   Future<List<TheLoai>> queryTheLoais() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
@@ -915,12 +937,81 @@ class DbProcess {
     return theLoais;
   }
 
+  Future<List<TheLoaiDto>> queryTheLoaiDtos() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TheLoai;
+      ''',
+    );
+
+    List<TheLoaiDto> theLoais = [];
+
+    for (var element in data) {
+      final theLoai = TheLoaiDto(
+        element['MaTheLoai'],
+        element['TenTheLoai'],
+        0,
+      );
+
+      List<Map<String, dynamic>> soLuongSachData = await _database.rawQuery(
+        '''
+        select count(MaDauSach) as SoLuong
+        from DauSach_TheLoai
+        where MaTheLoai = ?
+        ''',
+        [theLoai.maTheLoai],
+      );
+
+      if (soLuongSachData.isNotEmpty) {
+        theLoai.soLuongSach = soLuongSachData[0]['SoLuong'];
+      }
+
+      theLoais.add(theLoai);
+    }
+
+    return theLoais;
+  }
+
   Future<int> insertTheLoai(TheLoai newTheLoai) async {
     return await _database.insert(
       'TheLoai',
       {
         'TenTheLoai': newTheLoai.tenTheLoai,
       },
+    );
+  }
+
+  Future<void> updateTheLoai(int maTheLoai, String tenTheLoai) async {
+    await _database.rawUpdate(
+      '''
+      update TheLoai
+      set TenTheLoai = ?
+      where MaTheLoai = ?
+      ''',
+      [
+        tenTheLoai,
+        maTheLoai,
+      ],
+    );
+  }
+
+  Future<void> deleteTheLoaiWithMaTheLoai(int maTheLoai) async {
+    /* Delete DauSach_TheLoai có liên quan */
+    await _database.rawDelete(
+      '''
+      delete from DauSach_TheLoai
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
+    );
+
+    /* Delete TheLoai */
+    await _database.rawDelete(
+      '''
+      delete from TheLoai 
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
     );
   }
 
