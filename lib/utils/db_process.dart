@@ -16,6 +16,8 @@ import 'package:library_management/models/phieu_muon.dart';
 import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/report_doc_gia.dart';
 import 'package:library_management/models/phieu_tra.dart';
+import 'package:library_management/models/report_sach_muon.dart';
+import 'package:library_management/models/report_sach_nhap.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -153,9 +155,7 @@ class DbProcess {
 
           CREATE TABLE PhieuMuon(
             MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
-            MaCuonSach TEXT,
-            MaDocGia INTEGER,
-            NgayMuon TEXT,
+            
             HanTra TEXT,
             TinhTrang TEXT,
 
@@ -1438,5 +1438,51 @@ class DbProcess {
       );
     }
     return danhSachDocGia;
+  }
+
+  // REPORT CUON SACH DA MUON THEO THANG
+  Future<List<TKSachMuon>> querySachMuonTheoThang() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaCuonSach, NgayMuon 
+      from PhieuMuon 
+
+      ''',
+    );
+    List<TKSachMuon> danhSachSachMuon = [];
+    for (var element in data) {
+      DateTime createCardDate = vnDateFormat.parse(element['NgayMuon'] as String);
+      danhSachSachMuon.add(
+        TKSachMuon(
+          createCardDate.month,
+          createCardDate.year,
+          element['MaCuonSach'],
+        ),
+      );
+    }
+    return danhSachSachMuon;
+  }
+
+  // REPORT SACH NHAP
+  Future<List<TKSachNhap>> querySachNhapTheoThang() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaSach, NgayLap 
+      from PhieuNhap join CT_PhieuNhap USING(MaPhieuNhap)
+
+      ''',
+    );
+    List<TKSachNhap> danhSachSachMuon = [];
+    for (var element in data) {
+      DateTime createCardDate = vnDateFormat.parse(element['NgayLap'] as String);
+      danhSachSachMuon.add(
+        TKSachNhap(
+          createCardDate.month,
+          createCardDate.year,
+          element['MaSach'],
+        ),
+      );
+    }
+    return danhSachSachMuon;
   }
 }
