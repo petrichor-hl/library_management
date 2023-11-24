@@ -165,7 +165,7 @@ class PdfApi {
                         pw.Expanded(
                           flex: 3,
                           child: pw.Text(
-                            'Ngày mượn: $hanTra',
+                            'Hạn trả: $hanTra',
                             style: nunitoRegularTextStyle,
                           ),
                         ),
@@ -202,6 +202,18 @@ class PdfApi {
                         headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
                         cellHeight: 30,
                         cellStyle: nunitoRegularTextStyle,
+                        cellAlignments: {
+                          0: Alignment.centerLeft,
+                          1: Alignment.centerLeft,
+                          2: Alignment.centerLeft,
+                          3: Alignment.centerLeft,
+                          4: Alignment.centerLeft,
+                        },
+                        rowDecoration: const pw.BoxDecoration(
+                          border: pw.Border(
+                            bottom: pw.BorderSide(width: 1, color: PdfColors.grey200),
+                          ),
+                        ),
                       ),
                       pw.SizedBox(height: 5 * PdfPageFormat.mm),
                       pw.Text(

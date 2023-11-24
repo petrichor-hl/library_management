@@ -39,3 +39,9 @@ extension StringExtension on String {
     return words.join(" ");
   }
 }
+
+extension DateTimeExtension on DateTime {
+  DateTime endOfDay() {
+    return DateTime(year, month, day, 23, 59, 59, 9999);
+  }
+}

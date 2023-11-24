@@ -104,15 +104,15 @@ VALUES
 
 INSERT INTO TacGia(TenTacGia) 
 VALUES
-('Paulo Coelho'), -- id: 1
-('J. D. Salinger'), -- id: 2
-('Viktor Frankl'),
-('Nguyễn Nhật Ánh'), -- id: 4
-('Cửu Bả Đao'),
-('Cửu Dạ Hồi'),
-('Nguyễn Ngọc Tư'),
-('Robert Kiyosaki'),
-('Sharon L. Lechter');
+('paulo coelho'), -- id: 1
+('j. d. salinger'), -- id: 2
+('viktor frankl'),
+('nguyễn nhật ánh'), -- id: 4
+('cửu bả đao'),
+('cửu dạ hồi'),
+('nguyễn ngọc tư'),
+('robert kiyosaki'),
+('sharon l. lechter');
 
 INSERT INTO TacGia_DauSach(MaTacGia, MaDauSach) 
 VALUES
@@ -129,16 +129,16 @@ VALUES
 
 INSERT INTO TheLoai(TenTheLoai) 
 VALUES
-('Tiểu thuyết'),    -- id: 1
-('Hư cấu kỳ ảo'),   -- id: 2
-('Phiêu lưu'),
-('Giáo dục'),
-('Tuổi mới lớn'),
-('Tự truyện'),      -- id: 6
-('Tình yêu'),       -- id: 7
-('Đời sống'),
-('Buồn'),           -- id: 9
-('Tài chính');
+('tiểu thuyết'),    -- id: 1
+('hư cấu kỳ ảo'),   -- id: 2
+('phiêu lưu'),
+('giáo dục'),
+('tuổi mới lớn'),
+('tự truyện'),      -- id: 6
+('tình yêu'),       -- id: 7
+('đời sống'),
+('buồn'),           -- id: 9
+('tài chính');
 
 INSERT INTO DauSach_TheLoai(MaDauSach, MaTheLoai) 
 VALUES
@@ -158,5 +158,9 @@ VALUES
 INSERT INTO PhieuMuon(MaCuonSach, MaDocGia, NgayMuon, HanTra, TinhTrang)
 VALUES 
 ('852', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
-('311', '2', '17/10/2023', '16/11/2023', 'Đang mượn'),
+('311', '2', '17/10/2023', '16/11/2023', 'Đã trả'),
 ('144', '2', '18/11/2023', '18/12/2023', 'Đang mượn');
+
+INSERT INTO PhieuTra(MaPhieuMuon, NgayTra, SoTienPhat)
+VALUES
+(2, '20/11/2023', '8000')

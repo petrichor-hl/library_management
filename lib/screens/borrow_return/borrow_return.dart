@@ -18,7 +18,7 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 2);
+    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -50,9 +50,9 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
                 ),
                 controller: tabController,
                 tabs: const [
-                  Tab(text: "Phiếu Mượn/Trả"),
                   Tab(text: "Cho mượn sách"),
                   Tab(text: "Nhận trả sách"),
+                  Tab(text: "Phiếu Mượn/Trả"),
                 ],
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -83,12 +83,12 @@ class _BorrowReturnState extends State<BorrowReturn> with TickerProviderStateMix
             child: TabBarView(
               controller: tabController,
               children: [
-                const QuanLyMuonTra(),
                 BlocProvider(
                   create: (_) => SelectedCuonSachChoMuonCubit(),
                   child: const MuonSach(),
                 ),
                 const TraSach(),
+                const QuanLyMuonTra(),
               ],
             ),
           ),

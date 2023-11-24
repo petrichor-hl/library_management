@@ -1,3 +1,5 @@
+import 'package:library_management/utils/extension.dart';
+
 class CuonSachDto2th {
   String maCuonSach;
   int maSach;
@@ -24,7 +26,7 @@ class CuonSachDto2th {
 
     String str = "";
     for (var tacGia in tacGias) {
-      str += '$tacGia, ';
+      str += '${tacGia.capitalizeFirstLetterOfEachWord()}, ';
     }
     return str.substring(0, str.length - 2);
   }

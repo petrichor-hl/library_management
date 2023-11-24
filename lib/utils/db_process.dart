@@ -4,7 +4,10 @@ import 'package:library_management/dto/chi_tiet_phieu_nhap_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto.dart';
 import 'package:library_management/dto/cuon_sach_dto_2th.dart';
 import 'package:library_management/dto/dau_sach_dto.dart';
+import 'package:library_management/dto/phieu_muon_can_tra_dto.dart';
 import 'package:library_management/dto/phieu_muon_dto.dart';
+import 'package:library_management/dto/tac_gia_dto.dart';
+import 'package:library_management/dto/the_loai_dto.dart';
 import 'package:library_management/models/chi_tiet_phieu_nhap.dart';
 import 'package:library_management/models/dau_sach.dart';
 import 'package:library_management/models/doc_gia.dart';
@@ -55,7 +58,7 @@ class DbProcess {
           );
 
           INSERT INTO ThamSoQuyDinh 
-          VALUES('Thư viện READER', '506 Hùng Vương, Hội An, Quảng Nam', '0905743143', 'tvReader@gmail.com', '30','5', '10000', '12', '50000', 3);
+          VALUES('Thư viện READER', '506 Hùng Vương, Hội An, Quảng Nam', '0905743143', 'tvReader@gmail.com', '30','5', '2000', '12', '50000', 3);
 
           CREATE TABLE TacGia(
             MaTacGia INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -452,6 +455,48 @@ class DbProcess {
     return dauSachs;
   }
 
+  Future<List<String>> queryDauSachWithMaTacGia(int maTacGia) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select TenDauSach
+      from DauSach join TacGia_DauSach using(MaDauSach)
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+
+    List<String> dauSachs = [];
+
+    for (var element in data) {
+      dauSachs.add(
+        element['TenDauSach'],
+      );
+    }
+
+    return dauSachs;
+  }
+
+  Future<List<String>> queryDauSachWithMaTheLoai(int maTheLoai) async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select TenDauSach
+      from DauSach join DauSach_TheLoai using(MaDauSach)
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
+    );
+
+    List<String> dauSachs = [];
+
+    for (var element in data) {
+      dauSachs.add(
+        element['TenDauSach'],
+      );
+    }
+
+    return dauSachs;
+  }
+
   Future<int> insertDauSach(DauSach newDauSach) async {
     return await _database.insert(
       'DauSach',
@@ -771,7 +816,7 @@ class DbProcess {
     );
   }
 
-  /* TAC GIA CODE */
+  /* TÁC GIẢ CODE */
   Future<List<TacGia>> queryTacGias() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
@@ -793,6 +838,41 @@ class DbProcess {
     return tacGias;
   }
 
+  Future<List<TacGiaDto>> queryTacGiaDtos() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TacGia;
+      ''',
+    );
+
+    List<TacGiaDto> tacGias = [];
+
+    for (var element in data) {
+      final tacGia = TacGiaDto(
+        element['MaTacGia'],
+        element['TenTacGia'],
+        0,
+      );
+
+      List<Map<String, dynamic>> soLuongSachData = await _database.rawQuery(
+        '''
+        select count(MaDauSach) as SoLuong
+        from TacGia_DauSach
+        where MaTacGia = ?
+        ''',
+        [tacGia.maTacGia],
+      );
+
+      if (soLuongSachData.isNotEmpty) {
+        tacGia.soLuongSach = soLuongSachData[0]['SoLuong'];
+      }
+
+      tacGias.add(tacGia);
+    }
+
+    return tacGias;
+  }
+
   Future<int> insertTacGia(TacGia newTacGia) async {
     return await _database.insert(
       'TacGia',
@@ -802,7 +882,41 @@ class DbProcess {
     );
   }
 
-  /* THE LOAI CODE */
+  Future<void> updateTacGia(int maTacGia, String tenTacGia) async {
+    await _database.rawUpdate(
+      '''
+      update TacGia
+      set TenTacGia = ?
+      where MaTacGia = ?
+      ''',
+      [
+        tenTacGia,
+        maTacGia,
+      ],
+    );
+  }
+
+  Future<void> deleteTacGiaWithMaTacGia(int maTacGia) async {
+    /* Delete TacGia_DauSach có liên quan */
+    await _database.rawDelete(
+      '''
+      delete from TacGia_DauSach
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+
+    /* Delete TacGia */
+    await _database.rawDelete(
+      '''
+      delete from TacGia 
+      where MaTacGia = ?
+      ''',
+      [maTacGia],
+    );
+  }
+
+  /* THỂ LOẠI CODE */
 
   Future<List<TheLoai>> queryTheLoais() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
@@ -825,12 +939,81 @@ class DbProcess {
     return theLoais;
   }
 
+  Future<List<TheLoaiDto>> queryTheLoaiDtos() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select * from TheLoai;
+      ''',
+    );
+
+    List<TheLoaiDto> theLoais = [];
+
+    for (var element in data) {
+      final theLoai = TheLoaiDto(
+        element['MaTheLoai'],
+        element['TenTheLoai'],
+        0,
+      );
+
+      List<Map<String, dynamic>> soLuongSachData = await _database.rawQuery(
+        '''
+        select count(MaDauSach) as SoLuong
+        from DauSach_TheLoai
+        where MaTheLoai = ?
+        ''',
+        [theLoai.maTheLoai],
+      );
+
+      if (soLuongSachData.isNotEmpty) {
+        theLoai.soLuongSach = soLuongSachData[0]['SoLuong'];
+      }
+
+      theLoais.add(theLoai);
+    }
+
+    return theLoais;
+  }
+
   Future<int> insertTheLoai(TheLoai newTheLoai) async {
     return await _database.insert(
       'TheLoai',
       {
         'TenTheLoai': newTheLoai.tenTheLoai,
       },
+    );
+  }
+
+  Future<void> updateTheLoai(int maTheLoai, String tenTheLoai) async {
+    await _database.rawUpdate(
+      '''
+      update TheLoai
+      set TenTheLoai = ?
+      where MaTheLoai = ?
+      ''',
+      [
+        tenTheLoai,
+        maTheLoai,
+      ],
+    );
+  }
+
+  Future<void> deleteTheLoaiWithMaTheLoai(int maTheLoai) async {
+    /* Delete DauSach_TheLoai có liên quan */
+    await _database.rawDelete(
+      '''
+      delete from DauSach_TheLoai
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
+    );
+
+    /* Delete TheLoai */
+    await _database.rawDelete(
+      '''
+      delete from TheLoai 
+      where MaTheLoai = ?
+      ''',
+      [maTheLoai],
     );
   }
 
@@ -851,7 +1034,7 @@ class DbProcess {
       lichSuTimKiem.add(
         LichSuTimKiem(
           element['SearchTimestamp'],
-          'CuonSach',
+          loaiTimKiem,
           element['TuKhoa'],
         ),
       );
@@ -1160,12 +1343,74 @@ class DbProcess {
     );
   }
 
+  Future<List<PhieuMuonDto>> queryPhieuMuonDtoWithMaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaPhieuMuon, MaCuonSach, TenDauSach, NgayMuon, HanTra, PhieuMuon.TinhTrang 
+      from PhieuMuon join CuonSach using(MaCuonSach) 
+      join Sach using(MaSach)
+      join DauSach using(MaDauSach)
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    List<PhieuMuonDto> phieuMuons = [];
+
+    for (var element in data) {
+      final phieuMuon = PhieuMuonDto(
+        element['MaPhieuMuon'],
+        element['MaCuonSach'],
+        element['TenDauSach'],
+        vnDateFormat.parse(element['NgayMuon']),
+        vnDateFormat.parse(element['HanTra']),
+        element['TinhTrang'],
+      );
+
+      if (phieuMuon.tinhTrang == 'Đang mượn' && phieuMuon.hanTra.endOfDay().isBefore(DateTime.now())) {
+        phieuMuon.tinhTrang = 'Quá hạn';
+      }
+
+      phieuMuons.add(
+        phieuMuon,
+      );
+    }
+
+    return phieuMuons;
+  }
+
   /* PHIẾU TRẢ CODE */
   Future<void> insertPhieuTra(PhieuTra phieuTra) async {
     await _database.insert(
       'PhieuTra',
       phieuTra.toMap(),
     );
+  }
+
+  Future<List<PhieuTra>> queryPhieuTraWithMaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaPhieuTra, MaPhieuMuon, NgayTra, SoTienPhat
+      from PhieuTra join PhieuMuon using(MaPhieuMuon)
+      where MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    List<PhieuTra> phieuTras = [];
+
+    for (var element in data) {
+      phieuTras.add(
+        PhieuTra(
+          element['MaPhieuTra'],
+          element['MaPhieuMuon'],
+          vnDateFormat.parse(element['NgayTra']),
+          element['SoTienPhat'],
+        ),
+      );
+    }
+
+    return phieuTras;
   }
 
   /* REPORT CODE */

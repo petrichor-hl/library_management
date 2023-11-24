@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/dto/phieu_muon_dto.dart';
+import 'package:library_management/dto/phieu_muon_can_tra_dto.dart';
 import 'package:library_management/main.dart';
 import 'package:library_management/screens/borrow_return/tra_sach/phieu_tra_section.dart';
 import 'package:library_management/utils/common_variables.dart';
@@ -506,6 +506,12 @@ class TraSachState extends State<TraSach> {
                                                 padding: const EdgeInsets.only(left: 15, right: 20),
                                                 child: Text(
                                                   _phieuMuons[index].hanTra.toVnFormat(),
+                                                  style: _phieuMuons[index].hanTra.endOfDay().isBefore(DateTime.now())
+                                                      ? const TextStyle(
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xFFD80032),
+                                                        )
+                                                      : null,
                                                 ),
                                               ),
                                             ),
