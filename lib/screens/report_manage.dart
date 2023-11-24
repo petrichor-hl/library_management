@@ -10,8 +10,10 @@ class ReportManage extends StatefulWidget {
 }
 
 class _ReportManageState extends State<ReportManage> with TickerProviderStateMixin {
-  late final TabController tabController;
+  late final TabController _tabController;
+  //late final ScrollController _scrollController;
   final int _count = 2;
+  //bool fixedScroll = true;
   var _selectedYear = new DateTime.now();
   Color mainColor = const Color.fromARGB(255, 4, 104, 138);
   var isHoverYearBtn = false;
@@ -20,12 +22,12 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: _count, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: _count, vsync: this, initialIndex: 0);
   }
 
   @override
   void dispose() {
-    tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -51,7 +53,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                       vertical: 4,
                       horizontal: 6,
                     ),
-                    controller: tabController,
+                    controller: _tabController,
                     tabs: const [
                       Tab(text: "Báo cáo độc giả"),
                       Tab(text: "Báo cáo sách"),
@@ -145,7 +147,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
           ),
           Expanded(
             child: TabBarView(
-              controller: tabController,
+              controller: _tabController,
               children: [
                 BaoCaoDocGia(
                   selectedYear: _selectedYear.year,

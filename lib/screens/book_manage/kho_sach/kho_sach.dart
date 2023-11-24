@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:library_management/components/my_search_bar.dart';
 import 'package:library_management/main.dart';
-import 'package:library_management/models/lich_su_tim_kiem_cuon_sach.dart';
+import 'package:library_management/models/lich_su_tim_kiem.dart';
 import 'package:library_management/screens/book_manage/kho_sach/ket_qua_tim_kiem.dart';
 
 class KhoSach extends StatefulWidget {
@@ -15,7 +15,7 @@ class KhoSach extends StatefulWidget {
 class _KhoSachState extends State<KhoSach> {
   final _searchController = TextEditingController();
 
-  late List<LichSuTimKiemCuonSach> _lichSuTimKiemCuonSachs;
+  late List<LichSuTimKiem> _lichSuTimKiemCuonSachs;
 
   late final Future<void> _futureLichSuTimKiemCuonSachs = _getLichSuTimKiemCuonSachs();
   Future<void> _getLichSuTimKiemCuonSachs() async {
@@ -24,7 +24,7 @@ class _KhoSachState extends State<KhoSach> {
     Tạo chuyển động mượt mà 
     */
     await Future.delayed(kTabScrollDuration);
-    _lichSuTimKiemCuonSachs = await dbProcess.queryLichSuTimKiemCuonSachs();
+    _lichSuTimKiemCuonSachs = await dbProcess.queryLichSuTimKiem(loaiTimKiem: 'CuonSach');
   }
 
   void updateTuKhoaTimKiemGanDay(int index) {
@@ -32,7 +32,7 @@ class _KhoSachState extends State<KhoSach> {
     _lichSuTimKiemCuonSachs[index].searchTimestamp = DateTime.now().millisecondsSinceEpoch;
 
     /* Update DB */
-    dbProcess.updateSearchTimestampLichSuTimKiemCuonSach(_lichSuTimKiemCuonSachs[index]);
+    dbProcess.updateSearchTimestampLichSuTimKiem(_lichSuTimKiemCuonSachs[index]);
 
     /* Cho Từ khóa vừa Click lên đầu mảng */
     final element = _lichSuTimKiemCuonSachs.removeAt(index);
@@ -67,13 +67,14 @@ class _KhoSachState extends State<KhoSach> {
                   Từ khóa không khớp với những từ khóa hiện tại
                   => Thêm mới từ khóa tìm kiếm gần đây 
                   */
-                  final newLichSuTimKiem = LichSuTimKiemCuonSach(
+                  final newLichSuTimKiem = LichSuTimKiem(
                     DateTime.now().millisecondsSinceEpoch,
+                    'CuonSach',
                     searchText,
                   );
 
                   _lichSuTimKiemCuonSachs.insert(0, newLichSuTimKiem);
-                  dbProcess.insertLichSuTimKiemCuonSach(newLichSuTimKiem);
+                  dbProcess.insertLichSuTimKiem(newLichSuTimKiem);
 
                   /* Giới hạn chỉ lưu 12 từ khóa tìm kiếm gần đây */
                   if (_lichSuTimKiemCuonSachs.length > 12) {
@@ -85,7 +86,7 @@ class _KhoSachState extends State<KhoSach> {
                       }
                     }
                     // print(_lichSuTimKiemCuonSachs[minTimestampIndex].tuKhoa);
-                    dbProcess.deleteLichSuTimKiemCuonSach(_lichSuTimKiemCuonSachs[minTimestampIndex]);
+                    dbProcess.deleteLichSuTimKiem(_lichSuTimKiemCuonSachs[minTimestampIndex]);
                     _lichSuTimKiemCuonSachs.removeAt(minTimestampIndex);
                   }
                 } else {
@@ -113,77 +114,87 @@ class _KhoSachState extends State<KhoSach> {
                   ),
                 );
               }
+              if (_lichSuTimKiemCuonSachs.isEmpty) {
+                return const Text(
+                  'Chưa có dữ liệu',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 16,
+                  ),
+                );
+              }
 
               return _searchController.text.isEmpty
                   ? Expanded(
                       child: GridView(
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 380,
-                        mainAxisExtent: 54,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      children: List.generate(
-                        _lichSuTimKiemCuonSachs.length,
-                        (index) {
-                          bool isHover = false;
-                          return Ink(
-                            /* 
+                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 380,
+                          mainAxisExtent: 54,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        children: List.generate(
+                          _lichSuTimKiemCuonSachs.length,
+                          (index) {
+                            bool isHover = false;
+                            return Ink(
+                              /* 
                             Thêm key ở đây để khi xóa hàng loạt các Từ khóa Tìm kiếm Gần đây sẽ không gặp lỗi 
                             (lỗi này không gây ra crash hệ thống)
                             Thử comment dòng "key: ValueKey(...)" để thấy.
                             */
-                            key: ValueKey(_lichSuTimKiemCuonSachs[index]),
-                            color: Colors.grey.withOpacity(0.1),
-                            child: StatefulBuilder(
-                              builder: (ctx, setStateInkWell) {
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _searchController.text = _lichSuTimKiemCuonSachs[index].tuKhoa;
-                                    });
+                              key: ValueKey(_lichSuTimKiemCuonSachs[index]),
+                              color: Colors.grey.withOpacity(0.1),
+                              child: StatefulBuilder(
+                                builder: (ctx, setStateInkWell) {
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _searchController.text = _lichSuTimKiemCuonSachs[index].tuKhoa;
+                                      });
 
-                                    updateTuKhoaTimKiemGanDay(index);
-                                  },
-                                  onHover: (value) => setStateInkWell(() => isHover = value),
-                                  hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.9),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 20, right: 10),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          _lichSuTimKiemCuonSachs[index].tuKhoa,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: isHover ? Colors.white : Colors.black,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        /* Nút Xóa lịch sử tìm kiếm Cuốn Sách */
-                                        if (isHover)
-                                          IconButton(
-                                            onPressed: () {
-                                              dbProcess.deleteLichSuTimKiemCuonSach(_lichSuTimKiemCuonSachs[index]);
-                                              setState(() {
-                                                _lichSuTimKiemCuonSachs.removeAt(index);
-                                              });
-                                            },
-                                            icon: const Icon(Icons.close, color: Colors.white),
-                                            style: IconButton.styleFrom(
-                                              foregroundColor: Colors.white,
+                                      updateTuKhoaTimKiemGanDay(index);
+                                    },
+                                    onHover: (value) => setStateInkWell(() => isHover = value),
+                                    hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 20, right: 10),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            _lichSuTimKiemCuonSachs[index].tuKhoa,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: isHover ? Colors.white : Colors.black,
+                                              fontStyle: FontStyle.italic,
                                             ),
                                           ),
-                                      ],
+                                          const Spacer(),
+                                          /* Nút Xóa lịch sử tìm kiếm Cuốn Sách */
+                                          if (isHover)
+                                            IconButton(
+                                              onPressed: () {
+                                                dbProcess.deleteLichSuTimKiem(_lichSuTimKiemCuonSachs[index]);
+                                                setState(() {
+                                                  _lichSuTimKiemCuonSachs.removeAt(index);
+                                                });
+                                              },
+                                              icon: const Icon(Icons.close, color: Colors.white),
+                                              style: IconButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ))
+                    )
                   : Expanded(
                       child: KetQuaTimKiem(
                         keyword: _searchController.text,

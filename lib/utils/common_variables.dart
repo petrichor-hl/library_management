@@ -10,6 +10,8 @@ final myIconButtonStyle = IconButton.styleFrom(
   padding: const EdgeInsets.all(10),
 );
 
+TextStyle errorTextStyle(BuildContext context) => TextStyle(color: Theme.of(context).colorScheme.error);
+
 Color getDataRowColor(BuildContext context, Set<MaterialState> states) {
   if (states.contains(MaterialState.selected)) {
     return Theme.of(context).colorScheme.primary.withOpacity(0.3);
