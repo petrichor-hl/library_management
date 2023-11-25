@@ -78,7 +78,7 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
                   child: Row(
                     children: [
                       const Text(
-                        'Số lượng sách năm vừa qua',
+                        'Số lượng sách nhập và sách mượn',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
