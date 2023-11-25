@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:library_management/models/report_doc_gia.dart';
+import 'package:library_management/models/report_sach.dart';
 import 'package:library_management/utils/extension.dart';
 
-class BaoCaoChiTietDocGia extends StatelessWidget {
-  const BaoCaoChiTietDocGia({required this.list, super.key});
-
-  final List<TKDocGia> list;
-
+class BaoCaoSachChiTiet extends StatelessWidget {
+  const BaoCaoSachChiTiet({required this.barIndex, required this.list, super.key});
+  final List<TKSach> list;
+  final int barIndex;
   @override
   Widget build(BuildContext context) {
     if (list.isEmpty) {
@@ -23,7 +22,7 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
-                      'Không có độc giả nào được đăng ký',
+                      'Không có cuốn sách nào được ghi nhận',
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 18,
@@ -53,9 +52,9 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Text(
-                    'Các độc giả được thêm vào',
-                    style: TextStyle(
+                  Text(
+                    (barIndex == 0) ? 'Danh sách các cuốn sách được mượn' : 'Danh sách các cuốn sách được nhập',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
@@ -68,37 +67,37 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
                 ],
               ),
               const Gap(10),
-              const Row(
+              Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 80,
                     child: Text(
-                      'Mã độc giả',
+                      'Mã sách',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
-                  Expanded(
+                  const Expanded(
                     flex: 3,
                     child: Text(
-                      'Tên độc giả',
+                      'Tên sách',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
                   ),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   Expanded(
                     flex: 2,
                     child: Text(
-                      'Ngày lập thẻ',
-                      style: TextStyle(
+                      (barIndex == 0) ? 'Ngày mượn sách' : 'Ngày nhập sách',
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -113,7 +112,6 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
                     (index) {
                       return SingleChildScrollView(
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Row(
                               children: [
@@ -122,7 +120,7 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.fromLTRB(10, 15, 15, 15),
                                     child: Text(
-                                      list[index].maDocGia.toString(),
+                                      list[index].maCuonSach.toString(),
                                     ),
                                   ),
                                 ),
@@ -133,7 +131,7 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
                                       horizontal: 15,
                                     ),
                                     child: Text(
-                                      list[index].hoTen.capitalizeFirstLetterOfEachWord(),
+                                      list[index].tenSach.capitalizeFirstLetterOfEachWord(),
                                     ),
                                   ),
                                 ),

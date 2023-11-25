@@ -81,7 +81,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
               SizedBox(
                 width: double.infinity,
                 child: Text(
-                  'Tổng sách mượn : $_totalReader',
+                  'Tổng độc giả đăng ký : $_totalReader',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -287,11 +287,11 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
   // Danh sách chi tiết độc giả trong tháng
   List<TKDocGia> _docGiaListInMonth(int month) {
     List<TKDocGia> list = List.empty(growable: true);
-    _readers.forEach((element) {
+    for (var element in _readers) {
       if (element.year == widget.selectedYear && element.month == (month + 1)) {
         list.add(element);
       }
-    });
+    }
     return list;
   }
 }

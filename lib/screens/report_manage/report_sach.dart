@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
 import 'package:library_management/main.dart';
-import 'package:collection/collection.dart';
-import 'package:library_management/models/report_sach_muon.dart';
-import 'package:library_management/models/report_sach_nhap.dart';
+import 'package:library_management/models/report_sach.dart';
+import 'package:library_management/screens/report_manage/report_sach_chitiet.dart';
 
 class BaoCaoSach extends StatefulWidget {
   const BaoCaoSach({required this.selectedYear, super.key});
@@ -18,16 +17,16 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
   int _totalBookBorrow = 0;
   int _totalBookImport = 0;
   final double _width = 35;
-  late List<TKSachMuon> _bookBorrow;
-  late List<TKSachNhap> _bookImport;
+  late List<TKSach> _bookBorrow;
+  late List<TKSach> _bookImport;
   //màu chính và màu phụ
   Color mainColor = const Color.fromARGB(255, 4, 104, 138);
   Color secondaryColor = const Color.fromARGB(255, 229, 239, 243);
   Color thirdColor = const Color.fromARGB(255, 72, 184, 233);
 
-  List<int> _reportSachMuonInYear(List<TKSachMuon> list, int selectedYear) {
+  List<int> _reportSachMuonInYear(List<TKSach> list, int selectedYear) {
     List<int> reportList = List<int>.filled(12, 0, growable: false);
-    for (TKSachMuon tkSachMuon in list) {
+    for (TKSach tkSachMuon in list) {
       if (tkSachMuon.year == selectedYear) {
         reportList[tkSachMuon.month - 1]++;
       }
@@ -37,9 +36,9 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
     return reportList;
   }
 
-  List<int> _reportSachNhapInYear(List<TKSachNhap> list, int selectedYear) {
+  List<int> _reportSachNhapInYear(List<TKSach> list, int selectedYear) {
     List<int> reportList = List<int>.filled(12, 0, growable: false);
-    for (TKSachNhap tkSachNhap in list) {
+    for (TKSach tkSachNhap in list) {
       if (tkSachNhap.year == selectedYear) {
         reportList[tkSachNhap.month - 1]++;
       }
@@ -171,7 +170,24 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
         minY: 0,
         maxY: topValue.toDouble(),
         titlesData: _buildAxes(),
-        barTouchData: BarTouchData(touchTooltipData: BarTouchTooltipData(tooltipBgColor: secondaryColor)),
+        barTouchData: BarTouchData(
+          enabled: true,
+          touchTooltipData: BarTouchTooltipData(tooltipBgColor: secondaryColor),
+          touchCallback: (p0, p1) {
+            if (p0 is FlTapUpEvent) {
+              if (p1 == null) return;
+              if (p1.spot?.touchedBarGroupIndex == null) return;
+              if (p1.spot?.touchedRodDataIndex == null) return;
+              showDialog(
+                context: context,
+                builder: (ctx) => BaoCaoSachChiTiet(
+                  barIndex: p1.spot!.touchedRodDataIndex,
+                  list: _bookListInMoth(p1.spot!.touchedBarGroupIndex, p1.spot!.touchedRodDataIndex),
+                ),
+              );
+            }
+          },
+        ),
         gridData: const FlGridData(show: false),
         borderData: FlBorderData(border: const Border(bottom: BorderSide(width: 1), left: BorderSide(width: 1))),
         barGroups: _buildAllBars());
@@ -268,5 +284,38 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
         BarChartRodData(toY: y2, color: thirdColor, width: _width, borderRadius: BorderRadius.circular(3)),
       ],
     );
+  }
+
+  // Danh sách chi tiết các sách mượn trong tháng
+  List<TKSach> _bookBorrowListInMonth(int month) {
+    List<TKSach> list = List.empty(growable: true);
+    for (var element in _bookBorrow) {
+      if (element.year == widget.selectedYear && element.month == (month + 1)) {
+        list.add(element);
+      }
+    }
+    return list;
+  }
+
+  // Danh sách chi tiết các sách nhập trong tháng
+  List<TKSach> _bookImportListInMonth(int month) {
+    List<TKSach> list = List.empty(growable: true);
+    for (var element in _bookImport) {
+      if (element.year == widget.selectedYear && element.month == (month + 1)) {
+        list.add(element);
+      }
+    }
+    return list;
+  }
+
+  // Trả về danh sách loại sách trong tháng
+  List<TKSach> _bookListInMoth(int month, int barIndex) {
+    List<TKSach> list = List.empty(growable: true);
+    if (barIndex == 0) {
+      list = _bookBorrowListInMonth(month);
+    } else {
+      list = _bookImportListInMonth(month);
+    }
+    return list;
   }
 }
