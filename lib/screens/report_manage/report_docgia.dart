@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:library_management/main.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:library_management/models/report_doc_gia.dart';
-import 'package:library_management/screens/report_docgia_chitiet.dart';
+import 'package:library_management/screens/report_manage/report_docgia_chitiet.dart';
 
 class BaoCaoDocGia extends StatefulWidget {
   const BaoCaoDocGia({required this.selectedYear, super.key});
@@ -14,6 +14,7 @@ class BaoCaoDocGia extends StatefulWidget {
 
 class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
   int _highestNum = 0;
+  int _totalReader = 0;
   late List<TKDocGia> _readers;
 
   //màu chính và màu phụ
@@ -30,6 +31,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         reportList[tkDocGia.month - 1]++;
       }
     }
+    _totalReader = reportList.reduce((a, b) => a + b);
     _highestNum = reportList.reduce((curr, next) => curr > next ? curr : next);
     return reportList;
   }
@@ -72,7 +74,21 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
               const SizedBox(
                 height: 30,
               ),
-              Expanded(child: LineChart(_lineChartData()))
+              Expanded(child: LineChart(_lineChartData())),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'Tổng sách mượn : $_totalReader',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
             ],
           ),
         );
@@ -110,18 +126,12 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
       //Xử lí khi tương tác với dữ liệu
       lineTouchData: LineTouchData(
           enabled: true,
-          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) async {
-            if (touchResponse?.lineBarSpots != null && event is FlTapUpEvent) {
-              setState(() {
-                final spotIndex = touchResponse?.lineBarSpots?[0].spotIndex ?? -1;
-                if (spotIndex == showingTooltipSpot) {
-                  showingTooltipSpot = -1;
-                } else {
-                  showingTooltipSpot = spotIndex;
-                }
-              });
-            }
-          },
+          // touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+          //   showDialog(
+          //     context: context,
+          //     builder: (ctx) => BaoCaoChiTietDocGia(),
+          //   );
+          // },
           touchTooltipData: LineTouchTooltipData(
             tooltipBgColor: secondaryColor,
             tooltipRoundedRadius: 5,
