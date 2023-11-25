@@ -126,12 +126,22 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
       //Xử lí khi tương tác với dữ liệu
       lineTouchData: LineTouchData(
           enabled: true,
-          // touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-          //   showDialog(
-          //     context: context,
-          //     builder: (ctx) => BaoCaoChiTietDocGia(),
-          //   );
-          // },
+          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+            if (event is FlTapUpEvent) {
+              if (touchResponse == null) {
+                return;
+              }
+              if (touchResponse.lineBarSpots?.first == null) {
+                return;
+              }
+              showDialog(
+                context: context,
+                builder: (ctx) => BaoCaoChiTietDocGia(
+                  list: _docGiaListInMonth(touchResponse.lineBarSpots!.first.spotIndex),
+                ),
+              );
+            }
+          },
           touchTooltipData: LineTouchTooltipData(
             tooltipBgColor: secondaryColor,
             tooltipRoundedRadius: 5,
@@ -266,11 +276,22 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         isStepLineChart: false,
         isCurved: false,
         barWidth: 2,
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         belowBarData: BarAreaData(
           show: true,
           //gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [mainColor, Color.fromARGB(35, 4, 104, 138)]),
           color: colorA,
         ));
+  }
+
+  // Danh sách chi tiết độc giả trong tháng
+  List<TKDocGia> _docGiaListInMonth(int month) {
+    List<TKDocGia> list = List.empty(growable: true);
+    _readers.forEach((element) {
+      if (element.year == widget.selectedYear && element.month == (month + 1)) {
+        list.add(element);
+      }
+    });
+    return list;
   }
 }

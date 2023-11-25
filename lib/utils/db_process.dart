@@ -1419,7 +1419,7 @@ class DbProcess {
   Future<List<TKDocGia>> queryDocGiaTheoThang() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select MaDocGia, NgayLapThe 
+      select MaDocGia, NgayLapThe, HoTen
       from DocGia 
 
       ''',
@@ -1431,8 +1431,10 @@ class DbProcess {
       DateTime createCardDate = vnDateFormat.parse(element['NgayLapThe'] as String);
       danhSachDocGia.add(
         TKDocGia(
+          createCardDate.day,
           createCardDate.month,
           createCardDate.year,
+          element['HoTen'],
           element['MaDocGia'],
         ),
       );
@@ -1444,7 +1446,7 @@ class DbProcess {
   Future<List<TKSachMuon>> querySachMuonTheoThang() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select MaCuonSach, NgayMuon 
+      select MaCuonSach, NgayMuon
       from PhieuMuon 
 
       ''',
