@@ -289,10 +289,10 @@ class DbProcess {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select * from DocGia 
-      where HoTen like ?
+      where HoTen like ? or SoDienThoai like ?
       limit ?, 8
       ''',
-      ['%${str.toLowerCase()}%', numberRowIgnore],
+      ['%$str%', '%$str%', numberRowIgnore],
     );
     List<DocGia> docGias = [];
 
