@@ -53,6 +53,9 @@ dependencies:
   open_file: ^3.3.2
   printing: ^5.11.1
   diacritic: ^0.1.4
+  fl_chart: ^0.64.0
+  month_year_picker: ^0.3.0+1
+  syncfusion_flutter_charts: ^23.1.44
 
 dev_dependencies:
   flutter_test:
