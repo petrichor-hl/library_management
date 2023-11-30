@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:library_management/main.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:library_management/models/report_doc_gia.dart';
-import 'package:library_management/screens/report_docgia_chitiet.dart';
+import 'package:library_management/screens/report_manage/report_docgia_chitiet.dart';
 
 class BaoCaoDocGia extends StatefulWidget {
   const BaoCaoDocGia({required this.selectedYear, super.key});
@@ -14,6 +14,7 @@ class BaoCaoDocGia extends StatefulWidget {
 
 class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
   int _highestNum = 0;
+  int _totalReader = 0;
   late List<TKDocGia> _readers;
 
   //màu chính và màu phụ
@@ -30,6 +31,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         reportList[tkDocGia.month - 1]++;
       }
     }
+    _totalReader = reportList.reduce((a, b) => a + b);
     _highestNum = reportList.reduce((curr, next) => curr > next ? curr : next);
     return reportList;
   }
@@ -72,7 +74,21 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
               const SizedBox(
                 height: 30,
               ),
-              Expanded(child: LineChart(_lineChartData()))
+              Expanded(child: LineChart(_lineChartData())),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'Tổng độc giả đăng ký : $_totalReader',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
             ],
           ),
         );
@@ -110,16 +126,20 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
       //Xử lí khi tương tác với dữ liệu
       lineTouchData: LineTouchData(
           enabled: true,
-          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) async {
-            if (touchResponse?.lineBarSpots != null && event is FlTapUpEvent) {
-              setState(() {
-                final spotIndex = touchResponse?.lineBarSpots?[0].spotIndex ?? -1;
-                if (spotIndex == showingTooltipSpot) {
-                  showingTooltipSpot = -1;
-                } else {
-                  showingTooltipSpot = spotIndex;
-                }
-              });
+          touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
+            if (event is FlTapUpEvent) {
+              if (touchResponse == null) {
+                return;
+              }
+              if (touchResponse.lineBarSpots?.first == null) {
+                return;
+              }
+              showDialog(
+                context: context,
+                builder: (ctx) => BaoCaoChiTietDocGia(
+                  list: _docGiaListInMonth(touchResponse.lineBarSpots!.first.spotIndex),
+                ),
+              );
             }
           },
           touchTooltipData: LineTouchTooltipData(
@@ -256,11 +276,22 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
         isStepLineChart: false,
         isCurved: false,
         barWidth: 2,
-        dotData: FlDotData(show: false),
+        dotData: const FlDotData(show: false),
         belowBarData: BarAreaData(
           show: true,
           //gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [mainColor, Color.fromARGB(35, 4, 104, 138)]),
           color: colorA,
         ));
+  }
+
+  // Danh sách chi tiết độc giả trong tháng
+  List<TKDocGia> _docGiaListInMonth(int month) {
+    List<TKDocGia> list = List.empty(growable: true);
+    for (var element in _readers) {
+      if (element.year == widget.selectedYear && element.month == (month + 1)) {
+        list.add(element);
+      }
+    }
+    return list;
   }
 }

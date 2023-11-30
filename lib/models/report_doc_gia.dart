@@ -1,6 +1,8 @@
 class TKDocGia {
+  int day;
   int month;
   int year;
   int? maDocGia;
-  TKDocGia(this.month, this.year, this.maDocGia);
+  String hoTen;
+  TKDocGia(this.day, this.month, this.year, this.hoTen, this.maDocGia);
 }

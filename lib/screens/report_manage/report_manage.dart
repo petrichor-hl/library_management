@@ -1,6 +1,7 @@
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
-import 'package:library_management/screens/report.dart';
+import 'package:library_management/screens/report_manage/report_docgia.dart';
+import 'package:library_management/screens/report_manage/report_sach.dart';
 
 class ReportManage extends StatefulWidget {
   const ReportManage({super.key});
@@ -152,7 +153,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                 BaoCaoDocGia(
                   selectedYear: _selectedYear.year,
                 ),
-                BaoCaoDocGia(
+                BaoCaoSach(
                   selectedYear: _selectedYear.year,
                 )
               ],

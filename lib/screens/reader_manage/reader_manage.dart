@@ -157,7 +157,7 @@ class _ReaderManageState extends State<ReaderManage> {
 
   /* Hàm này dùng để lấy các Reader ở trang thứ Index và hiển thị lên bảng */
   Future<void> _loadReadersOfPageIndex(int pageIndex) async {
-    String searchText = _searchController.text;
+    String searchText = _searchController.text.toLowerCase();
 
     List<DocGia> newReaderRows = searchText.isEmpty
         ? await dbProcess.queryDocGia(numberRowIgnore: (pageIndex - 1) * 8)
@@ -338,14 +338,14 @@ class _ReaderManageState extends State<ReaderManage> {
 
                           return DataRow(
                             /* Thẻ Độc Giả quá hạn sẽ tô màu xám (black12) */
-                            color: reader.ngayHetHan < DateTime.now()
-                                ? MaterialStateProperty.resolveWith((states) {
-                                    if (states.contains(MaterialState.selected)) {
-                                      return Theme.of(context).colorScheme.primary.withOpacity(0.3);
-                                    }
-                                    return Colors.black12;
-                                  })
-                                : null,
+                            // color: reader.ngayHetHan < DateTime.now()
+                            //     ? MaterialStateProperty.resolveWith((states) {
+                            //         if (states.contains(MaterialState.selected)) {
+                            //           return Theme.of(context).colorScheme.primary.withOpacity(0.3);
+                            //         }
+                            //         return Colors.black12;
+                            //       })
+                            //     : null,
                             selected: _selectedRow == index,
                             onSelectChanged: (_) => setState(() {
                               _selectedRow = index;
