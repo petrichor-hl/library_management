@@ -12,6 +12,7 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
   Widget build(BuildContext context) {
     if (list.isEmpty) {
       return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
               width: 500,
               child: Padding(
@@ -40,132 +41,133 @@ class BaoCaoChiTietDocGia extends StatelessWidget {
               )));
     } else {
       return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-        width: 500,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 30,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'Các độc giả được thêm vào',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded),
-                  )
-                ],
+            width: 500,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 30,
               ),
-              const Gap(10),
-              const Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      'Mã độc giả',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                  Row(
+                    children: [
+                      const Text(
+                        'Các độc giả được thêm vào',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 15,
+                  const Gap(10),
+                  const Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Mã độc giả',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          'Tên độc giả',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Ngày lập thẻ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Tên độc giả',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 15),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Ngày lập thẻ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: ListView(
-                  children: List.generate(
-                    list.length,
-                    (index) {
-                      return SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
+                    child: ListView(
+                      children: List.generate(
+                        list.length,
+                        (index) {
+                          return SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(
-                                  width: 80,
-                                  child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(10, 15, 15, 15),
-                                    child: Text(
-                                      list[index].maDocGia.toString(),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 80,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(10, 15, 15, 15),
+                                        child: Text(
+                                          list[index].maDocGia.toString(),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                        ),
+                                        child: Text(
+                                          list[index].hoTen.capitalizeFirstLetterOfEachWord(),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                        ),
+                                        child: Text(
+                                          '${list[index].day} / ${list[index].month} / ${list[index].year}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    child: Text(
-                                      list[index].hoTen.capitalizeFirstLetterOfEachWord(),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                    ),
-                                    child: Text(
-                                      '${list[index].day} / ${list[index].month} / ${list[index].year}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
+                                const Divider(
+                                  height: 0,
                                 ),
                               ],
                             ),
-                            const Divider(
-                              height: 0,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ));
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ));
     }
   }
 }

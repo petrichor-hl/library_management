@@ -17,6 +17,7 @@ import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/report_doc_gia.dart';
 import 'package:library_management/models/phieu_tra.dart';
 import 'package:library_management/models/report_sach.dart';
+import 'package:library_management/models/report_the_loai_muon.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -1460,6 +1461,28 @@ class DbProcess {
       );
     }
     return danhSachSachMuon;
+  }
+
+  // REPORT THE LOAI SACH MUON
+  Future<List<TKTheLoai>> queryTheLoaiSachMuonTheoNam() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select NgayMuon, TenTheLoai, count(MaCuonSach) as quanity
+      from PhieuMuon join CuonSach USING(MaCuonSach) 
+      join Sach using(MaSach)
+      join DauSach_TheLoai using(MaDauSach)
+      join TheLoai using(MaTheLoai)
+      group by MaTheLoai
+      ''',
+    );
+    List<TKTheLoai> danhSachTheLoaiSachMuon = [];
+    for (var element in data) {
+      DateTime date = vnDateFormat.parse(element['NgayMuon'] as String);
+      danhSachTheLoaiSachMuon.add(
+        TKTheLoai(date.year, element['TenTheLoai'], element['quanity']),
+      );
+    }
+    return danhSachTheLoaiSachMuon;
   }
 
   // REPORT SACH NHAP

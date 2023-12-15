@@ -114,17 +114,6 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                       );
                     },
                   );
-
-                  // DateTime? chosenDate = await
-                  // showDatePicker(
-                  //   context: context,
-                  //   initialDate: DateTime.now(),
-                  //   firstDate: DateTime(1950),
-                  //   lastDate: DateTime.now(),
-                  // );
-                  // if (chosenDate != null) {
-                  //   _selectedYear = chosenDate;
-                  // }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainColor,

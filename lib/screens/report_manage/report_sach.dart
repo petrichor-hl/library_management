@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/report_sach.dart';
 import 'package:library_management/screens/report_manage/report_sach_chitiet.dart';
+import 'package:library_management/screens/report_manage/report_the_loai_sach_muon.dart';
 
 class BaoCaoSach extends StatefulWidget {
   const BaoCaoSach({required this.selectedYear, super.key});
@@ -19,6 +20,8 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
   final double _width = 35;
   late List<TKSach> _bookBorrow;
   late List<TKSach> _bookImport;
+  //var _selectedYear = DateTime.now();
+  var isHoverYearBtn = false;
   //màu chính và màu phụ
   Color mainColor = const Color.fromARGB(255, 4, 104, 138);
   Color secondaryColor = const Color.fromARGB(255, 229, 239, 243);
@@ -133,30 +136,64 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
                 const SizedBox(
                   height: 10,
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'Tổng sách mượn : $_totalBookBorrow',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'Tổng sách mượn : $_totalBookBorrow',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        const SizedBox(
+                          height: 7,
+                          width: 7,
+                        ),
+                        Text(
+                          'Tổng sách nhập : $_totalBookImport',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                const SizedBox(
-                  height: 7,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    'Tổng sách nhập : $_totalBookImport',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                    const Spacer(),
+                    ElevatedButton(
+                      onHover: (value) => {isHoverYearBtn = true},
+                      onPressed: //() {},
+                          () async {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BaoCaoTheLoaiSachMuon(
+                              selectedYear: widget.selectedYear,
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mainColor,
+                        foregroundColor: Colors.white.withOpacity(0.5),
+                        minimumSize: const Size(100, 60),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12), // <-- Radius
+                        ),
+                      ),
+                      child: const Text(
+                        "Chi tiết thể loại sách mượn",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.left,
-                  ),
+                  ],
                 ),
               ],
             ),
