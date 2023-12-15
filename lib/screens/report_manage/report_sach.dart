@@ -3,8 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
 import 'package:library_management/main.dart';
 import 'package:library_management/models/report_sach.dart';
+import 'package:library_management/models/report_the_loai_muon.dart';
 import 'package:library_management/screens/report_manage/report_sach_chitiet.dart';
-import 'package:library_management/screens/report_manage/report_the_loai_sach_muon.dart';
+import 'package:library_management/screens/report_manage/report_sach_muon_the_loai.dart';
+import 'package:library_management/utils/extension.dart';
 
 class BaoCaoSach extends StatefulWidget {
   const BaoCaoSach({required this.selectedYear, super.key});
@@ -20,6 +22,8 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
   final double _width = 35;
   late List<TKSach> _bookBorrow;
   late List<TKSach> _bookImport;
+  late List<TKTheLoai> _bookCategory;
+
   //var _selectedYear = DateTime.now();
   var isHoverYearBtn = false;
   //màu chính và màu phụ
@@ -60,6 +64,7 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
     await Future.delayed(kTabScrollDuration);
     _bookBorrow = await dbProcess.querySachMuonTheoThang();
     _bookImport = await dbProcess.querySachNhapTheoThang();
+    _bookCategory = await dbProcess.queryTheLoaiSachMuonTheoNam();
   }
 
   @override
@@ -172,6 +177,7 @@ class _BaoCaoSachState extends State<BaoCaoSach> {
                           builder: (BuildContext context) {
                             return BaoCaoTheLoaiSachMuon(
                               selectedYear: widget.selectedYear,
+                              list: _bookCategory,
                             );
                           },
                         );

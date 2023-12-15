@@ -22,6 +22,10 @@ VALUES
 ('nguyễn hồ phúc my', '03/12/2003', '28 Mai Văn Ngọc, Phường 10, Phú Nhuận, Thành phố Hồ Chí Minh', '0905067490', '20/06/2023', '20/12/2023', 0);
 -- ('', '', '', '', '', '', 0),
 
+
+
+
+
 INSERT INTO DauSach(TenDauSach) 
 VALUES 
 ('nhà giả kim'),
@@ -49,6 +53,29 @@ VALUES
 INSERT INTO PhieuNhap(NgayLap) VALUES ('19/07/2023');
 INSERT INTO PhieuNhap(NgayLap) VALUES ('24/08/2023');
 INSERT INTO PhieuNhap(NgayLap) VALUES ('07/11/2023');
+
+INSERT INTO CT_TaoThe(MaDocGia, NgayTao) 
+VALUES
+('1', '27/10/2023'),
+('2',  '24/08/2023'),
+('3', '15/09/2023'),
+('4',  '24/07/2023'),
+('5', '31/08/2023'),
+('6','19/08/2023'),
+('7', '07/09/2023' ),
+('8',  '21/10/2023'),
+('9',  '19/07/2023'),
+('10', '28/07/2023'),
+('11',  '02/08/2023'),
+('12','28/10/2023' ),
+('13',  '19/05/2023'),
+('14', '01/02/2023'),
+('15',  '09/06/2023'),
+('16', '27/07/2022'),
+('17',  '19/10/2023'),
+('18', '08/08/2023'),
+('19', '28/10/2023'),
+('20',  '20/06/2023' );
 
 INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) VALUES ('1', '3', '2', '37000');
 INSERT INTO CT_PhieuNhap(MaPhieuNhap, MaSach, SoLuong, DonGia) VALUES ('1', '4', '2', '62000');
