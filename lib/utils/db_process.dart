@@ -17,6 +17,8 @@ import 'package:library_management/models/phieu_nhap.dart';
 import 'package:library_management/models/report_doc_gia.dart';
 import 'package:library_management/models/phieu_tra.dart';
 import 'package:library_management/models/report_sach.dart';
+import 'package:library_management/models/report_the_loai_muon.dart';
+import 'package:library_management/models/report_thu_nhap.dart';
 import 'package:library_management/models/sach.dart';
 import 'package:library_management/models/tac_gia.dart';
 import 'package:library_management/models/the_loai.dart';
@@ -154,7 +156,9 @@ class DbProcess {
 
           CREATE TABLE PhieuMuon(
             MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
-            
+            MaCuonSach TEXT,
+            MaDocGia INTEGER,
+            NgayMuon TEXT,
             HanTra TEXT,
             TinhTrang TEXT,
 
@@ -176,6 +180,15 @@ class DbProcess {
             LoaiTimKiem TEXT,
             TuKhoa TEXT
           );
+
+          CREATE TABLE CT_TaoThe(
+            MaCTTT INTEGER PRIMARY KEY AUTOINCREMENT, 
+            MaDocGia INTERGER,
+            PhiTaoThe INTERGER,
+            NgayTao TEXT,
+
+            FOREIGN KEY (MaDocGia) REFERENCES DocGia(MaDocGia) ON DELETE RESTRICT
+          )
         ''',
         );
       },
@@ -1462,6 +1475,28 @@ class DbProcess {
     return danhSachSachMuon;
   }
 
+  // REPORT THE LOAI SACH MUON
+  Future<List<TKTheLoai>> queryTheLoaiSachMuonTheoNam() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select NgayMuon, TenTheLoai, count(MaCuonSach) as quanity
+      from PhieuMuon join CuonSach USING(MaCuonSach) 
+      join Sach using(MaSach)
+      join DauSach_TheLoai using(MaDauSach)
+      join TheLoai using(MaTheLoai)
+      group by MaTheLoai
+      ''',
+    );
+    List<TKTheLoai> danhSachTheLoaiSachMuon = [];
+    for (var element in data) {
+      DateTime date = vnDateFormat.parse(element['NgayMuon'] as String);
+      danhSachTheLoaiSachMuon.add(
+        TKTheLoai(date.year, element['TenTheLoai'], element['quanity']),
+      );
+    }
+    return danhSachTheLoaiSachMuon;
+  }
+
   // REPORT SACH NHAP
   Future<List<TKSach>> querySachNhapTheoThang() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
@@ -1481,5 +1516,44 @@ class DbProcess {
       );
     }
     return danhSachSachMuon;
+  }
+
+  // REPORT DOANH THU
+  // REPORT TIEN PHAT
+  Future<List<TKThuNhap>> queryTienPhatTheoThang() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select NgayTra, MaPhieuTra, SoTienPhat
+      from PhieuTra
+
+      ''',
+    );
+    List<TKThuNhap> danhSachTienPhat = [];
+    for (var element in data) {
+      DateTime date = vnDateFormat.parse(element['NgayTra'] as String);
+      danhSachTienPhat.add(
+        TKThuNhap(date.day, date.month, date.year, element['MaPhieuTra'].toString(), "fine", element['SoTienPhat']),
+      );
+    }
+    return danhSachTienPhat;
+  }
+
+  // REPORT TIEN TAO THE
+  Future<List<TKThuNhap>> queryTienTaoTheTheoThang() async {
+    List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select MaCTTT, PhiTaoThe, NgayTao
+      from CT_TaoThe
+
+      ''',
+    );
+    List<TKThuNhap> danhSachTienTao = [];
+    for (var element in data) {
+      DateTime date = vnDateFormat.parse(element['NgayTao'] as String);
+      danhSachTienTao.add(
+        TKThuNhap(date.day, date.month, date.year, element['MaCTTT'].toString(), "fee", element['PhiTaoThe']),
+      );
+    }
+    return danhSachTienTao;
   }
 }

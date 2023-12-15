@@ -1,5 +1,6 @@
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
+import 'package:library_management/screens/report_manage/report_doanh_thu.dart';
 import 'package:library_management/screens/report_manage/report_docgia.dart';
 import 'package:library_management/screens/report_manage/report_sach.dart';
 
@@ -13,7 +14,7 @@ class ReportManage extends StatefulWidget {
 class _ReportManageState extends State<ReportManage> with TickerProviderStateMixin {
   late final TabController _tabController;
   //late final ScrollController _scrollController;
-  final int _count = 2;
+  final int _count = 3;
   //bool fixedScroll = true;
   var _selectedYear = new DateTime.now();
   Color mainColor = const Color.fromARGB(255, 4, 104, 138);
@@ -58,6 +59,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                     tabs: const [
                       Tab(text: "Báo cáo độc giả"),
                       Tab(text: "Báo cáo sách"),
+                      Tab(text: "Báo cáo doanh thu"),
                     ],
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -114,17 +116,6 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                       );
                     },
                   );
-
-                  // DateTime? chosenDate = await
-                  // showDatePicker(
-                  //   context: context,
-                  //   initialDate: DateTime.now(),
-                  //   firstDate: DateTime(1950),
-                  //   lastDate: DateTime.now(),
-                  // );
-                  // if (chosenDate != null) {
-                  //   _selectedYear = chosenDate;
-                  // }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: mainColor,
@@ -155,7 +146,8 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                 ),
                 BaoCaoSach(
                   selectedYear: _selectedYear.year,
-                )
+                ),
+                BaoCaoDoanhThu()
               ],
             ),
           ),
