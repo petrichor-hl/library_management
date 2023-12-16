@@ -108,12 +108,12 @@ class BaoCaoTheLoaiSachMuon extends StatelessWidget {
                         ),
                       ),
                       chartValuesOptions: const ChartValuesOptions(
-                        showChartValueBackground: false,
-                        showChartValues: true,
-                        showChartValuesInPercentage: false,
-                        showChartValuesOutside: false,
-                        decimalPlaces: 0,
-                      ),
+                          showChartValueBackground: false,
+                          showChartValues: true,
+                          showChartValuesInPercentage: false,
+                          showChartValuesOutside: false,
+                          decimalPlaces: 0,
+                          chartValueStyle: TextStyle(fontWeight: FontWeight.normal, color: Colors.black)),
                     ),
                   ),
                 )
