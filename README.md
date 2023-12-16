@@ -49,3 +49,7 @@ SQLite 3
 - flutter_bloc: ^8.1.3
 - pdf: ^3.10.6 (to generate PDF file)
 - path_provider: ^2.1.1
+- fl_chart: ^0.64.0
+- month_year_picker: ^0.3.0+1
+- syncfusion_flutter_charts: ^23.1.44
+- pie_chart: ^5.4.0
