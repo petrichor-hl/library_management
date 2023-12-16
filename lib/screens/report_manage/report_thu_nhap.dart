@@ -1,13 +1,9 @@
-import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:library_management/main.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:library_management/models/report_doc_gia.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:library_management/models/report_thu_nhap.dart';
-import 'package:library_management/screens/report_manage/report_docgia_chitiet.dart';
 
 class BaoCaoThuNhap extends StatefulWidget {
   const BaoCaoThuNhap({required this.selectedYear, super.key});
