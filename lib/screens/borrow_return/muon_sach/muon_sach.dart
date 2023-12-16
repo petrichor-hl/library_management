@@ -49,7 +49,7 @@ class _MuonSachState extends State<MuonSach> {
   String _errorText = '';
   String _maDocGia = '';
   String _hoTenDocGia = '';
-  String _soSachDaMuon = '';
+  String _soSachDangMuon = '';
   bool _isInPhieuMuon = true;
 
   Future<void> _searchMaDocGia() async {
@@ -72,7 +72,7 @@ class _MuonSachState extends State<MuonSach> {
     });
 
     _hoTenDocGia = '';
-    _soSachDaMuon = '';
+    _soSachDangMuon = '';
     _maDocGia = '';
 
     int maDocGia = int.parse(_searchMaDocGiaController.text);
@@ -85,7 +85,52 @@ class _MuonSachState extends State<MuonSach> {
     } else {
       _maDocGia = maDocGia.toString();
       _hoTenDocGia = hoTen.capitalizeFirstLetterOfEachWord();
-      _soSachDaMuon = (await dbProcess.querySoSachDaMuonCuaDocGia(maDocGia)).toString();
+      _soSachDangMuon = (await dbProcess.querySoSachDangMuonCuaDocGia(maDocGia)).toString();
+
+      int soSachQuaHan = await dbProcess.querySoSachMuonQuahanCuaDocGia(maDocGia);
+
+      if (soSachQuaHan > 0 && mounted) {
+        showDialog(
+          context: context,
+          builder: (ctx) => Dialog(
+            surfaceTintColor: Colors.transparent,
+            child: SizedBox(
+              width: 300,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.warning_rounded,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 52,
+                    ),
+                    const Gap(10),
+                    Text(
+                      'Độc giả $_hoTenDocGia có',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      '$soSachQuaHan cuốn sách quá hạn',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const Gap(16),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Đóng'),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
     }
 
     setState(() {
@@ -176,7 +221,7 @@ class _MuonSachState extends State<MuonSach> {
     setState(() {
       _maDocGia = '';
       _hoTenDocGia = '';
-      _soSachDaMuon = '';
+      _soSachDangMuon = '';
     });
 
     setState(() {
@@ -325,7 +370,7 @@ class _MuonSachState extends State<MuonSach> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Số sách đã mượn: $_soSachDaMuon',
+                          'Số sách đang mượn: $_soSachDangMuon',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -364,7 +409,7 @@ class _MuonSachState extends State<MuonSach> {
                       Expanded(
                         child: SachTrongKho(
                           _searchCuonSachController,
-                          soSachCoTheMuon: ThamSoQuyDinh.soSachMuonToiDa - (_soSachDaMuon.isEmpty ? -1 : int.parse(_soSachDaMuon)),
+                          soSachCoTheMuon: ThamSoQuyDinh.soSachMuonToiDa - (_soSachDangMuon.isEmpty ? -1 : int.parse(_soSachDangMuon)),
                         ),
                       ),
                       /* Khoảng trắng 30 pixel */
@@ -373,7 +418,7 @@ class _MuonSachState extends State<MuonSach> {
                       Expanded(
                         child: SachDaChon(
                           _maCuonSachToAddCuonSachController,
-                          soSachCoTheMuon: ThamSoQuyDinh.soSachMuonToiDa - (_soSachDaMuon.isEmpty ? -1 : int.parse(_soSachDaMuon)),
+                          soSachCoTheMuon: ThamSoQuyDinh.soSachMuonToiDa - (_soSachDangMuon.isEmpty ? -1 : int.parse(_soSachDangMuon)),
                         ),
                       )
                     ],

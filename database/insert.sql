@@ -1,26 +1,26 @@
-INSERT INTO DocGia(HoTen, NgaySinh, DiaChi, SoDienThoai, NgayLapThe, NgayHetHan, TongNo) 
+INSERT INTO DocGia(HoTen, NgaySinh, DiaChi, SoDienThoai, NgayLapThe, NgayHetHan) 
 VALUES
-('trần lê hoàng lâm', '17/04/2003', 'S8.01 VGP, Quận 9, Thủ Đức', '0915203143', '27/10/2023', '27/04/2024', 0),
-('tăng thị kim nguyên', '01/05/2003', '13 Nguyễn Thị Định, phường Thanh Hà, Thành phố Hội An', '0905746418', '24/08/2023', '24/02/2024', 0),
-('bùi cường', '12/09/2003', 'A ma quang, phường Tự An, Thành phố Buôn Mê Thuộc', '0914119624', '15/09/2023', '15/03/2024', 14000),
-('nguyễn viết hường', '17/09/2003', 'S5.01 VGP, Long Thạnh Mỹ, Quận 9, Tp HCM', '0975664494', '24/07/2023', '24/01/2024', 20000),
-('trần văn sơn', '06/06/1975', '506 Hùng Vương, phường Thanh Hà, Thành phố Hội An', '0986780715', '31/08/2023', '02/03/2024', 0),
-('đỗ mai minh quân', '02/09/2004', '624 Cẩm Đường, Long Thành, Đồng Nai', '0374936329', '19/08/2023', '19/02/2024', 0),
-('đinh nhật thông', '26/07/2005', 'Phường Điện Ngọc, Thị xã Điện Bàn, Tỉnh Quảng Nam', '0399784005', '07/09/2023', '07/03/2024', 0),
-('lê thị châu toàn', '30/09/1983', '326 Lý Thường Kiệt, Phường Minh An, Hội An, Quảng Nam', '0818055446', '21/10/2023', '21/4/2024', 0),
-('nguyễn thị huyền trang', '30/11/2009', 'Hà bản, Điện Dương, Điện Bàn, Quảng Nam', '0767367435', '19/07/2023', '19/01/2024', 0),
-('lê đăng thương', '07/05/2001', 'Thôn 2, Xã EaNam, Huyện EaH''leo, Tỉnh Đăk Lăk', '0397824107', '28/07/2023', '28/01/2024', 0),
-('trần vũ bảo phúc', '14/04/2003', '102/44/49 Pháo Đài Láng, Láng Thượng, Đống Đa, Hà Nội', '0981787708', '02/08/2023', '02/02/2024', 0),
-('nguyễn nguyên khương', '12/12/2008', 'I-01.04, Chung cư Sunrise Riverside, Phước Kiển, Nhà Bè, Thành phố Hồ Chí Min', '0865122487', '28/10/2023', '28/04/2024', 0),
-('nguyễn ngọc tín', '08/09/2005', '1163/2d Lê Đức Thọ, Quận Gò Vấp', '0522669557', '19/05/2023', '19/11/2023', 0),
-('lê duy thường', '16/07/2003', 'Đường số 16, Tân Phú, Quận 7, Thành phố Hồ Chí Minh', '0387992373', '01/02/2023', '01/08/2023', 0),
-('văn minh triết', '20/12/2001', '3/8 Đ. Số 8, Tân Quy, Quận 7, Thành phố Hồ Chí Minh', '0938083882', '09/06/2023', '09/12/2023', 0),
-('hoàng văn quy', '12/07/1998', 'Hẻm 233, Võ Thị Sáu, Quận 3, Thành phố Hồ Chí Minh', '0398724661', '27/07/2022', '27/01/2023', 0),
-('nguyễn minh châu', '28/10/2023', '40 Bế Văn Đàn, Phường 14, Tân Bình, Thành phố Hồ Chí Minh', '0397116293', '19/10/2023', '19/04/2024', 0),
-('trần thị thu hoài', '16/09/2003', '69/9 Đề Thám, phường Cô Giang, Quận 1, TP HCM', '0378034554', '08/08/2023', '08/02/2024', 0),
-('phạm thị như ý', '05/11/2003', '20/16 Đường số 2, phường Tân Kiểng, Quận 7', '0941288835', '28/10/2023', '28/04/2024', 0),
-('nguyễn hồ phúc my', '03/12/2003', '28 Mai Văn Ngọc, Phường 10, Phú Nhuận, Thành phố Hồ Chí Minh', '0905067490', '20/06/2023', '20/12/2023', 0);
--- ('', '', '', '', '', '', 0),
+('trần lê hoàng lâm', '17/04/2003', 'S8.01 VGP, Quận 9, Thủ Đức', '0915203143', '27/10/2023', '27/04/2024'),
+('tăng thị kim nguyên', '01/05/2003', '13 Nguyễn Thị Định, phường Thanh Hà, Thành phố Hội An', '0905746418', '24/08/2023', '24/02/2024'),
+('bùi cường', '12/09/2003', 'A ma quang, phường Tự An, Thành phố Buôn Mê Thuộc', '0914119624', '15/09/2023', '15/03/2024'),
+('nguyễn viết hường', '17/09/2003', 'S5.01 VGP, Long Thạnh Mỹ, Quận 9, Tp HCM', '0975664494', '24/07/2023', '24/01/2024'),
+('trần văn sơn', '06/06/1975', '506 Hùng Vương, phường Thanh Hà, Thành phố Hội An', '0986780715', '31/08/2023', '02/03/2024'),
+('đỗ mai minh quân', '02/09/2004', '624 Cẩm Đường, Long Thành, Đồng Nai', '0374936329', '19/08/2023', '19/02/2024'),
+('đinh nhật thông', '26/07/2005', 'Phường Điện Ngọc, Thị xã Điện Bàn, Tỉnh Quảng Nam', '0399784005', '07/09/2023', '07/03/2024'),
+('lê thị châu toàn', '30/09/1983', '326 Lý Thường Kiệt, Phường Minh An, Hội An, Quảng Nam', '0818055446', '21/10/2023', '21/4/2024'),
+('nguyễn thị huyền trang', '30/11/2009', 'Hà bản, Điện Dương, Điện Bàn, Quảng Nam', '0767367435', '19/07/2023', '19/01/2024'),
+('lê đăng thương', '07/05/2001', 'Thôn 2, Xã EaNam, Huyện EaH''leo, Tỉnh Đăk Lăk', '0397824107', '28/07/2023', '28/01/2024'),
+('trần vũ bảo phúc', '14/04/2003', '102/44/49 Pháo Đài Láng, Láng Thượng, Đống Đa, Hà Nội', '0981787708', '02/08/2023', '02/02/2024'),
+('nguyễn nguyên khương', '12/12/2008', 'I-01.04, Chung cư Sunrise Riverside, Phước Kiển, Nhà Bè, Thành phố Hồ Chí Min', '0865122487', '28/10/2023', '28/04/2024'),
+('nguyễn ngọc tín', '08/09/2005', '1163/2d Lê Đức Thọ, Quận Gò Vấp', '0522669557', '19/05/2023', '19/11/2023'),
+('lê duy thường', '16/07/2003', 'Đường số 16, Tân Phú, Quận 7, Thành phố Hồ Chí Minh', '0387992373', '01/02/2023', '01/08/2023'),
+('văn minh triết', '20/12/2001', '3/8 Đ. Số 8, Tân Quy, Quận 7, Thành phố Hồ Chí Minh', '0938083882', '09/06/2023', '09/12/2023'),
+('hoàng văn quy', '12/07/1998', 'Hẻm 233, Võ Thị Sáu, Quận 3, Thành phố Hồ Chí Minh', '0398724661', '27/07/2022', '27/01/2023'),
+('nguyễn minh châu', '28/10/2023', '40 Bế Văn Đàn, Phường 14, Tân Bình, Thành phố Hồ Chí Minh', '0397116293', '19/10/2023', '19/04/2024'),
+('trần thị thu hoài', '16/09/2003', '69/9 Đề Thám, phường Cô Giang, Quận 1, TP HCM', '0378034554', '08/08/2023', '08/02/2024'),
+('phạm thị như ý', '05/11/2003', '20/16 Đường số 2, phường Tân Kiểng, Quận 7', '0941288835', '28/10/2023', '28/04/2024'),
+('nguyễn hồ phúc my', '03/12/2003', '28 Mai Văn Ngọc, Phường 10, Phú Nhuận, Thành phố Hồ Chí Minh', '0905067490', '20/06/2023', '20/12/2023');
+-- ('', '', '', '', '', ''),
 
 
 
