@@ -148,13 +148,14 @@ class DbProcess {
             DiaChi TEXT,
             SoDienThoai TEXT,
             NgayLapThe TEXT,
-            NgayHetHan TEXT,
-            TongNo INTEGER
+            NgayHetHan TEXT
           );
 
           CREATE TABLE PhieuMuon(
             MaPhieuMuon INTEGER PRIMARY KEY AUTOINCREMENT,
-            
+            MaCuonSach TEXT,
+            MaDocGia INTEGER,
+            NgayMuon TEXT,
             HanTra TEXT,
             TinhTrang TEXT,
 
@@ -259,7 +260,6 @@ class DbProcess {
           element['SoDienThoai'],
           vnDateFormat.parse(element['NgayLapThe'] as String),
           vnDateFormat.parse(element['NgayHetHan'] as String),
-          element['TongNo'],
         ),
       );
     }
@@ -306,7 +306,6 @@ class DbProcess {
           element['SoDienThoai'],
           vnDateFormat.parse(element['NgayLapThe'] as String),
           vnDateFormat.parse(element['NgayHetHan'] as String),
-          element['TongNo'],
         ),
       );
     }
@@ -343,7 +342,7 @@ class DbProcess {
       '''
       update DocGia 
       set HoTen = ?, NgaySinh = ?, DiaChi = ?, SoDienThoai = ?, 
-      NgayLapThe = ?, NgayHetHan = ?, TongNo = ? 
+      NgayLapThe = ?, NgayHetHan = ?
       where MaDocGia  = ?
       ''',
       [
@@ -353,7 +352,6 @@ class DbProcess {
         updatedDocGia.soDienThoai,
         updatedDocGia.ngayLapThe.toVnFormat(),
         updatedDocGia.ngayHetHan.toVnFormat(),
-        updatedDocGia.tongNo,
         updatedDocGia.maDocGia,
       ],
     );
@@ -1267,7 +1265,7 @@ class DbProcess {
     );
   }
 
-  Future<int> querySoSachDaMuonCuaDocGia(int maDocGia) async {
+  Future<int> querySoSachDangMuonCuaDocGia(int maDocGia) async {
     final List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
       select count(MaPhieuMuon) as count from PhieuMuon
@@ -1277,6 +1275,25 @@ class DbProcess {
     );
 
     return data.first['count'];
+  }
+
+  Future<int> querySoSachMuonQuahanCuaDocGia(int maDocGia) async {
+    final List<Map<String, dynamic>> data = await _database.rawQuery(
+      '''
+      select HanTra from PhieuMuon
+      where TinhTrang = 'Đang mượn' and MaDocGia = ?
+      ''',
+      [maDocGia],
+    );
+
+    int count = 0;
+    for (var element in data) {
+      if (vnDateFormat.parse(element['HanTra']).endOfDay().isBefore(DateTime.now())) {
+        count++;
+      }
+    }
+
+    return count;
   }
 
   Future<List<PhieuMuonCanTraDto>> queryPhieuMuonCanTraDtoWithMaDocGia(int maDocGia) async {

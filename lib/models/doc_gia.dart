@@ -9,7 +9,6 @@ class DocGia {
     this.soDienThoai,
     this.ngayLapThe,
     this.ngayHetHan,
-    this.tongNo,
   );
 
   int? maDocGia;
@@ -19,7 +18,6 @@ class DocGia {
   String soDienThoai;
   DateTime ngayLapThe;
   DateTime ngayHetHan;
-  int tongNo;
 
   Map<String, dynamic> toMap() {
     return {
@@ -29,7 +27,6 @@ class DocGia {
       'SoDienThoai': soDienThoai,
       'NgayLapThe': ngayLapThe.toVnFormat(),
       'NgayHetHan': ngayHetHan.toVnFormat(),
-      'TongNo': tongNo,
     };
   }
 }

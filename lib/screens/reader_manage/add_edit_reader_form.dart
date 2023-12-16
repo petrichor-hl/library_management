@@ -52,13 +52,12 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
       if (widget.editDocGia == null) {
         DocGia newDocGia = DocGia(
           null,
-          _fullnameController.text,
+          _fullnameController.text.toLowerCase(),
           vnDateFormat.parse(_dobController.text),
           _addressController.text,
           _phoneController.text,
           vnDateFormat.parse(_creationDateController.text),
           vnDateFormat.parse(_expirationDateController.text),
-          0,
         );
 
         int returningId = await dbProcess.insertDocGia(newDocGia);
@@ -68,13 +67,12 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
           Navigator.of(context).pop(newDocGia);
         }
       } else {
-        widget.editDocGia!.hoTen = _fullnameController.text;
+        widget.editDocGia!.hoTen = _fullnameController.text.toLowerCase();
         widget.editDocGia!.ngaySinh = vnDateFormat.parse(_dobController.text);
         widget.editDocGia!.diaChi = _addressController.text;
         widget.editDocGia!.soDienThoai = _phoneController.text;
         widget.editDocGia!.ngayLapThe = vnDateFormat.parse(_creationDateController.text);
         widget.editDocGia!.ngayHetHan = vnDateFormat.parse(_expirationDateController.text);
-        widget.editDocGia!.tongNo = int.parse(_totalTiabilitiesController.text.replaceAll('.', ''));
 
         await dbProcess.updateDocGia(widget.editDocGia!);
 
@@ -108,14 +106,13 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
       Nếu là chỉnh sửa độc giả
       thì phải fill thông tin vào của độc giả cần chỉnh sửa vào form
       */
-      _fullnameController.text = widget.editDocGia!.hoTen;
+      _fullnameController.text = widget.editDocGia!.hoTen.capitalizeFirstLetterOfEachWord();
       _dobController.text = widget.editDocGia!.ngaySinh.toVnFormat();
       _addressController.text = widget.editDocGia!.diaChi;
       _phoneController.text = widget.editDocGia!.soDienThoai;
       _addressController.text = widget.editDocGia!.diaChi;
       _creationDateController.text = widget.editDocGia!.ngayLapThe.toVnFormat();
       _expirationDateController.text = widget.editDocGia!.ngayHetHan.toVnFormat();
-      _totalTiabilitiesController.text = widget.editDocGia!.tongNo.toVnCurrencyWithoutSymbolFormat();
     } else {
       /* 
       Nếu là thêm mới Độc Giả, thì thiết lập sẵn Creation và ExpriationDate 
@@ -248,36 +245,7 @@ class _AddEditDocGiaFormState extends State<AddEditDocGiaForm> {
                   isEnable: false,
                   controller: _expirationDateController,
                 ),
-                if (widget.editDocGia != null) ...[
-                  const SizedBox(height: 10),
-                  LabelTextFormField(
-                    labelText: 'Tổng nợ',
-                    controller: _totalTiabilitiesController,
-                    suffixText: 'VND',
-                    customValidator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Bạn chưa nhập Tổng nợ';
-                      }
-                      if (int.tryParse(value.replaceAll('.', '')) == null) {
-                        return 'Tổng nợ phải là con số';
-                      }
-                      return null;
-                    },
-                    onEditingComplete: () {
-                      var text = _totalTiabilitiesController.text;
-                      try {
-                        _totalTiabilitiesController.text = int.parse(text).toVnCurrencyWithoutSymbolFormat();
-                      } catch (e) {
-                        // Do nothing
-                        // print('Parse FAILED');
-                      }
-                      FocusScope.of(context).unfocus();
-                    },
-                    onTap: () {
-                      _totalTiabilitiesController.text = _totalTiabilitiesController.text.replaceAll('.', '');
-                    },
-                  ),
-                ] else ...[
+                if (widget.editDocGia == null) ...[
                   const SizedBox(height: 10),
                   Text(
                     '*Thu tiền tạo thẻ ${ThamSoQuyDinh.phiTaoThe.toVnCurrencyFormat()}',

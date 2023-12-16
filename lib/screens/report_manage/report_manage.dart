@@ -15,7 +15,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
   //late final ScrollController _scrollController;
   final int _count = 2;
   //bool fixedScroll = true;
-  var _selectedYear = new DateTime.now();
+  var _selectedYear = DateTime.now();
   Color mainColor = const Color.fromARGB(255, 4, 104, 138);
   var isHoverYearBtn = false;
   //String showYear = DateTime.now().year.toString();

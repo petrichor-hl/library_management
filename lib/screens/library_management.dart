@@ -24,7 +24,7 @@ class _LibraryManagementState extends State<LibraryManagement> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 2);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
   }
 
   @override

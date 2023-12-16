@@ -27,7 +27,6 @@ class _ReaderManageState extends State<ReaderManage> {
     'Số điện thoại',
     'Ngày lập thẻ',
     'Ngày hết hạn',
-    'Tổng nợ',
   ];
 
   int _selectedRow = -1;
@@ -407,12 +406,6 @@ class _ReaderManageState extends State<ReaderManage> {
                               DataCell(
                                 Text(
                                   reader.ngayHetHan.toVnFormat(),
-                                  style: cellTextStyle,
-                                ),
-                              ),
-                              DataCell(
-                                Text(
-                                  reader.tongNo.toVnCurrencyWithoutSymbolFormat(),
                                   style: cellTextStyle,
                                 ),
                               ),
