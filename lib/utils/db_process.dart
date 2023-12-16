@@ -1523,8 +1523,9 @@ class DbProcess {
   Future<List<TKThuNhap>> queryTienPhatTheoThang() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select NgayTra, MaPhieuTra, SoTienPhat
-      from PhieuTra
+      select NgayTra, HoTen, SoTienPhat
+      from PhieuTra join PhieuMuon USING(MaPhieuMuon)
+      join DocGia USING(MaDocGia)
 
       ''',
     );
@@ -1532,7 +1533,7 @@ class DbProcess {
     for (var element in data) {
       DateTime date = vnDateFormat.parse(element['NgayTra'] as String);
       danhSachTienPhat.add(
-        TKThuNhap(date.day, date.month, date.year, element['MaPhieuTra'].toString(), "fine", element['SoTienPhat']),
+        TKThuNhap(date.day, date.month, date.year, element['HoTen'].toString(), "fine", element['SoTienPhat']),
       );
     }
     return danhSachTienPhat;
@@ -1542,8 +1543,8 @@ class DbProcess {
   Future<List<TKThuNhap>> queryTienTaoTheTheoThang() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(
       '''
-      select MaCTTT, PhiTaoThe, NgayTao
-      from CT_TaoThe
+      select HoTen, PhiTaoThe, NgayTao
+      from CT_TaoThe join DocGia USING(MaDocGia)
 
       ''',
     );
@@ -1551,7 +1552,7 @@ class DbProcess {
     for (var element in data) {
       DateTime date = vnDateFormat.parse(element['NgayTao'] as String);
       danhSachTienTao.add(
-        TKThuNhap(date.day, date.month, date.year, element['MaCTTT'].toString(), "fee", element['PhiTaoThe']),
+        TKThuNhap(date.day, date.month, date.year, element['HoTen'].toString(), "fee", element['PhiTaoThe']),
       );
     }
     return danhSachTienTao;
