@@ -83,8 +83,59 @@ class _MuonSachState extends State<MuonSach> {
     if (hoTen == null) {
       _errorText = 'Không tìm thấy Độc giả.';
     } else {
-      _maDocGia = maDocGia.toString();
       _hoTenDocGia = hoTen.capitalizeFirstLetterOfEachWord();
+
+      /* Kiểm tra thẻ Độc giả còn hạn hay không */
+      if (!await dbProcess.kiemTraHanTheDocGia(maDocGia)) {
+        /* Hết hạn */
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          builder: (ctx) => Dialog(
+            surfaceTintColor: Colors.transparent,
+            child: SizedBox(
+              width: 300,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.cancel_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 52,
+                    ),
+                    const Gap(12),
+                    Text(
+                      'Thẻ Độc giả $_hoTenDocGia \n đã hết hạn',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const Gap(16),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Đóng'),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        _searchMaDocGiaController.clear();
+        _hoTenDocGia = '';
+
+        setState(() {
+          _isProcessingMaDocGia = false;
+        });
+        return;
+      }
+      _maDocGia = maDocGia.toString();
+
       _soSachDangMuon = (await dbProcess.querySoSachDangMuonCuaDocGia(maDocGia)).toString();
 
       int soSachQuaHan = await dbProcess.querySoSachMuonQuahanCuaDocGia(maDocGia);
@@ -107,17 +158,19 @@ class _MuonSachState extends State<MuonSach> {
                       size: 52,
                     ),
                     const Gap(10),
-                    Text(
-                      'Độc giả $_hoTenDocGia có',
-                      style: const TextStyle(
+                    const Text(
+                      'Lưu ý',
+                      style: TextStyle(
                         fontSize: 16,
                       ),
                     ),
+                    const Gap(4),
                     Text(
-                      '$soSachQuaHan cuốn sách quá hạn',
+                      'Độc giả $_hoTenDocGia có \n $soSachQuaHan cuốn sách quá hạn',
                       style: const TextStyle(
                         fontSize: 16,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const Gap(16),
                     FilledButton(

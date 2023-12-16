@@ -103,7 +103,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
     int topValue = _highestNum - _highestNum % 10 + 10;
     late int showingTooltipSpot = -1;
     final List<FlSpot> list = <FlSpot>[];
-    final LineChartBarData _lineChartBarData = _linesData(list, mainColor);
+    final LineChartBarData lineChartBarData = _linesData(list, mainColor);
     for (var i = 0; i < 12; i++) {
       list.add(FlSpot(i + 1, countDocGia[i].toDouble()));
     }
@@ -118,7 +118,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
       showingTooltipIndicators: showingTooltipSpot != -1
           ? [
               ShowingTooltipIndicators([
-                LineBarSpot(_lineChartBarData, showingTooltipSpot, _lineChartBarData.spots[showingTooltipSpot]),
+                LineBarSpot(lineChartBarData, showingTooltipSpot, lineChartBarData.spots[showingTooltipSpot]),
               ])
             ]
           : [],
@@ -184,7 +184,7 @@ class _BaoCaoDocGiaState extends State<BaoCaoDocGia> {
           getTouchLineEnd: (_, __) => double.infinity),
       borderData: FlBorderData(border: const Border(bottom: BorderSide(width: 1), left: BorderSide(width: 1))),
       lineBarsData: [
-        _lineChartBarData,
+        lineChartBarData,
       ],
       gridData: FlGridData(
         drawHorizontalLine: false,

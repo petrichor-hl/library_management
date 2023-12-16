@@ -56,7 +56,7 @@ class BaoCaoTheLoaiSachMuon extends StatelessWidget {
                 ),
               )));
     } else {
-      finalList = reportList!;
+      finalList = reportList;
       return Dialog(
         backgroundColor: Colors.white,
         child: SizedBox(

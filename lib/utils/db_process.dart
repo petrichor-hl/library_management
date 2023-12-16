@@ -368,6 +368,19 @@ class DbProcess {
     );
   }
 
+  Future<bool> kiemTraHanTheDocGia(int maDocGia) async {
+    final res = await _database.rawQuery(
+      '''
+        select NgayHetHan from DocGia 
+        where MaDocGia = ?
+        ''',
+      [maDocGia],
+    );
+
+    final ngayHetHan = vnDateFormat.parse(res[0]['NgayHetHan'] as String);
+    return ngayHetHan.endOfDay().isAfter(DateTime.now());
+  }
+
   /* ĐẦU SÁCH CODE */
   Future<List<DauSach>> queryDauSach() async {
     List<Map<String, dynamic>> data = await _database.rawQuery(

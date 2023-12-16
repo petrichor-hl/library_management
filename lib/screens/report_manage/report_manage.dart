@@ -44,7 +44,7 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
               Padding(
                 padding: const EdgeInsets.fromLTRB(30, 25, 30, 20),
                 child: Ink(
-                  width: 360,
+                  width: 400,
                   padding: EdgeInsets.all(_count.toDouble()),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -57,9 +57,9 @@ class _ReportManageState extends State<ReportManage> with TickerProviderStateMix
                     ),
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: "Báo cáo độc giả"),
-                      Tab(text: "Báo cáo sách"),
-                      Tab(text: "Báo cáo doanh thu"),
+                      Tab(text: "Độc giả"),
+                      Tab(text: "Sách"),
+                      Tab(text: "Doanh thu"),
                     ],
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),

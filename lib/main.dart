@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:library_management/cubit/tat_ca_sach_cubit.dart';
 import 'package:library_management/screens/auth/auth.dart';
-import 'package:library_management/screens/auth/login_view.dart';
-import 'package:library_management/screens/library_management.dart';
 import 'package:library_management/utils/db_process.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -30,7 +28,7 @@ void main() async {
   );
 
   doWhenWindowReady(() {
-    const initialSize = Size(1280, 700);
+    const initialSize = Size(1280, 900);
     appWindow.minSize = initialSize;
     appWindow.size = initialSize;
     appWindow.alignment = Alignment.center;
