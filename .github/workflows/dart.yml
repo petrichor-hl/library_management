@@ -1,29 +1,35 @@
-name: Flutter
+name: Flutter CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
   pull_request:
-    branches: [ master ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Setup Flutter SDK
-        uses: flutter-actions/setup-flutter@v2
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
-          version: 3.0.2
+          # Specify the Flutter version you want to use
+          flutter-version: '2.10.5' 
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: flutter pub get
 
-      - name: Analyze project source
-        run: dart analyze
+      - name: Analyze Project Source
+        run: flutter analyze
 
-      - name: Run tests
+      - name: Run Tests
         run: flutter test
+
+
