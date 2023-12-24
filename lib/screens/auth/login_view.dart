@@ -16,6 +16,8 @@ class LoginView extends StatefulWidget {
   final void Function() onQuenMatKhauButtonClick;
   @override
   State<LoginView> createState() => _LoginViewState();
+
+  validateCredentials(String s, String t) {}
 }
 
 class _LoginViewState extends State<LoginView> {
