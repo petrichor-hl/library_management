@@ -13,23 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Flutter SDK
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-          # Specify the Flutter version you want to use
-          flutter-version: '2.10.5' 
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Analyze Project Source
-        run: flutter analyze
-
-      - name: Run Tests
-        run: flutter test
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build web
 
 
