@@ -12,9 +12,18 @@ class SelectedCuonSachChoMuonCubit extends Cubit<List<CuonSachDto2th>> {
     emit([...state]);
   }
 
-  bool contains(CuonSachDto2th needCheckCuonSach) {
+  bool contain(CuonSachDto2th needCheckCuonSach) {
     for (var cuonSach in state) {
       if (cuonSach.maCuonSach == needCheckCuonSach.maCuonSach) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool containMaCuonSach(String needCheckMaCuonSach) {
+    for (var cuonSach in state) {
+      if (cuonSach.maCuonSach == needCheckMaCuonSach) {
         return true;
       }
     }

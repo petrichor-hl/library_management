@@ -48,6 +48,29 @@ class SachDaChon extends StatelessWidget {
       return;
     }
 
+    /* 
+    Kiểm tra xem Mã cuốn sách này đã được chọn từ trước hay chưa
+    VD:
+    Thủ thư đã chọn cuốn 665-Cố Định Một Đám Mây-Nguyễn Ngọc Tư
+    Sau đó Thủ thư nhập tiếp cuốn 665 nữa là sai
+    */
+    final isSelected = context.read<SelectedCuonSachChoMuonCubit>().containMaCuonSach(maCuonSach);
+    if (isSelected) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Cuốn sách $maCuonSach này đã được chọn rồi',
+            textAlign: TextAlign.center,
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+          width: 300,
+        ),
+      );
+      return;
+    }
+
     CuonSachDto2th? cuonSach = await dbProcess.queryCuonSachDto2thSanCoWithMaCuonSach(maCuonSach);
     if (cuonSach == null) {
       // ignore: use_build_context_synchronously

@@ -235,7 +235,7 @@ class _SachTrongKhoState extends State<SachTrongKho> {
                                                 );
                                                 return;
                                               }
-                                              final isSelected = context.read<SelectedCuonSachChoMuonCubit>().contains(_cuonSachs[index]);
+                                              final isSelected = context.read<SelectedCuonSachChoMuonCubit>().contain(_cuonSachs[index]);
                                               if (!isSelected) {
                                                 context.read<SelectedCuonSachChoMuonCubit>().add(
                                                       _cuonSachs[index],
@@ -243,13 +243,13 @@ class _SachTrongKhoState extends State<SachTrongKho> {
                                               } else {
                                                 ScaffoldMessenger.of(context).clearSnackBars();
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(
+                                                  SnackBar(
                                                     content: Text(
-                                                      'Cuốn sách này đã được chọn rồi',
+                                                      'Cuốn sách ${_cuonSachs[index].maCuonSach} này đã được chọn rồi',
                                                       textAlign: TextAlign.center,
                                                     ),
                                                     behavior: SnackBarBehavior.floating,
-                                                    duration: Duration(seconds: 3),
+                                                    duration: const Duration(seconds: 3),
                                                     width: 300,
                                                   ),
                                                 );
